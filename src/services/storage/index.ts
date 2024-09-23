@@ -14,17 +14,10 @@ export interface IStorageService {
     uploadFile(bucket: string, key: string, body: string, contentType: string): Promise<{ uri: string }>;
 
     /**
-     * Generates a pre-signed URL for a file for temporary access.
-     * @param bucket The bucket or container name where the file is stored.
-     * @param key The key or path under which the file is stored.
-     * @param expiry The expiration time in seconds for the pre-signed URL.
-     * @param operation The operation that the pre-signed URL allows ('put' for upload, 'get' for download).
-     * @returns A promise that resolves with the pre-signed URL.
+     * Checks if an object exists in the storage service.
+     * @param bucket The bucket or container name to check.
+     * @param key The key or path of the file to check.
+     * @returns A promise that resolves to a boolean indicating whether the object exists.
      */
-    // generatePresignedUrl(
-    //   bucket: string,
-    //   key: string,
-    //   expiry: number,
-    //   operation: "put" | "get"
-    // ): Promise<string>;
+    objectExists(bucket: string, key: string): Promise<boolean>;
 }

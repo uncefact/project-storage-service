@@ -33,4 +33,22 @@ export class GCPStorageService implements IStorageService {
 
         return { uri: `https://${bucket}.storage.googleapis.com/${key}` };
     }
+
+    /**
+     * Checks if an object exists in Google Cloud Storage.
+     * @param bucket The bucket name to check.
+     * @param key The key or path of the file in the bucket.
+     * @returns A promise that resolves to a boolean indicating whether the object exists.
+     */
+    async objectExists(bucket: string, key: string): Promise<boolean> {
+        const bucketInstance = this.storage.bucket(bucket);
+        const file = bucketInstance.file(`${key}.json`);
+
+        try {
+            const [exists] = await file.exists();
+            return exists;
+        } catch (error) {
+            return false;
+        }
+    }
 }

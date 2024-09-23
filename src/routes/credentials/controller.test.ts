@@ -1,6 +1,7 @@
 import { getMockReq, getMockRes } from '@jest-mock/express';
 import { storeCredential } from './controller';
 import { CredentialsService } from './service';
+import { ConflictError } from '../../errors';
 
 const { res: mockRes, next: mockNext, clearMockRes } = getMockRes();
 
@@ -12,6 +13,7 @@ jest.mock('../../config', () => ({
 jest.mock('../../services/storage/gcp', () => ({
     GCPStorageService: jest.fn().mockImplementation(() => ({
         uploadFile: jest.fn().mockResolvedValue({ uri: 'mock-uri' }),
+        objectExists: jest.fn().mockResolvedValue(false),
     })),
 }));
 
@@ -37,7 +39,7 @@ describe('storeCredential Handler', () => {
         const mockReq = getMockReq({
             body: {
                 bucket: 'bucketName',
-                filename: 'credentials.json',
+                id: 'b9c1ca4e-6b28-477f-b61d-062645ee3e88',
                 data: { test: 'data' },
             },
         });
@@ -56,7 +58,7 @@ describe('storeCredential Handler', () => {
         const mockReq = getMockReq({
             body: {
                 bucket: 'invalid-bucket',
-                filename: 'credentials.json',
+                id: 'b9c1ca4e-6b28-477f-b61d-062645ee3e88',
                 data: { test: 'data' },
             },
         });
@@ -76,8 +78,8 @@ describe('storeCredential Handler', () => {
 
         const mockReq = getMockReq({
             body: {
-                bucket: 'example-bucket',
-                filename: 'credentials.json',
+                bucket: 'bucketName',
+                id: 'b9c1ca4e-6b28-477f-b61d-062645ee3e88',
                 data: { test: 'data' },
             },
         });
@@ -86,7 +88,28 @@ describe('storeCredential Handler', () => {
 
         expect(mockRes.status).toHaveBeenCalledWith(500);
         expect(mockRes.json).toHaveBeenCalledWith({
-            message: 'An unexpected error ocurred while storing the credential.',
+            message: 'An unexpected error occurred while storing the credential.',
+        });
+    });
+
+    it('responds with 409 status when the object already exists', async () => {
+        jest.spyOn(CredentialsService.prototype, 'encryptAndStoreCredential').mockRejectedValueOnce(
+            new ConflictError('Object already exists'),
+        );
+
+        const mockReq = getMockReq({
+            body: {
+                bucket: 'bucketName',
+                id: 'b9c1ca4e-6b28-477f-b61d-062645ee3e88',
+                data: { test: 'data' },
+            },
+        });
+
+        await storeCredential(mockReq, mockRes, mockNext);
+
+        expect(mockRes.status).toHaveBeenCalledWith(409);
+        expect(mockRes.json).toHaveBeenCalledWith({
+            message: 'Object already exists',
         });
     });
 });

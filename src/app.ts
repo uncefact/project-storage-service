@@ -6,7 +6,6 @@ import express from 'express';
 import { API_VERSION } from './config';
 import { router } from './routes';
 
-// TODO: Add error and logging middleware
 export const app = express();
 
 app.use(cors());

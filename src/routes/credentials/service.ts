@@ -1,42 +1,57 @@
 import { isPlainObject } from 'lodash';
+import { v4 } from 'uuid';
+import { IStorageService, ICryptographyService } from '../../services';
 import { AVAILABLE_BUCKETS } from '../../config';
-import { IStorageService } from '../../services';
-import { ICryptographyService } from '../../services/cryptography';
-
-interface IStoreCredentialsParams {
-    bucket?: string;
-    filename?: string;
-    data?: Record<string, any>;
-}
+import { IStoreParams } from '../../types';
+import { isValidUUID } from '../../utils';
+import { ApiError, ApplicationError, BadRequestError, ConflictError } from '../../errors';
 
 export class CredentialsService {
     /**
      * Encrypts and stores credentials in a storage service.
      * @param cryptographyService - The cryptography service used for encryption and key generation.
      * @param storageService - The storage service used for uploading the encrypted credentials.
-     * @param bucket - The name of the bucket where the credentials will be stored.
-     * @param filename - The name of the file where the credentials will be stored.
-     * @param data - The JSON object containing the credentials data.
-     * @returns An object containing the URI of the uploaded file, the hash of the data, and the encryption key.
-     * @throws If the bucket or filename is not provided, or if the data is not a JSON object.
+     * @param params - An object containing the following properties:
+     * @param params.bucket - The name of the bucket where the credentials will be stored.
+     * @param params.id - (Optional) The identifier for the credentials. If not provided, a UUID will be generated.
+     * @param params.data - The data to be encrypted and stored. Must be a plain object.
+     * @returns An object containing the URI of the uploaded file, the hash of the data, and the decryption key.
+     * @throws {Error} If the bucket is not provided or is invalid.
+     * @throws {Error} If the data is not a plain object.
+     * @throws {Error} If an object with the same ID already exists in the bucket.
+     * @throws {Error} If the provided ID is not a valid UUID.
      */
 
     public async encryptAndStoreCredential(
         cryptographyService: ICryptographyService,
         storageService: IStorageService,
-        { bucket, filename, data }: IStoreCredentialsParams,
+        { bucket, id, data }: IStoreParams,
     ) {
         try {
-            if (!bucket || !filename) {
-                throw new Error('Bucket and filename are required');
+            if (!bucket) {
+                throw new BadRequestError('Bucket is required. Please provide a bucket name.');
             }
 
             if (!AVAILABLE_BUCKETS.includes(bucket)) {
-                throw new Error('Invalid bucket');
+                throw new BadRequestError(
+                    `Invalid bucket. Must be one of the following buckets: ${AVAILABLE_BUCKETS.join(', ')}`,
+                );
             }
 
             if (!isPlainObject(data)) {
-                throw new Error('Data must be a JSON object');
+                throw new BadRequestError('Data must be a JSON object. Please provide a valid JSON object.');
+            }
+
+            const credentialId = id ?? v4();
+
+            if (!isValidUUID(credentialId)) {
+                throw new BadRequestError(`Invalid id ${credentialId}. Please provide a valid UUID.`);
+            }
+
+            const objectExists = await storageService.objectExists(bucket, credentialId);
+
+            if (objectExists) {
+                throw new ConflictError('A credential with the provided ID already exists in the specified bucket.');
             }
 
             const stringifiedData = JSON.stringify(data);
@@ -47,7 +62,7 @@ export class CredentialsService {
 
             const encryptedData = cryptographyService.encryptString(stringifiedData, key);
 
-            const objectName = filename + '.json';
+            const objectName = credentialId + '.json';
 
             const encryptedDocument = JSON.stringify(encryptedData);
 
@@ -64,7 +79,11 @@ export class CredentialsService {
                 err,
             );
 
-            throw err;
+            if (err instanceof ApiError) {
+                throw err;
+            }
+
+            throw new ApplicationError('An unexpected error occurred while encrypting and storing the credential.');
         }
     }
 }

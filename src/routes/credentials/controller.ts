@@ -1,21 +1,22 @@
 import { RequestHandler } from 'express';
-import { AVAILABLE_BUCKETS } from '../../config';
-import { CryptographyService, IStorageService, initalizeStorageService } from '../../services';
+import { CryptographyService, IStorageService, initialiseStorageService } from '../../services';
+import { ApiError } from '../../errors';
 import { CredentialsService } from './service';
 
 /**
- * Handles the request to a store credential.
+ * Handles the request to store a credential.
  *
- * @param req The request object.
+ * @param req The request object containing the credential data in the body.
  * @param res The response object.
- * @returns The response with the stored credentials URI, key and hash.
+ * @returns A JSON response with the stored credential's URI, hash, and key on success,
+ *          or an error message with an appropriate status code on failure.
  */
 export const storeCredential: RequestHandler = async (req, res) => {
     try {
         const params = req.body;
 
         const credentialsService = new CredentialsService();
-        const storageService: IStorageService = initalizeStorageService();
+        const storageService: IStorageService = initialiseStorageService();
         const cryptographyService = new CryptographyService();
 
         const response = await credentialsService.encryptAndStoreCredential(
@@ -28,14 +29,12 @@ export const storeCredential: RequestHandler = async (req, res) => {
     } catch (err: any) {
         console.log('[CredentialsController.storeCredential] An error occurred while storing the credential.', err);
 
-        if (err.message === 'Invalid bucket') {
-            return res.status(400).json({
-                message: `Invalid bucket. Must be one of the following buckets: ${AVAILABLE_BUCKETS}`,
-            });
+        if (err instanceof ApiError) {
+            return res.status(err.statusCode).json({ message: err.message });
         }
 
         res.status(500).json({
-            message: 'An unexpected error ocurred while storing the credential.',
+            message: 'An unexpected error occurred while storing the credential.',
         });
     }
 };

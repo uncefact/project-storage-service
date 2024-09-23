@@ -1,9 +1,5 @@
-import {
-    encryptString as oaEncryptString,
-    generateEncryptionKey as oaGenerateEncryptionKey,
-} from '@govtechsg/oa-encryption';
-import { computeEntryHash } from '@veramo/utils';
-import { ICryptographyService } from './index';
+import crypto from 'crypto';
+import { HashAlgorithm, EncryptionAlgorithm, ICryptographyService, ivLengthMap, keyLengthMap } from './index';
 
 /**
  * Service for cryptography operations.
@@ -11,36 +7,59 @@ import { ICryptographyService } from './index';
 export class CryptographyService implements ICryptographyService {
     /**
      * Computes the hash of the input string.
-     * @param input - The input string to compute the hash for.
-     * @returns The computed hash.
+     * @param {string} input - The input string to compute the hash for.
+     * @param {HashAlgorithm} [algorithm=HashAlgorithm.SHA_256] - The hash algorithm to use.
+     * @returns {string} The computed hash as a hexadecimal string.
      */
-    computeHash(input: string) {
-        const hash = computeEntryHash(input);
+    computeHash(input: string, algorithm: HashAlgorithm = HashAlgorithm.SHA_256) {
+        const hash = crypto.createHash(algorithm).update(input).digest('hex');
 
         return hash;
     }
 
     /**
-     * Generates an encryption key.
-     * @returns The generated encryption key.
+     * Generates an encryption key for the specified algorithm.
+     * @param {EncryptionAlgorithm} [algorithm=EncryptionAlgorithm.AES_256_GCM] - The encryption algorithm to generate the key for.
+     * @returns {string} The generated encryption key as a hexadecimal string.
      */
-    generateEncryptionKey() {
-        const encryptionKey = oaGenerateEncryptionKey();
+    generateEncryptionKey(algorithm: EncryptionAlgorithm = EncryptionAlgorithm.AES_256_GCM) {
+        const encryptionKey = crypto.randomBytes(keyLengthMap[algorithm]).toString('hex');
 
         return encryptionKey;
     }
 
     /**
-     * Encrypts a string using the provided key.
-     * @param input - The string to encrypt.
-     * @param key - The encryption key to use.
-     * @returns The encrypted document.
+     * Encrypts a string using the provided key with the specified encryption algorithm.
+     * @param {string} input - The string to encrypt.
+     * @param {string} key - The encryption key to use (hexadecimal string).
+     * @param {EncryptionAlgorithm} [algorithm=EncryptionAlgorithm.AES_256_GCM] - The encryption algorithm to use.
+     * @returns {IEncryptionResult} An object containing the encrypted data:
+     *          - cipherText: The encrypted string (Base64 encoded).
+     *          - iv: The initialization vector used for encryption (Base64 encoded).
+     *          - tag: The authentication tag for GCM mode (Base64 encoded).
+     *          - type: The encryption algorithm used.
+     * @throws {Error} If the key length is invalid for the specified algorithm.
      */
-    encryptString(input: string, key: string) {
-        const encryptedDocument = oaEncryptString(input, key);
+    encryptString(input: string, key: string, algorithm = EncryptionAlgorithm.AES_256_GCM) {
+        if (key.length !== keyLengthMap[algorithm] * 2) {
+            throw new Error(
+                `Invalid key length for ${algorithm} algorithm. Expected ${keyLengthMap[algorithm] * 2} characters, got ${key.length}.`,
+            );
+        }
 
-        delete (encryptedDocument as any).key;
+        const iv = crypto.randomBytes(ivLengthMap[algorithm]);
+        const cipher = crypto.createCipheriv(algorithm, Buffer.from(key, 'hex'), iv);
 
-        return encryptedDocument;
+        let cipherText = cipher.update(input, 'utf8', 'base64');
+        cipherText += cipher.final('base64');
+
+        const authTag = cipher.getAuthTag().toString('base64');
+
+        return {
+            cipherText,
+            iv: iv.toString('base64'),
+            tag: authTag,
+            type: algorithm,
+        };
     }
 }

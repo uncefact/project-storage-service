@@ -12,6 +12,13 @@ jest.mock('../../config', () => ({
 jest.mock('../../services/storage/gcp', () => ({
     GCPStorageService: jest.fn().mockImplementation(() => ({
         uploadFile: jest.fn().mockResolvedValue({ uri: 'mock-uri' }),
+        objectExists: jest.fn().mockResolvedValue(false),
+    })),
+}));
+
+jest.mock('../../services/cryptography', () => ({
+    CryptographyService: jest.fn().mockImplementation(() => ({
+        computeHash: jest.fn().mockReturnValue('mocked-hash'),
     })),
 }));
 
@@ -29,7 +36,7 @@ describe('storeDocument Handler', () => {
         const mockReq = getMockReq({
             body: {
                 bucket: 'bucketName',
-                filename: 'Documents.json',
+                id: 'b9c1ca4e-6b28-477f-b61d-062645ee3e88',
                 data: { test: 'data' },
             },
         });
@@ -39,6 +46,7 @@ describe('storeDocument Handler', () => {
         expect(mockRes.status).toHaveBeenCalledWith(201);
         expect(mockRes.json).toHaveBeenCalledWith({
             uri: 'mock-uri',
+            hash: 'mocked-hash',
         });
     });
 
@@ -46,7 +54,7 @@ describe('storeDocument Handler', () => {
         const mockReq = getMockReq({
             body: {
                 bucket: 'invalid-bucket',
-                filename: 'Documents.json',
+                id: 'b9c1ca4e-6b28-477f-b61d-062645ee3e88',
                 data: { test: 'data' },
             },
         });
@@ -65,7 +73,7 @@ describe('storeDocument Handler', () => {
         const mockReq = getMockReq({
             body: {
                 bucket: 'example-bucket',
-                filename: 'Documents.json',
+                id: 'b9c1ca4e-6b28-477f-b61d-062645ee3e88',
                 data: { test: 'data' },
             },
         });
@@ -74,7 +82,7 @@ describe('storeDocument Handler', () => {
 
         expect(mockRes.status).toHaveBeenCalledWith(500);
         expect(mockRes.json).toHaveBeenCalledWith({
-            message: 'An unexpected error ocurred while storing the document.',
+            message: 'An unexpected error occurred while storing the document.',
         });
     });
 });

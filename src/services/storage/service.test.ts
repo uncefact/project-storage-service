@@ -1,4 +1,4 @@
-describe('initalizeStorageService', () => {
+describe('initialiseStorageService', () => {
     beforeEach(() => {
         jest.resetModules();
         jest.doMock('./local', () => ({
@@ -22,8 +22,8 @@ describe('initalizeStorageService', () => {
         });
         const { LocalStorageService } = require('./local');
         return import('../../config').then(() => {
-            const initalizeStorageService = require('./service').initalizeStorageService;
-            initalizeStorageService();
+            const initialiseStorageService = require('./service').initialiseStorageService;
+            initialiseStorageService();
 
             expect(LocalStorageService).toHaveBeenCalledTimes(1);
         });
@@ -38,8 +38,8 @@ describe('initalizeStorageService', () => {
         });
         const { GCPStorageService } = require('./gcp');
         return import('../../config').then(() => {
-            const initalizeStorageService = require('./service').initalizeStorageService;
-            initalizeStorageService();
+            const initialiseStorageService = require('./service').initialiseStorageService;
+            initialiseStorageService();
 
             expect(GCPStorageService).toHaveBeenCalledTimes(1);
         });
@@ -53,9 +53,9 @@ describe('initalizeStorageService', () => {
             };
         });
         return import('../../config').then(() => {
-            const initalizeStorageService = require('./service').initalizeStorageService;
+            const initialiseStorageService = require('./service').initialiseStorageService;
             expect(() => {
-                initalizeStorageService();
+                initialiseStorageService();
             }).toThrow('Invalid storage type');
         });
     });
