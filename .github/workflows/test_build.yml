@@ -4,7 +4,11 @@ on:
     pull_request:
         branches:
             - next
-
+permissions:
+  contents: write
+  checks: write
+  pull-requests: write
+  
 jobs:
     test-and-build:
         runs-on: ubuntu-latest
@@ -25,7 +29,7 @@ jobs:
 
             - name: Run tests
               run: |
-                yarn test --ci --json --coverage --testLocationInResults --outputFile=report.json
+                yarn test:ci
       
             - name: Coverage
               uses: artiomtr/jest-coverage-report-action@v2
