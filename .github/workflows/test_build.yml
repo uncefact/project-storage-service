@@ -5,10 +5,6 @@ on:
         branches:
             - next
 
-permissions:
-    contents: read
-    checks: write
-
 jobs:
     test-and-build:
         runs-on: ubuntu-latest
@@ -28,16 +24,16 @@ jobs:
               run: yarn lint
 
             - name: Run tests
-              run: yarn test:ci
-
+              run: |
+                yarn test:ci
+      
             - name: Coverage
               uses: artiomtr/jest-coverage-report-action@v2
               with:
-                  test-script: yarn jest
-                  github-token: ${{ secrets.GITHUB_TOKEN }}
-                  coverage-file: report.json
-                  base-coverage-file: report.json
-                  threshold: 80
+                github-token: ${{ secrets.GITHUB_TOKEN }}
+                coverage-file: report.json
+                base-coverage-file: report.json
+                threshold: 80
 
             - name: Build
               run: yarn build

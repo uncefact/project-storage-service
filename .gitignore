@@ -2,6 +2,8 @@
 
 .env
 
+report.json
+
 dist
 coverage
 node_modules
