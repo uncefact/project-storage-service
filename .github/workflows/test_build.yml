@@ -4,11 +4,7 @@ on:
     pull_request:
         branches:
             - next
-permissions:
-  contents: write
-  checks: write
-  pull-requests: write
-  
+
 jobs:
     test-and-build:
         runs-on: ubuntu-latest
@@ -34,6 +30,7 @@ jobs:
             - name: Coverage
               uses: artiomtr/jest-coverage-report-action@v2
               with:
+                package-manager: yarn
                 github-token: ${{ secrets.GITHUB_TOKEN }}
                 coverage-file: report.json
                 base-coverage-file: report.json
