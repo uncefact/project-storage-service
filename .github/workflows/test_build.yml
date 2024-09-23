@@ -25,7 +25,7 @@ jobs:
 
             - name: Run tests
               run: |
-                yarn test:ci
+                yarn test --ci --json --coverage --testLocationInResults --outputFile=report.json
       
             - name: Coverage
               uses: artiomtr/jest-coverage-report-action@v2
