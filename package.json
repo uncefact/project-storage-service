@@ -7,7 +7,7 @@
         "postinstall": "husky",
         "start": "node dist/index.js",
         "test": "jest",
-        "test:ci": "jest --changedSince=origin/next --ci --json --coverage --testLocationInResults --outputFile=report.json",
+        "test:ci": "jest --ci --json --coverage --testLocationInResults --outputFile=report.json",
         "watch:build": "webpack --watch --mode development",
         "watch:server": "nodemon \"./dist/server.js\" --watch \"./dist\""
     },
