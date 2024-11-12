@@ -8,3 +8,4 @@ dist
 coverage
 node_modules
 uploads
+src/swagger/swagger.json

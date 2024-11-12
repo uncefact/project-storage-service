@@ -1,6 +1,8 @@
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
-export const API_VERSION = process.env.API_VERSION || 'v1';
+import pkg from '../package.json';
+
+export const API_VERSION = `v${pkg.version || '1.0.0'}`;
 export const PROTOCOL = process.env.PROTOCOL || 'http';
 export const DOMAIN = process.env.DOMAIN || 'localhost';
 export const PORT = process.env.PORT || 3333;

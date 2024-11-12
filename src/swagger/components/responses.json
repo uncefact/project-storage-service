@@ -1,0 +1,54 @@
+{
+    "components": {
+        "responses": {
+            "400": {
+                "description": "The request is invalid.",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "message": {
+                                    "type": "string",
+                                    "example": "Bucket is required. Please provide a bucket name."
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "409": {
+                "description": "The credential already exists.",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "message": {
+                                    "type": "string",
+                                    "example": "A credential with the provided ID already exists in the specified bucket."
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "500": {
+                "description": "An error occurred while storing the credential.",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "message": {
+                                    "type": "string",
+                                    "example": "An unexpected error occurred while storing the credential."
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

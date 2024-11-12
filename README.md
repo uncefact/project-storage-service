@@ -83,6 +83,8 @@ export STORAGE_TYPE=local
 yarn dev
 ```
 
+The Swagger UI is available at `http://localhost:3333/api-docs`.
+
 ### Google Cloud Storage
 
 For production environments,
@@ -103,6 +105,8 @@ yarn build
 # Run the app
 yarn start
 ```
+
+The Swagger UI is available at `http://localhost:3333/api-docs`.
 
 ## Cryptography
 

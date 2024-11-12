@@ -1,0 +1,35 @@
+{
+    "components": {
+        "schemas": {
+            "Credential": {
+                "type": "object",
+                "properties": {
+                    "bucket": {
+                        "type": "string",
+                        "example": "verifiable-credentials"
+                    },
+                    "data": {
+                        "type": "object",
+                        "properties": {
+                            "field1": {
+                                "type": "string",
+                                "example": "value1"
+                            },
+                            "field2": {
+                                "type": "string",
+                                "example": "value2"
+                            }
+                        }
+                    },
+                    "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "example": "123e4567-e89b-12d3-a456-426614174000",
+                        "description": "Optional"
+                    }
+                },
+                "required": ["bucket", "data"]
+            }
+        }
+    }
+}

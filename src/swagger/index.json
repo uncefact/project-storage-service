@@ -1,0 +1,18 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Storage Service API"
+    },
+    "servers": [],
+    "paths": {
+        "$ref": "./paths.json#/paths"
+    },
+    "components": {
+        "schemas": {
+            "$ref": "./components/schemas.json#/components/schemas"
+        },
+        "examples": {
+            "$ref": "./components/examples.json#/components/examples"
+        }
+    }
+}

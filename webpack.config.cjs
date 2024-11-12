@@ -1,5 +1,6 @@
 const path = require('path');
 const TerserPlugin = require('terser-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
     entry: './src/server.ts',
@@ -41,4 +42,15 @@ module.exports = {
     resolve: {
         extensions: ['.ts', '.js'],
     },
+    plugins: [
+        new CopyWebpackPlugin({
+            patterns: [
+                './node_modules/swagger-ui-dist/swagger-ui.css',
+                './node_modules/swagger-ui-dist/swagger-ui-bundle.js',
+                './node_modules/swagger-ui-dist/swagger-ui-standalone-preset.js',
+                './node_modules/swagger-ui-dist/favicon-16x16.png',
+                './node_modules/swagger-ui-dist/favicon-32x32.png',
+            ],
+        }),
+    ],
 };

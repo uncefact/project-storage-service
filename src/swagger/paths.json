@@ -1,0 +1,116 @@
+{
+    "paths": {
+        "/documents": {
+            "post": {
+                "summary": "Store a credential.",
+                "description": "Store a credential in the storage service.",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "./components/schemas.json#/components/schemas/Credential"
+                            },
+                            "examples": {
+                                "example1": {
+                                    "$ref": "./components/examples.json#/components/examples/ExampleRequest1"
+                                },
+                                "example2": {
+                                    "$ref": "./components/examples.json#/components/examples/ExampleRequest2"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Credential stored successfully.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "uri": {
+                                            "type": "string",
+                                            "example": "http://localhost:3333/v1/verifiable-credentials/123e4567-e89b-12d3-a456-426614174000.json"
+                                        },
+                                        "hash": {
+                                            "type": "string",
+                                            "example": "computed-hash"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "./components/responses.json#/components/responses/400"
+                    },
+                    "409": {
+                        "$ref": "./components/responses.json#/components/responses/409"
+                    },
+                    "500": {
+                        "$ref": "./components/responses.json#/components/responses/500"
+                    }
+                }
+            }
+        },
+        "/credentials": {
+            "post": {
+                "summary": "Store a credential.",
+                "description": "Store a credential in the storage service.",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "./components/schemas.json#/components/schemas/Credential"
+                            },
+                            "examples": {
+                                "example1": {
+                                    "$ref": "./components/examples.json#/components/examples/ExampleRequest1"
+                                },
+                                "example2": {
+                                    "$ref": "./components/examples.json#/components/examples/ExampleRequest2"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Credential stored successfully.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "uri": {
+                                            "type": "string",
+                                            "example": "http://localhost:3333/v1/verifiable-credentials/123e4567-e89b-12d3-a456-426614174000.json"
+                                        },
+                                        "hash": {
+                                            "type": "string",
+                                            "example": "computed-hash"
+                                        },
+                                        "key": {
+                                            "type": "string",
+                                            "example": "encryption-key"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "./components/responses.json#/components/responses/400"
+                    },
+                    "409": {
+                        "$ref": "./components/responses.json#/components/responses/409"
+                    },
+                    "500": {
+                        "$ref": "./components/responses.json#/components/responses/500"
+                    }
+                }
+            }
+        }
+    }
+}
