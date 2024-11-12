@@ -171,6 +171,14 @@ The cryptography service uses the following algorithms:
     }
     ```
 
+## API versions and Source Code versions
+
+The following table lists the API versions and the corresponding source code versions:
+
+| API Version | Source Code Version From                                      | Source Code Version To                                        |
+| ----------- | ------------------------------------------------------------- | ------------------------------------------------------------- |
+| v1.0.0      | [next](https://github.com/uncefact/project-identity-resolver) | [next](https://github.com/uncefact/project-identity-resolver) |
+
 ## Docker
 
 To run the storage service using Docker:

@@ -1,8 +1,8 @@
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
-import pkg from '../package.json';
 
-export const API_VERSION = `v${pkg.version || '1.0.0'}`;
+// The API_VERSION is set manually, it should be updated when having change impact on the API.
+export const API_VERSION = 'v1.0.0';
 export const PROTOCOL = process.env.PROTOCOL || 'http';
 export const DOMAIN = process.env.DOMAIN || 'localhost';
 export const PORT = process.env.PORT || 3333;
