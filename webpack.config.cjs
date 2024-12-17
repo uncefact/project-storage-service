@@ -15,12 +15,12 @@ module.exports = {
             {
                 test: /\.ts?$/,
                 use: 'ts-loader',
-                exclude: /node_modules/,
+                exclude: [/node_modules/, /documentation/],
             },
             {
                 test: /\.js$/,
                 loader: 'babel-loader',
-                exclude: /node_modules/,
+                exclude: [/node_modules/, /documentation/],
                 options: {
                     presets: ['@babel/preset-env'],
                 },
