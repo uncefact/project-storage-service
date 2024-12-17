@@ -8,3 +8,6 @@ dist
 coverage
 node_modules
 uploads
+
+# Misc
+.DS_Store
