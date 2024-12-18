@@ -10,7 +10,7 @@ function HomepageHero() {
     <header className="home-hero">
       <div className="home-hero__container">
         <div className="home-hero__content">
-          <h1 className="home-hero__title">UN Transparency Protocol <br /> Storage Service</h1>
+          <h1 className="home-hero__title">Storage Service</h1>
           <p className="home-hero__description">{siteConfig.tagline}</p>
           <div className="home-hero__actions">
             <Link
@@ -21,7 +21,7 @@ function HomepageHero() {
           </div>
         </div>
         <div className="home-hero__image-wrapper rad-10">
-          <img src={HomeHeroImageUrl} className="home-hero__image" alt="" />
+          <img src={HomeHeroImageUrl} className="home-hero__image" alt="UN Storage Service Image" />
         </div>
       </div>
     </header>
@@ -31,8 +31,7 @@ function HomepageHero() {
 export default function Home() {
   return (
     <Layout
-      title="UN Transparency Protocol"
-      description="Supporting governments and industry on practical measures to counter greenwashing by implementing supply chain traceability and transparency at the scale needed to achieve meaningful impacts on global sustainability outcomes.">
+      description="A secure credential storage solution that complies with UNTP standards.">
       <main className="homepage-content">
         <HomepageHero/>
         <HomepageFeatures/>

@@ -29,11 +29,11 @@ const FeatureList = [
     ),
   },
   {
-    title: 'UNTP Compliance',
+    title: 'Secure Cryptography',
     Svg: require('@site/static/img/compliance-icon.svg').default,
     description: (
       <>
-        Designed and built following UNTP standards. Ensure your storage implementation meets all compliance requirements.
+        Protect your data with industry-standard SHA-256 hashing and AES-256-GCM encryption. Maintain data integrity and security across all storage operations.
       </>
     ),
   },

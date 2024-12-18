@@ -1,5 +1,3 @@
-$home-content__max-width: 1200px;
-
 .home-page {
   background: linear-gradient(180deg, #F2FCFF 0%, #FFFFFF 100%);
 }
@@ -24,10 +22,14 @@ $home-content__max-width: 1200px;
 
   &__title {
     margin: 0 0 15px 0;
-    font-size: 37px;
+    font-size: 30px;
     font-weight: 500;
     letter-spacing: 0;
     line-height: 48px;
+
+    @media screen and (min-width: 996px) {
+      font-size: 37px;
+    }
   }
 
   &__description {
@@ -51,7 +53,7 @@ $home-content__max-width: 1200px;
     }
   }
 
-  &__image {
+&__image {
     max-width: 100%;
   }
 }
@@ -60,7 +62,6 @@ $home-content__max-width: 1200px;
   padding: 0 var(--ifm-spacing-horizontal);
 
   &__container {
-    max-width: $home-content__max-width;
     margin: 0 auto;
   }
 }
