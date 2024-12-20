@@ -30,8 +30,7 @@ function HomepageHero() {
 
 export default function Home() {
   return (
-    <Layout
-      description="A secure credential storage solution that complies with UNTP standards.">
+    <Layout>
       <main className="homepage-content">
         <HomepageHero/>
         <HomepageFeatures/>

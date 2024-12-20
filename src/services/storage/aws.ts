@@ -2,8 +2,6 @@ import { S3Client, HeadObjectCommand, PutObjectCommand, PutObjectCommandInput } 
 import { IStorageService } from '.';
 import { REGION } from '../../config';
 
-const s3Client = new S3Client({ region: REGION });
-
 /**
  * AWS S3 Storage service.
  */
@@ -32,7 +30,7 @@ export class AWSStorageService implements IStorageService {
 
         try {
             const command = new PutObjectCommand(params);
-            await s3Client.send(command);
+            await this.storage.send(command);
             console.log(`File uploaded successfully to ${bucket}/${key}`);
             return { uri: `https://${bucket}.s3.amazonaws.com/${key}` };
         } catch (error) {
@@ -52,7 +50,7 @@ export class AWSStorageService implements IStorageService {
 
         try {
             const command = new HeadObjectCommand(params);
-            await s3Client.send(command);
+            await this.storage.send(command);
             return true;
         } catch (error) {
             return false;

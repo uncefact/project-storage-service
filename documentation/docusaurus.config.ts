@@ -34,6 +34,8 @@ const config: Config = {
         docs: {
           sidebarPath: './sidebars.ts',
           editUrl: 'https://github.com/uncefact/project-identity-resolver/tree/next',
+          routeBasePath: 'docs',
+          includeCurrentVersion: false,
         },
         blog: false,
         theme: {
@@ -65,7 +67,12 @@ const config: Config = {
         src: 'img/logo.svg',
       },
       items: [
-        {to: '/docs/introduction', label: 'Introduction', position: 'right'},
+        {
+          type: 'docsVersionDropdown',
+          position: 'right',
+          dropdownActiveClassDisabled: true,
+        },
+        {to: '/docs/introduction/', label: 'Introduction', position: 'right'},
         {
           to: '/docs/getting-started/',
           label: 'Getting started',
@@ -93,7 +100,7 @@ const config: Config = {
           html: '<svg class="icon"><use xlink:href="#github"></use></svg><span class="menu-item-name">Github</span>',
           className: 'navbar-github-link',
           position: 'right',
-        },
+        }
       ],
     },
     prism: {

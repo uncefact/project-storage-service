@@ -1,6 +1,6 @@
 {
   "name": "documentation",
-  "version": "1.0.0-alpha",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "docusaurus": "docusaurus",
@@ -15,9 +15,9 @@
     "typecheck": "tsc"
   },
   "dependencies": {
-    "@docusaurus/core": "3.4.0",
-    "@docusaurus/preset-classic": "3.4.0",
-    "@docusaurus/theme-mermaid": "^3.4.0",
+    "@docusaurus/core": "3.6.3",
+    "@docusaurus/preset-classic": "3.6.3",
+    "@docusaurus/theme-mermaid": "^3.6.3",
     "@mdx-js/react": "^3.0.0",
     "clsx": "^2.0.0",
     "docusaurus-plugin-sass": "^0.2.5",
@@ -27,9 +27,9 @@
     "sass": "^1.77.6"
   },
   "devDependencies": {
-    "@docusaurus/module-type-aliases": "3.4.0",
-    "@docusaurus/tsconfig": "3.4.0",
-    "@docusaurus/types": "3.4.0",
+    "@docusaurus/module-type-aliases": "3.6.3",
+    "@docusaurus/tsconfig": "3.6.3",
+    "@docusaurus/types": "3.6.3",
     "typescript": "~5.2.2"
   },
   "browserslist": {
