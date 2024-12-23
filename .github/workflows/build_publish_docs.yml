@@ -5,7 +5,7 @@ on:
   # TODO: Enable once release branch is created
   # push:
   #   branches:
-  #     - release
+  #     - main
   workflow_dispatch:
 
 jobs:
@@ -28,11 +28,6 @@ jobs:
       - name: Install dependencies
         run: cd documentation && yarn install --frozen-lockfile
 
-      # Generate new documentation version using release script and store version number
-      - name: Create New Version of Documentation
-        id: new_version
-        run: yarn release:doc
-
       # Build static documentation website with environment variables for proper URL configuration
       - name: Build website
         run: cd documentation && yarn build
@@ -54,14 +49,3 @@ jobs:
           # https://github.com/actions/checkout/issues/13#issuecomment-724415212
           # The GH actions bot is used by default if you didn't specify the two fields.
           # You can swap them out with your own user credentials.
-
-      # Commit version changes and push updates to the documentation source files
-      - name: Commit and push changes
-        run: |
-          VERSION="${{ steps.new_version.outputs.doc_version }}"
-
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
-          git add .
-          git commit -m "docs: release documentation version ${VERSION}"
-          git push origin ${GITHUB_REF_NAME}
