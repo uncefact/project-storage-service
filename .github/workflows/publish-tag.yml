@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  tagging:
+  publish-tag:
     runs-on: ubuntu-latest
 
     steps:
