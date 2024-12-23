@@ -1,11 +1,9 @@
-# TODO: Enable once tagging is enabled
 name: Deploy to GitHub Pages
 
 on:
-  # TODO: Enable once release branch is created
-  # push:
-  #   branches:
-  #     - main
+  push:
+    branches:
+      - main
   workflow_dispatch:
 
 jobs:
