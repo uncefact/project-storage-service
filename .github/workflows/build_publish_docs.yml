@@ -19,19 +19,21 @@ jobs:
       # Setup Node.js environment with caching to optimize dependency installation
       - uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: 21
           cache: yarn
 
       # Install all required Node.js packages and dependencies for documentation generation
       - name: Install dependencies
-        run: cd documentation && yarn install --frozen-lockfile
+        run: yarn install --frozen-lockfile
+        working-directory: documentation
 
       # Build static documentation website with environment variables for proper URL configuration
       - name: Build website
-        run: cd documentation && yarn build
+        run: yarn build
         env:
           DOCS_BASE_URL: ${{ vars.DOCS_BASE_URL }}
           DOCS_URL: ${{ vars.DOCS_URL }}
+        working-directory: documentation
 
       # Deploy built documentation to gh-pages branch for GitHub Pages hosting
       # Popular action to deploy to GitHub Pages:
