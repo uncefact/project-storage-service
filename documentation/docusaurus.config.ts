@@ -69,7 +69,7 @@ const config: Config = {
       items: [
         {
           type: 'docsVersionDropdown',
-          position: 'right',
+          position: 'left',
           dropdownActiveClassDisabled: true,
         },
         {to: '/docs/introduction/', label: 'Introduction', position: 'right'},

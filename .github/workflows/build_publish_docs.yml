@@ -2,31 +2,45 @@
 name: Deploy to GitHub Pages
 
 on:
+  # TODO: Enable once release branch is created
+  # push:
+  #   branches:
+  #     - release
   workflow_dispatch:
 
 jobs:
   deploy:
     name: Deploy to GitHub Pages
     runs-on: ubuntu-latest
+    environment: github-pages
+
     steps:
+      # Checkout repository code to access documentation files and source code
       - uses: actions/checkout@v4
+
+      # Setup Node.js environment with caching to optimize dependency installation
       - uses: actions/setup-node@v3
         with:
           node-version: 18
           cache: yarn
 
+      # Install all required Node.js packages and dependencies for documentation generation
       - name: Install dependencies
         run: cd documentation && yarn install --frozen-lockfile
 
+      # Generate new documentation version using release script and store version number
       - name: Create New Version of Documentation
+        id: new_version
         run: yarn release:doc
 
+      # Build static documentation website with environment variables for proper URL configuration
       - name: Build website
         run: cd documentation && yarn build
         env:
           DOCS_BASE_URL: ${{ vars.DOCS_BASE_URL }}
           DOCS_URL: ${{ vars.DOCS_URL }}
 
+      # Deploy built documentation to gh-pages branch for GitHub Pages hosting
       # Popular action to deploy to GitHub Pages:
       # Docs: https://github.com/peaceiris/actions-gh-pages#%EF%B8%8F-docusaurus
       - name: Deploy to GitHub Pages
@@ -40,3 +54,14 @@ jobs:
           # https://github.com/actions/checkout/issues/13#issuecomment-724415212
           # The GH actions bot is used by default if you didn't specify the two fields.
           # You can swap them out with your own user credentials.
+
+      # Commit version changes and push updates to the documentation source files
+      - name: Commit and push changes
+        run: |
+          VERSION="${{ steps.new_version.outputs.doc_version }}"
+
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add .
+          git commit -m "docs: release documentation version ${VERSION}"
+          git push origin ${GITHUB_REF_NAME}
