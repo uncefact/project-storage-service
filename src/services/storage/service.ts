@@ -1,5 +1,6 @@
 import { IStorageService } from '.';
 import { STORAGE_TYPE } from '../../config';
+import { AWSStorageService } from './aws';
 import { GCPStorageService } from './gcp';
 import { LocalStorageService } from './local';
 
@@ -9,6 +10,8 @@ import { LocalStorageService } from './local';
  */
 export const initialiseStorageService = (): IStorageService => {
     switch (STORAGE_TYPE) {
+        case 'aws':
+            return new AWSStorageService();
         case 'gcp':
             return new GCPStorageService();
         case 'local':

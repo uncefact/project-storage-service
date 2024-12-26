@@ -12,7 +12,8 @@ export const AVAILABLE_BUCKETS = process.env.AVAILABLE_BUCKETS
     ? process.env.AVAILABLE_BUCKETS.split(',')
     : [DEFAULT_BUCKET];
 
-export const STORAGE_TYPE = process.env.STORAGE_TYPE || 'local'; // local | gcp
+export const STORAGE_TYPE = process.env.STORAGE_TYPE || 'local'; // local | gcp | aws
+export const REGION = process.env.REGION || 'ap-southeast-2';
 export const LOCAL_DIRECTORY = process.env.LOCAL_DIRECTORY || 'uploads';
 export const __filename = fileURLToPath(import.meta.url);
 export const __dirname = dirname(__filename);
