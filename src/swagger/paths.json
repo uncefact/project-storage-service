@@ -31,7 +31,7 @@
                                     "properties": {
                                         "uri": {
                                             "type": "string",
-                                            "example": "http://localhost:3333/v1/verifiable-credentials/123e4567-e89b-12d3-a456-426614174000.json"
+                                            "example": "http://localhost:3333/api/1.0.0/verifiable-credentials/123e4567-e89b-12d3-a456-426614174000.json"
                                         },
                                         "hash": {
                                             "type": "string",
@@ -85,7 +85,7 @@
                                     "properties": {
                                         "uri": {
                                             "type": "string",
-                                            "example": "http://localhost:3333/v1/verifiable-credentials/123e4567-e89b-12d3-a456-426614174000.json"
+                                            "example": "http://localhost:3333/api/1.0.0/verifiable-credentials/123e4567-e89b-12d3-a456-426614174000.json"
                                         },
                                         "hash": {
                                             "type": "string",

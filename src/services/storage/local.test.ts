@@ -1,7 +1,7 @@
 import { LocalStorageService } from './local';
 
 jest.mock('../../config', () => ({
-    API_VERSION: 'v1',
+    API_VERSION: '1.0.0',
     DOMAIN: 'localhost',
     LOCAL_DIRECTORY: 'uploads',
     PORT: '3333',
@@ -26,6 +26,6 @@ describe('LocalStorageService', () => {
 
         const result = await storageService.uploadFile(bucket, key, body, contentType);
 
-        expect(result.uri).toEqual('http://localhost:3333/v1/test-bucket/test-file.json');
+        expect(result.uri).toEqual('http://localhost:3333/api/1.0.0/test-bucket/test-file.json');
     });
 });

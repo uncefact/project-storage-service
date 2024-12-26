@@ -112,8 +112,6 @@ yarn build
 yarn start
 ```
 
-The Swagger UI is available at `http://localhost:3333/api-docs`.
-
 ### Amazon Web Services (AWS)
 
 For the production environment, we recommend using IAM roles to enhance security and eliminate the need to hardcode AWS credentials.
@@ -151,7 +149,7 @@ The cryptography service uses the following algorithms:
 
 ### Store Credential
 
--   **URL**: `/v1/credentials`
+-   **URL**: `/api/1.0.0/credentials`
 -   **Method**: `POST`
 -   **Request Body**:
 
@@ -170,7 +168,7 @@ The cryptography service uses the following algorithms:
 
     ```json
     {
-        "uri": "http://localhost:3333/v1/verifiable-credentials/123e4567-e89b-12d3-a456-426614174000.json",
+        "uri": "http://localhost:3333/api/1.0.0/verifiable-credentials/123e4567-e89b-12d3-a456-426614174000.json",
         "hash": "computed-hash",
         "key": "encryption-key"
     }
@@ -178,7 +176,7 @@ The cryptography service uses the following algorithms:
 
 ### Store Document
 
--   **URL**: `/v1/documents`
+-   **URL**: `/api/1.0.0/documents`
 -   **Method**: `POST`
 -   **Request Body**:
 
@@ -196,18 +194,10 @@ The cryptography service uses the following algorithms:
 
     ```json
     {
-        "uri": "http://localhost:3333/v1/verifiable-credentials/123e4567-e89b-12d3-a456-426614174000.json",
+        "uri": "http://localhost:3333/api/1.0.0/verifiable-credentials/123e4567-e89b-12d3-a456-426614174000.json",
         "hash": "computed-hash"
     }
     ```
-
-## API versions and Source Code versions
-
-The following table lists the API versions and the corresponding source code versions:
-
-| API Version | Source Code Version From                                      | Source Code Version To                                        |
-| ----------- | ------------------------------------------------------------- | ------------------------------------------------------------- |
-| v1.0.0      | [next](https://github.com/uncefact/project-identity-resolver) | [next](https://github.com/uncefact/project-identity-resolver) |
 
 ## Docker
 

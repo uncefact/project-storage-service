@@ -1,13 +1,7 @@
-import { PROTOCOL, DOMAIN, PORT, API_VERSION } from '../config';
-
-export const updateSwagger = (swaggerJson: Record<string, any>) => {
+export const updateSwagger = (swaggerJson: Record<string, any>, options: { version: string; url: string }) => {
     const swagger = { ...swaggerJson };
     swagger.info = swagger.info || {};
-    swagger.info.version = API_VERSION;
-    swagger.servers = [
-        {
-            url: `${PROTOCOL}://${DOMAIN}:${PORT}/${API_VERSION}`,
-        },
-    ];
+    swagger.info.version = options.version;
+    swagger.servers = [{ url: options.url }];
     return swagger;
 };

@@ -3,15 +3,16 @@ sidebar_position: 2
 title: Getting Started
 ---
 
-import Disclaimer from './../_disclaimer.mdx';
+import Disclaimer from './../\_disclaimer.mdx';
 
 <Disclaimer />
 
 ## Prerequisites
 
 Before you begin, ensure you have installed:
-- [Node.js](https://nodejs.org/) (v18.18.0)
-- [Yarn](https://yarnpkg.com/) (>= 1.22.21)
+
+-   [Node.js](https://nodejs.org/) (v18.18.0)
+-   [Yarn](https://yarnpkg.com/) (>= 1.22.21)
 
 ## Basic Setup
 
@@ -30,32 +31,30 @@ The service can be configured through environment variables. If not specified, t
 
 ### Server Configuration
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `API_VERSION` | API version identifier | `v1` |
-| `PROTOCOL` | HTTP protocol to use | `http` |
-| `DOMAIN` | Server domain | `localhost` |
-| `PORT` | Server port number | `3333` |
+| Variable   | Description          | Default     |
+| ---------- | -------------------- | ----------- |
+| `PROTOCOL` | HTTP protocol to use | `http`      |
+| `DOMAIN`   | Server domain        | `localhost` |
+| `PORT`     | Server port number   | `3333`      |
 
 ### Storage Configuration
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `STORAGE_TYPE` | Storage provider (`local`, `gcp`, or `aws`) | `local` |
-| `LOCAL_DIRECTORY` | Directory for local file storage | `uploads` |
-| `REGION` | AWS/GCP region | `ap-southeast-2` |
+| Variable          | Description                                 | Default          |
+| ----------------- | ------------------------------------------- | ---------------- |
+| `STORAGE_TYPE`    | Storage provider (`local`, `gcp`, or `aws`) | `local`          |
+| `LOCAL_DIRECTORY` | Directory for local file storage            | `uploads`        |
+| `REGION`          | AWS/GCP region                              | `ap-southeast-2` |
 
 ### Bucket Configuration
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `DEFAULT_BUCKET` | Default storage bucket name | `verifiable-credentials` |
+| Variable            | Description                                     | Default                  |
+| ------------------- | ----------------------------------------------- | ------------------------ |
+| `DEFAULT_BUCKET`    | Default storage bucket name                     | `verifiable-credentials` |
 | `AVAILABLE_BUCKETS` | Comma-separated list of allowed storage buckets | `verifiable-credentials` |
 
 Example `.env` file for local development:
 
 ```env
-API_VERSION=v1
 PROTOCOL=http
 DOMAIN=localhost
 PORT=3333
@@ -85,7 +84,7 @@ yarn start
 You can test the service using `curl`:
 
 ```bash
-curl -X POST http://localhost:3333/v1/credentials \
+curl -X POST http://localhost:3333/api/1.0.0/credentials \
 -H "Content-Type: application/json" \
 -d '{
   "bucket": "verifiable-credentials",
@@ -99,8 +98,8 @@ The service will respond similarly to the data below:
 
 ```json
 {
-  "uri": "http://localhost:3333/v1/verifiable-credentials/e8b32169-582c-421a-a03f-5d1a7ac62d51.json",
-  "hash": "d6bb7b579925baa4fe1cec41152b6577003e6a9fde6850321e36ad4ac9b3f30a",
-  "key": "f3bee3dc18343aaab66d28fd70a03015d2ddbd5fd3b9ad38fff332c09014598d"
+    "uri": "http://localhost:3333/api/1.0.0/verifiable-credentials/e8b32169-582c-421a-a03f-5d1a7ac62d51.json",
+    "hash": "d6bb7b579925baa4fe1cec41152b6577003e6a9fde6850321e36ad4ac9b3f30a",
+    "key": "f3bee3dc18343aaab66d28fd70a03015d2ddbd5fd3b9ad38fff332c09014598d"
 }
 ```

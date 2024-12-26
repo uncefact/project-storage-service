@@ -1,8 +1,18 @@
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
+import fs from 'fs';
+const VERSION_FILE = 'version.json';
 
 // The API_VERSION is set manually, it should be updated when having change impact on the API.
-export const API_VERSION = 'v1.0.0';
+const getApiVersion = () => {
+    const version = fs.readFileSync(VERSION_FILE, 'utf8');
+    const { apiVersion } = JSON.parse(version);
+
+    if (!apiVersion) throw Error('API version not found');
+    return apiVersion;
+};
+
+export const API_VERSION = getApiVersion();
 export const PROTOCOL = process.env.PROTOCOL || 'http';
 export const DOMAIN = process.env.DOMAIN || 'localhost';
 export const PORT = process.env.PORT || 3333;
