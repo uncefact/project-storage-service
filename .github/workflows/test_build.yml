@@ -25,15 +25,36 @@ jobs:
 
             - name: Run tests
               run: yarn test:ci
-      
+
             - name: Coverage
               uses: artiomtr/jest-coverage-report-action@v2
               with:
-                test-script: yarn jest
-                github-token: ${{ secrets.GITHUB_TOKEN }}
-                coverage-file: report.json
-                base-coverage-file: report.json
-                threshold: 80
+                  test-script: yarn jest
+                  github-token: ${{ secrets.GITHUB_TOKEN }}
+                  coverage-file: report.json
+                  base-coverage-file: report.json
+                  threshold: 80
 
             - name: Build
               run: yarn build
+
+    build_docs:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v3
+              with:
+                  node-version: 21
+                  cache: yarn
+
+            - name: Install and build documentation
+              run: |
+                  cd documentation
+                  yarn install --frozen-lockfile
+                  yarn build
+              env:
+                  DOCS_BASE_URL: ${{ vars.DOCS_BASE_URL }}
+                  DOCS_URL: ${{ vars.DOCS_URL }}
