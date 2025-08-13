@@ -57,3 +57,17 @@ docker run -d -p 3333:3333 \
 -e AVAILABLE_BUCKETS=verifiable-credentials,verifiable-credentials,private-verifiable-credentials,epcis-events \
 storage-service:latest
 ```
+
+### Digital Ocean
+
+Replace `YOUR_DO_ACCESS_KEY_ID` and `YOUR_DO_SECRET` with your Digital Ocean access key ID and secret access key respectively. Also replace the `AVAILABLE_BUCKETS` list with your own bucket names that you have already created in your Digital Ocean account.
+
+```bash
+docker run -d -p 3333:3333 \
+-e STORAGE_TYPE=digital_ocean \
+-e REGION=syd1 \
+-e AWS_ACCESS_KEY_ID=YOUR_AWS_ACCESS_KEY_ID \
+-e AWS_SECRET_ACCESS_KEY=YOUR_AWS_SECRET \
+-e AVAILABLE_BUCKETS=verifiable-credentials,verifiable-credentials,private-verifiable-credentials,epcis-events \
+storage-service:latest
+```

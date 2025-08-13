@@ -3,6 +3,7 @@ import { STORAGE_TYPE } from '../../config';
 import { AWSStorageService } from './aws';
 import { GCPStorageService } from './gcp';
 import { LocalStorageService } from './local';
+import { DigitalOceanStorageService } from './digitalocean';
 
 /**
  * Initialise the storage service based on the STORAGE_TYPE environment variable.
@@ -16,7 +17,9 @@ export const initialiseStorageService = (): IStorageService => {
             return new GCPStorageService();
         case 'local':
             return new LocalStorageService();
+        case 'digital_ocean':
+            return new DigitalOceanStorageService();
         default:
-            throw new Error('Invalid storage type. Please provide one of the following: gcp, local');
+            throw new Error('Invalid storage type. Please provide one of the following: aws, gcp, local, digital_ocean');
     }
 };

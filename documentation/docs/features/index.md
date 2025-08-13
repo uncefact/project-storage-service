@@ -102,6 +102,7 @@ The service will respond similarly to the data below:
 -   **Local Storage**: File system storage for development
 -   **Google Cloud Storage**: GCP bucket storage for production
 -   **Amazon S3**: AWS S3 bucket storage for production
+-   **Digital Ocean Object Storage**: Digital Ocean object storage for production
 
 ## Security Features
 

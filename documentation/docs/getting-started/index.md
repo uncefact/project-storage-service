@@ -41,9 +41,9 @@ The service can be configured through environment variables. If not specified, t
 
 | Variable          | Description                                 | Default          |
 | ----------------- | ------------------------------------------- | ---------------- |
-| `STORAGE_TYPE`    | Storage provider (`local`, `gcp`, or `aws`) | `local`          |
+| `STORAGE_TYPE`    | Storage provider (`local`, `gcp`, `digital_ocean` or `aws`) | `local`          |
 | `LOCAL_DIRECTORY` | Directory for local file storage            | `uploads`        |
-| `REGION`          | AWS/GCP region                              | `ap-southeast-2` |
+| `REGION`          | AWS, DO or GCP region                              | `ap-southeast-2` |
 
 ### Bucket Configuration
 
