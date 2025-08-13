@@ -66,8 +66,8 @@ Replace `YOUR_DO_ACCESS_KEY_ID` and `YOUR_DO_SECRET` with your Digital Ocean acc
 docker run -d -p 3333:3333 \
 -e STORAGE_TYPE=digital_ocean \
 -e REGION=syd1 \
--e AWS_ACCESS_KEY_ID=YOUR_AWS_ACCESS_KEY_ID \
--e AWS_SECRET_ACCESS_KEY=YOUR_AWS_SECRET \
+-e AWS_ACCESS_KEY_ID=YOUR_DO_ACCESS_KEY_ID \
+-e AWS_SECRET_ACCESS_KEY=YOUR_DO_SECRET \
 -e AVAILABLE_BUCKETS=verifiable-credentials,verifiable-credentials,private-verifiable-credentials,epcis-events \
 storage-service:latest
 ```
