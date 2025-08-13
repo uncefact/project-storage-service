@@ -145,7 +145,7 @@ Example:
 export STORAGE_TYPE=digital_ocean
 
 # Set the AWS region
-export REGION=syd1
+# Set the region
 export AWS_ACCESS_KEY_ID=DO_ACCESS_KEY_ID
 export AWS_SECRET_ACCESS_KEY=DO_SECRET_ACCESS_KEY
 
