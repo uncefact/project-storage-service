@@ -13,7 +13,7 @@ The service offers the following functionality:
     Encrypts the document using AES-256-GCM for enhanced security.
 -   **Storage**:
     Stores the encrypted document using the specified storage adapter
-    (local file system or Google Cloud Storage).
+    (local file system, AWS, Digital Ocean or Google Cloud Storage).
 -   **Data Retrieval**:
     Upon successful storage, the service returns:
     -   The hash of the original document.
@@ -59,17 +59,17 @@ yarn test
 Configure the storage service using the following environment variables:
 
 -   `STORAGE_TYPE`:
-    The type of storage to use (`local` or `gcp` or `aws`).
+    The type of storage to use (`local` or `gcp` or `aws`, or `digital_ocean`).
 -   `LOCAL_DIRECTORY`:
     The directory for local storage (default: `uploads` in the current directory).
 -   `GOOGLE_APPLICATION_CREDENTIALS`:
     The path to the GCP service account file (if using GCP).
 -   `REGION`:
-    The AWS region to use (if using AWS).
+    The region to use (if using AWS or Digital Ocean).
 -   `AWS_ACCESS_KEY_ID`:
-    The AWS access key to use (if using AWS).
+    The access key to use (if using AWS or Digital Ocean).
 -   `AWS_SECRET_ACCESS_KEY`:
-    The AWS secret access key to use (if using AWS).
+    The secret access key to use (if using AWS or Digital Ocean).
 
 ## Storage Types
 
@@ -128,6 +128,26 @@ export STORAGE_TYPE=aws
 export REGION=ap-southeast-2
 export AWS_ACCESS_KEY_ID=AWS_ACCESS_KEY_ID # Local development only
 export AWS_SECRET_ACCESS_KEY=AWS_SECRET_ACCESS_KEY # Local development only
+
+# Build the app
+yarn build
+
+# Run the app
+yarn start
+```
+
+### Digital Ocean (DO)
+
+Example:
+
+```bash
+# Set the storage type to digital_ocean
+export STORAGE_TYPE=digital_ocean
+
+# Set the DO configuration
+export REGION=syd1
+export AWS_ACCESS_KEY_ID=DO_ACCESS_KEY_ID
+export AWS_SECRET_ACCESS_KEY=DO_SECRET_ACCESS_KEY
 
 # Build the app
 yarn build
@@ -223,6 +243,14 @@ docker run -d --env-file .env -p 3333:3333 \
 -e REGION=ap-southeast-2 \
 -e AWS_ACCESS_KEY_ID=YOUR_AWS_ACCESS_KEY_ID \
 -e AWS_SECRET_ACCESS_KEY=YOUR_AWS_SECRET \
+storage-service:latest
+
+# Start the container using Digital Ocean (DO)
+docker run -d --env-file .env -p 3333:3333 \
+-e STORAGE_TYPE=digital_ocean \
+-e REGION=syd1 \
+-e AWS_ACCESS_KEY_ID=YOUR_DO_ACCESS_KEY_ID \
+-e AWS_SECRET_ACCESS_KEY=YOUR_DO_SECRET \
 storage-service:latest
 ```
 
