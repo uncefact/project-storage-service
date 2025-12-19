@@ -7,29 +7,34 @@ that provides endpoints to encrypt and store Verifiable Credentials and document
 
 The service offers the following functionality:
 
--   **Hash Computation**:
-    Computes the SHA-256 hash of a given document to ensure data integrity.
--   **Encryption**:
-    Encrypts the document using AES-256-GCM for enhanced security.
--   **Storage**:
-    Stores the encrypted document using the specified storage adapter
-    (local file system, AWS, Digital Ocean or Google Cloud Storage).
--   **Data Retrieval**:
-    Upon successful storage, the service returns:
-    -   The hash of the original document.
-    -   A decryption key for the encrypted document (if applicable).
-    -   The URI of the stored encrypted document.
+- **Hash Computation**:
+  Computes the SHA-256 hash of a given document to ensure data integrity.
+- **Encryption**:
+  Encrypts the document using AES-256-GCM for enhanced security.
+- **Storage**:
+  Stores the encrypted document using the specified storage adapter
+  (local file system, AWS, Digital Ocean or Google Cloud Storage).
+- **Data Retrieval**:
+  Upon successful storage, the service returns:
+    - The hash of the original document.
+    - A decryption key for the encrypted document (if applicable).
+    - The URI of the stored encrypted document.
 
 ## Prerequisites
 
--   [Node.js](https://nodejs.org/) (v18.18.0)
--   [Yarn](https://yarnpkg.com/) (>= 1.22.21)
+- [Node.js](https://nodejs.org/) (v18.18.0)
+- [Yarn](https://yarnpkg.com/) (>= 1.22.21)
 
 ## Environment Variables
 
 An example environment file `.env.example` is provided in the storage service directory.
-Copy and rename it to `.env`,
-then modify the variables as required.
+Copy and rename it to `.env`:
+
+```bash
+cp .env.example .env
+```
+
+Then modify the variables as required.
 The default values should be sufficient for local development.
 
 ## Usage
@@ -50,26 +55,42 @@ yarn start
 # Run linter
 yarn lint
 
-# Run tests
+# Run unit tests
 yarn test
+
+# Run e2e tests
+yarn test:e2e
+
+# Run all tests (unit and e2e)
+yarn test:all
+
+
 ```
 
 ## Configuration
 
 Configure the storage service using the following environment variables:
 
--   `STORAGE_TYPE`:
-    The type of storage to use (`local` or `gcp` or `aws`, or `digital_ocean`).
--   `LOCAL_DIRECTORY`:
-    The directory for local storage (default: `uploads` in the current directory).
--   `GOOGLE_APPLICATION_CREDENTIALS`:
-    The path to the GCP service account file (if using GCP).
--   `REGION`:
-    The region to use (if using AWS or Digital Ocean).
--   `AWS_ACCESS_KEY_ID`:
-    The access key to use (if using AWS or Digital Ocean).
--   `AWS_SECRET_ACCESS_KEY`:
-    The secret access key to use (if using AWS or Digital Ocean).
+### Authentication
+
+- `API_KEY`:
+  **Required**. The API key used to authenticate upload requests to `/credentials` and `/documents` endpoints.
+  The service will not start without this variable set.
+
+### Storage Configuration
+
+- `STORAGE_TYPE`:
+  The type of storage to use (`local` or `gcp` or `aws`, or `digital_ocean`).
+- `LOCAL_DIRECTORY`:
+  The directory for local storage (default: `uploads` in the current directory).
+- `GOOGLE_APPLICATION_CREDENTIALS`:
+  The path to the GCP service account file (if using GCP).
+- `REGION`:
+  The region to use (if using AWS or Digital Ocean).
+- `AWS_ACCESS_KEY_ID`:
+  The access key to use (if using AWS or Digital Ocean).
+- `AWS_SECRET_ACCESS_KEY`:
+  The secret access key to use (if using AWS or Digital Ocean).
 
 ## Storage Types
 
@@ -160,18 +181,34 @@ yarn start
 
 The cryptography service uses the following algorithms:
 
--   **Hash Algorithm**:
-    SHA-256
--   **Encryption Algorithm**:
-    AES-256-GCM
+- **Hash Algorithm**:
+  SHA-256
+- **Encryption Algorithm**:
+  AES-256-GCM
+
+## Authentication
+
+All upload endpoints (`POST /credentials` and `POST /documents`) require API key authentication via the `X-API-Key` header.
+
+Example:
+
+```bash
+curl -X POST http://localhost:3333/api/1.0.0/credentials \
+-H "Content-Type: application/json" \
+-H "X-API-Key: your-api-key-here" \
+-d '{"bucket": "verifiable-credentials", "data": {"field1": "value1"}}'
+```
+
+If the API key is missing or invalid, the service will return a `401 Unauthorized` response.
 
 ## Endpoints
 
 ### Store Credential
 
--   **URL**: `/api/1.0.0/credentials`
--   **Method**: `POST`
--   **Request Body**:
+- **URL**: `/api/1.0.0/credentials`
+- **Method**: `POST`
+- **Authentication**: Required (X-API-Key header)
+- **Request Body**:
 
     ```json
     {
@@ -184,7 +221,7 @@ The cryptography service uses the following algorithms:
     }
     ```
 
--   **Response**:
+- **Response**:
 
     ```json
     {
@@ -196,9 +233,10 @@ The cryptography service uses the following algorithms:
 
 ### Store Document
 
--   **URL**: `/api/1.0.0/documents`
--   **Method**: `POST`
--   **Request Body**:
+- **URL**: `/api/1.0.0/documents`
+- **Method**: `POST`
+- **Authentication**: Required (X-API-Key header)
+- **Request Body**:
 
     ```json
     {
@@ -210,7 +248,7 @@ The cryptography service uses the following algorithms:
     }
     ```
 
--   **Response**:
+- **Response**:
 
     ```json
     {
@@ -228,29 +266,24 @@ To run the storage service using Docker:
 docker build -t storage-service:latest .
 
 # Start the container using local storage
+# Configure your .env file first with API_KEY and other required variables
 docker run -d --env-file .env -p 3333:3333 \
 storage-service:latest
 
 # Start the container using Google Cloud Storage
+# Update STORAGE_TYPE=gcp in your .env file and mount the service account file
 docker run -d --env-file .env -p 3333:3333 \
--e STORAGE_TYPE=gcp \
--v path/to/local/gcp/service-account-file.json:/tmp/service-account-file.json \
+-v /path/to/local/gcp/service-account-file.json:/tmp/service-account-file.json \
 storage-service:latest
 
 # Start the container using Amazon Web Services (AWS)
+# Update STORAGE_TYPE=aws and AWS credentials in your .env file
 docker run -d --env-file .env -p 3333:3333 \
--e STORAGE_TYPE=aws \
--e REGION=ap-southeast-2 \
--e AWS_ACCESS_KEY_ID=YOUR_AWS_ACCESS_KEY_ID \
--e AWS_SECRET_ACCESS_KEY=YOUR_AWS_SECRET \
 storage-service:latest
 
 # Start the container using Digital Ocean (DO)
+# Update STORAGE_TYPE=digital_ocean and credentials in your .env file
 docker run -d --env-file .env -p 3333:3333 \
--e STORAGE_TYPE=digital_ocean \
--e REGION=syd1 \
--e AWS_ACCESS_KEY_ID=YOUR_DO_ACCESS_KEY_ID \
--e AWS_SECRET_ACCESS_KEY=YOUR_DO_SECRET \
 storage-service:latest
 ```
 
@@ -262,8 +295,8 @@ The project uses Docusaurus for documentation management. Documentation versions
 
 The `scripts/release-doc.js` script automates the process of creating new documentation versions:
 
--   Reads the documentation version from `version.json`
--   Creates Docusaurus version using `docVersion` value from `version.json` file
+- Reads the documentation version from `version.json`
+- Creates Docusaurus version using `docVersion` value from `version.json` file
 
 To manually create a new documentation version:
 
@@ -278,21 +311,21 @@ The documentation is automatically built and deployed using GitHub Actions throu
 
 1. Triggers on:
 
--   Manual workflow dispatch
--   (TODO) Push to main branch once enabled
+- Manual workflow dispatch
+- (TODO) Push to main branch once enabled
 
 2. Performs the following steps:
 
--   Checks out the repository
--   Sets up Node.js 18 with Yarn cache
--   Installs documentation dependencies
--   Builds the static documentation site
--   Deploys to GitHub Pages using gh-pages branch
+- Checks out the repository
+- Sets up Node.js 18 with Yarn cache
+- Installs documentation dependencies
+- Builds the static documentation site
+- Deploys to GitHub Pages using gh-pages branch
 
 The pipeline uses environment variables for configuration:
 
--   `DOCS_BASE_URL`: Base URL for documentation hosting
--   `DOCS_URL`: Documentation site URL
+- `DOCS_BASE_URL`: Base URL for documentation hosting
+- `DOCS_URL`: Documentation site URL
 
 The built documentation is published to the `gh-pages` branch using the GitHub Actions bot.
 
@@ -308,16 +341,16 @@ To release a new version, ensure we have the `version.json` file updated with th
 6. Create a pull request from the release branch to `main`.
 7. Merge the pull request.
 8. Create a new release tag with the version number.
-8. Push the tag to the repository.
+9. Push the tag to the repository.
 
 (\*) With the `version.json` file, it contains the version number in the following format:
 
 ```json
 {
-  "version": "MAJOR.MINOR.PATCH",
-  "apiVersion": "MAJOR.MINOR.PATCH",
-  "docVersion": "MAJOR.MINOR.PATCH",
-  "dependencies": {}
+    "version": "MAJOR.MINOR.PATCH",
+    "apiVersion": "MAJOR.MINOR.PATCH",
+    "docVersion": "MAJOR.MINOR.PATCH",
+    "dependencies": {}
 }
 ```
 

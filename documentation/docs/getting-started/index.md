@@ -11,8 +11,8 @@ import Disclaimer from './../\_disclaimer.mdx';
 
 Before you begin, ensure you have installed:
 
--   [Node.js](https://nodejs.org/) (v18.18.0)
--   [Yarn](https://yarnpkg.com/) (>= 1.22.21)
+- [Node.js](https://nodejs.org/) (v18.18.0)
+- [Yarn](https://yarnpkg.com/) (>= 1.22.21)
 
 ## Basic Setup
 
@@ -37,13 +37,19 @@ The service can be configured through environment variables. If not specified, t
 | `DOMAIN`   | Server domain        | `localhost` |
 | `PORT`     | Server port number   | `3333`      |
 
+### Authentication Configuration
+
+| Variable  | Description                                | Default | Required |
+| --------- | ------------------------------------------ | ------- | -------- |
+| `API_KEY` | API key for authenticating upload requests | None    | **Yes**  |
+
 ### Storage Configuration
 
-| Variable          | Description                                 | Default          |
-| ----------------- | ------------------------------------------- | ---------------- |
+| Variable          | Description                                                 | Default          |
+| ----------------- | ----------------------------------------------------------- | ---------------- |
 | `STORAGE_TYPE`    | Storage provider (`local`, `gcp`, `digital_ocean` or `aws`) | `local`          |
-| `LOCAL_DIRECTORY` | Directory for local file storage            | `uploads`        |
-| `REGION`          | AWS, DO or GCP region                              | `ap-southeast-2` |
+| `LOCAL_DIRECTORY` | Directory for local file storage                            | `uploads`        |
+| `REGION`          | AWS, DO or GCP region                                       | `ap-southeast-2` |
 
 ### Bucket Configuration
 
@@ -55,11 +61,19 @@ The service can be configured through environment variables. If not specified, t
 Example `.env` file for local development:
 
 ```env
+# Server
 PROTOCOL=http
 DOMAIN=localhost
 PORT=3333
+
+# Authentication (Required)
+API_KEY=your-secure-api-key-here
+
+# Storage
 STORAGE_TYPE=local
 LOCAL_DIRECTORY=uploads
+
+# Buckets
 DEFAULT_BUCKET=verifiable-credentials
 AVAILABLE_BUCKETS=verifiable-credentials,private-verifiable-credentials
 ```
@@ -81,11 +95,12 @@ yarn start
 
 ## Quick Test
 
-You can test the service using `curl`:
+You can test the service using `curl`. Note that all upload endpoints require authentication via the `X-API-Key` header:
 
 ```bash
 curl -X POST http://localhost:3333/api/1.0.0/credentials \
 -H "Content-Type: application/json" \
+-H "X-API-Key: your-secure-api-key-here" \
 -d '{
   "bucket": "verifiable-credentials",
   "data": {

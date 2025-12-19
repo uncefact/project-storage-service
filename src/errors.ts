@@ -14,6 +14,12 @@ export class BadRequestError extends ApiError {
     }
 }
 
+export class UnauthorizedError extends ApiError {
+    constructor(message: string) {
+        super(message, 401);
+    }
+}
+
 export class ConflictError extends ApiError {
     constructor(message: string) {
         super(message, 409);
