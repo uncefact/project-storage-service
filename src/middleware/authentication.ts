@@ -2,6 +2,8 @@ import { NextFunction, Request, Response } from 'express';
 import { UnauthorizedError } from '../errors';
 import { ApiKeyAuthenticationService } from '../services/authentication';
 
+const authService = new ApiKeyAuthenticationService();
+
 /**
  * Middleware to authenticate requests using API key authentication.
  * If authentication fails, returns a 401 Unauthorized response.
@@ -12,7 +14,6 @@ import { ApiKeyAuthenticationService } from '../services/authentication';
  */
 export const authenticateRequest = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const authService = new ApiKeyAuthenticationService();
         const result = await authService.authenticate(req);
 
         if (!result.authenticated) {

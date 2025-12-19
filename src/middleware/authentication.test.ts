@@ -1,18 +1,20 @@
 import { NextFunction, Request, Response } from 'express';
 import { UnauthorizedError } from '../errors';
-import { ApiKeyAuthenticationService } from '../services/authentication';
-import { authenticateRequest } from './authentication';
 
-// Mock the ApiKeyAuthenticationService
+const mockAuthenticate = jest.fn();
+
 jest.mock('../services/authentication', () => ({
-    ApiKeyAuthenticationService: jest.fn(),
+    ApiKeyAuthenticationService: jest.fn().mockImplementation(() => ({
+        authenticate: mockAuthenticate,
+    })),
 }));
+
+import { authenticateRequest } from './authentication';
 
 describe('Authentication Middleware', () => {
     let mockRequest: Partial<Request>;
     let mockResponse: Partial<Response>;
     let mockNext: NextFunction;
-    let mockAuthService: jest.Mocked<ApiKeyAuthenticationService>;
 
     beforeEach(() => {
         mockRequest = {
@@ -25,14 +27,6 @@ describe('Authentication Middleware', () => {
         };
 
         mockNext = jest.fn();
-
-        mockAuthService = {
-            authenticate: jest.fn(),
-        } as any;
-
-        (ApiKeyAuthenticationService as jest.MockedClass<typeof ApiKeyAuthenticationService>).mockImplementation(
-            () => mockAuthService,
-        );
     });
 
     afterEach(() => {
@@ -41,27 +35,27 @@ describe('Authentication Middleware', () => {
 
     describe('authenticateRequest', () => {
         it('should call next() when authentication is successful', async () => {
-            mockAuthService.authenticate.mockResolvedValue({
+            mockAuthenticate.mockResolvedValue({
                 authenticated: true,
             });
 
             await authenticateRequest(mockRequest as Request, mockResponse as Response, mockNext);
 
-            expect(mockAuthService.authenticate).toHaveBeenCalledWith(mockRequest);
+            expect(mockAuthenticate).toHaveBeenCalledWith(mockRequest);
             expect(mockNext).toHaveBeenCalled();
             expect(mockResponse.status).not.toHaveBeenCalled();
         });
 
         it('should return 401 when authentication fails', async () => {
             const errorMessage = 'API key is required. Please provide a valid API key in the X-API-Key header.';
-            mockAuthService.authenticate.mockResolvedValue({
+            mockAuthenticate.mockResolvedValue({
                 authenticated: false,
                 error: errorMessage,
             });
 
             await authenticateRequest(mockRequest as Request, mockResponse as Response, mockNext);
 
-            expect(mockAuthService.authenticate).toHaveBeenCalledWith(mockRequest);
+            expect(mockAuthenticate).toHaveBeenCalledWith(mockRequest);
             expect(mockResponse.status).toHaveBeenCalledWith(401);
             expect(mockResponse.json).toHaveBeenCalledWith({
                 message: errorMessage,
@@ -70,7 +64,7 @@ describe('Authentication Middleware', () => {
         });
 
         it('should return 401 when authentication fails without error message', async () => {
-            mockAuthService.authenticate.mockResolvedValue({
+            mockAuthenticate.mockResolvedValue({
                 authenticated: false,
             });
 
@@ -85,7 +79,7 @@ describe('Authentication Middleware', () => {
 
         it('should handle UnauthorizedError thrown by auth service', async () => {
             const errorMessage = 'Invalid API key';
-            mockAuthService.authenticate.mockRejectedValue(new UnauthorizedError(errorMessage));
+            mockAuthenticate.mockRejectedValue(new UnauthorizedError(errorMessage));
 
             await authenticateRequest(mockRequest as Request, mockResponse as Response, mockNext);
 
@@ -97,7 +91,7 @@ describe('Authentication Middleware', () => {
         });
 
         it('should handle unexpected errors', async () => {
-            mockAuthService.authenticate.mockRejectedValue(new Error('Unexpected error'));
+            mockAuthenticate.mockRejectedValue(new Error('Unexpected error'));
 
             await authenticateRequest(mockRequest as Request, mockResponse as Response, mockNext);
 
