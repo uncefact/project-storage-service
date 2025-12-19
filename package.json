@@ -12,7 +12,7 @@
         "test:e2e": "jest --testMatch='**/e2e/**/*.e2e.test.ts'",
         "test:all": "jest",
         "test:ci": "jest --ci --json --coverage --testLocationInResults --outputFile=report.json --testPathIgnorePatterns=/e2e/",
-        "test:e2e:ci": "jest --ci --testMatch='**/e2e/**/*.e2e.test.ts'",
+        "test:e2e:ci": "jest --ci --testMatch='**/e2e/**/*.e2e.test.ts' --coverage=false",
         "watch:build": "webpack --watch --mode development",
         "watch:server": "nodemon \"./dist/server.js\" --watch \"./dist\"",
         "release:doc": "node scripts/release-doc.js"
