@@ -1,6 +1,7 @@
+import crypto from 'crypto';
 import { Request } from 'express';
 import { AuthResult, IAuthenticationService } from '.';
-import { getApiKey, AUTH_HEADER_NAME } from '../../config';
+import { AUTH_HEADER_NAME, getApiKey } from '../../config';
 
 export class ApiKeyAuthenticationService implements IAuthenticationService {
     /**
@@ -20,13 +21,31 @@ export class ApiKeyAuthenticationService implements IAuthenticationService {
             };
         }
 
-        // Validate the API key - get it at runtime
+        // Validate the API key
         const apiKey = getApiKey();
-        if (providedKey !== apiKey) {
-            return {
-                authenticated: false,
-                error: 'Invalid API key. Please provide a valid API key.',
-            };
+
+        const invalidKeyResponse = {
+            authenticated: false,
+            error: 'Invalid API key. Please provide a valid API key.',
+        } as const;
+
+        if (!apiKey) {
+            return invalidKeyResponse;
+        }
+
+        const keyBuffer = Buffer.from(apiKey);
+        const providedKeyBuffer = Buffer.from(providedKey);
+
+        // Use a constant-time comparison to prevent timing attacks.
+        // If lengths don't match, crypto.timingSafeEqual will throw, so we catch it.
+        try {
+            if (!crypto.timingSafeEqual(keyBuffer, providedKeyBuffer)) {
+                return invalidKeyResponse;
+            }
+        } catch (err: unknown) {
+            console.error('[ApiKeyAuthenticationService] Error comparing API keys:', err);
+
+            return invalidKeyResponse;
         }
 
         return { authenticated: true };
