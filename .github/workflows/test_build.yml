@@ -23,7 +23,7 @@ jobs:
             - name: Check linting
               run: yarn lint
 
-            - name: Run tests
+            - name: Run unit tests
               run: yarn test:ci
 
             - name: Coverage
@@ -37,6 +37,11 @@ jobs:
 
             - name: Build
               run: yarn build
+
+            - name: Run e2e tests
+              run: yarn test:e2e:ci
+              env:
+                  API_KEY: test-api-key-ci
 
     build_docs:
         runs-on: ubuntu-latest

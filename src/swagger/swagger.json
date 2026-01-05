@@ -4,6 +4,11 @@
     "title": "Storage Service API"
   },
   "servers": [],
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ],
   "paths": {
     "/documents": {
       "post": {
@@ -49,6 +54,9 @@
           },
           "400": {
             "$ref": "#/components/responses/400"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
           },
           "409": {
             "$ref": "#/components/responses/409"
@@ -107,6 +115,9 @@
           },
           "400": {
             "$ref": "#/components/responses/400"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
           },
           "409": {
             "$ref": "#/components/responses/409"
@@ -222,6 +233,22 @@
           }
         }
       },
+      "401": {
+        "description": "Unauthorized. Invalid or missing API key.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "API key is required. Please provide a valid API key in the X-API-Key header."
+                }
+              }
+            }
+          }
+        }
+      },
       "409": {
         "description": "The credential already exists.",
         "content": {
@@ -253,6 +280,14 @@
             }
           }
         }
+      }
+    },
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key",
+        "description": "API key for authentication. Required for all upload operations."
       }
     }
   }

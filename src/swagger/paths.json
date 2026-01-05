@@ -45,6 +45,9 @@
                     "400": {
                         "$ref": "./components/responses.json#/components/responses/400"
                     },
+                    "401": {
+                        "$ref": "./components/responses.json#/components/responses/401"
+                    },
                     "409": {
                         "$ref": "./components/responses.json#/components/responses/409"
                     },
@@ -102,6 +105,9 @@
                     },
                     "400": {
                         "$ref": "./components/responses.json#/components/responses/400"
+                    },
+                    "401": {
+                        "$ref": "./components/responses.json#/components/responses/401"
                     },
                     "409": {
                         "$ref": "./components/responses.json#/components/responses/409"

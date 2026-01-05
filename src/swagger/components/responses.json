@@ -17,6 +17,22 @@
                     }
                 }
             },
+            "401": {
+                "description": "Unauthorized. Invalid or missing API key.",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "message": {
+                                    "type": "string",
+                                    "example": "API key is required. Please provide a valid API key in the X-API-Key header."
+                                }
+                            }
+                        }
+                    }
+                }
+            },
             "409": {
                 "description": "The credential already exists.",
                 "content": {

@@ -11,16 +11,18 @@ import Disclaimer from './../\_disclaimer.mdx';
 
 ### Store Credential
 
--   **Endpoint**: `/api/1.0.0/credentials`
--   **Method**: POST
--   Stores encrypted credentials with optional ID
--   Returns URI, hash, and encryption key
+- **Endpoint**: `/api/1.0.0/credentials`
+- **Method**: POST
+- **Authentication**: Required (X-API-Key header)
+- Stores encrypted credentials with optional ID
+- Returns URI, hash, and encryption key
 
 Test the service using `curl`:
 
 ```bash
 curl -X POST http://localhost:3333/api/1.0.0/credentials \
 -H "Content-Type: application/json" \
+-H "X-API-Key: your-secure-api-key-here" \
 -d '{
   "bucket": "verifiable-credentials",
   "data": {
@@ -56,16 +58,18 @@ The service will respond similarly to the data below:
 
 ### Store Document
 
--   **Endpoint**: `/api/1.0.0/documents`
--   **Method**: POST
--   Stores documents with computed hash
--   Returns URI and document hash
+- **Endpoint**: `/api/1.0.0/documents`
+- **Method**: POST
+- **Authentication**: Required (X-API-Key header)
+- Stores documents with computed hash
+- Returns URI and document hash
 
 Test the service using `curl`:
 
 ```bash
 curl -X POST http://localhost:3333/api/1.0.0/documents \
 -H "Content-Type: application/json" \
+-H "X-API-Key: your-secure-api-key-here" \
 -d '{
   "bucket": "test-verifiable-credentials",
   "data": {
@@ -99,22 +103,27 @@ The service will respond similarly to the data below:
 
 ## Storage Providers
 
--   **Local Storage**: File system storage for development
--   **Google Cloud Storage**: GCP bucket storage for production
--   **Amazon S3**: AWS S3 bucket storage for production
--   **Digital Ocean Object Storage**: Digital Ocean object storage for production
+- **Local Storage**: File system storage for development
+- **Google Cloud Storage**: GCP bucket storage for production
+- **Amazon S3**: AWS S3 bucket storage for production
+- **Digital Ocean Object Storage**: Digital Ocean object storage for production
 
 ## Security Features
 
+### Authentication
+
+- API key authentication via `X-API-Key` header
+- Required for all upload operations
+
 ### Cryptography
 
--   SHA-256 hash computation
--   AES-256-GCM encryption
--   Secure key management
--   Data integrity verification
+- SHA-256 hash computation
+- AES-256-GCM encryption
+- Secure key management
+- Data integrity verification
 
 ### Configuration Options
 
--   Flexible storage provider selection
--   Environment-based configuration
--   Secure credential management
+- Flexible storage provider selection
+- Environment-based configuration
+- Secure credential management

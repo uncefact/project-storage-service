@@ -18,6 +18,8 @@
         "node_modules",
         "__mocks__",
         "dist",
-        "documentation/**/*"
+        "documentation/**/*",
+        "e2e/**/*",
+        "**/*.test.ts"
     ],
 }

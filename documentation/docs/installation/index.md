@@ -3,7 +3,7 @@ sidebar_position: 3
 title: Installation
 ---
 
-import Disclaimer from './../_disclaimer.mdx';
+import Disclaimer from './../\_disclaimer.mdx';
 
 <Disclaimer />
 
@@ -24,50 +24,69 @@ Build and run with Docker:
 # Build Docker image
 docker build -t storage-service:latest .
 
+# Copy and configure your environment file
+cp .env.example .env
+# Edit .env and set your API_KEY and other configuration
+
 # Run a container based on the storage-service image built in the previous step
-docker run -d \
-  -e AVAILABLE_BUCKETS=test-verifiable-credentials,verifiable-credentials,private-verifiable-credentials,epcis-events \
-  -v $(pwd)/uploads:/app/src/uploads:rw -p 3333:3333 storage-service:latest
+docker run -d --env-file .env -p 3333:3333 \
+  -v $(pwd)/uploads:/app/src/uploads:rw \
+  storage-service:latest
 ```
+
+**Note**: Ensure your `.env` file contains the required `API_KEY` variable. The service will not start without it.
 
 ## Cloud Provider Setup
 
 ### Google Cloud Storage
 
-Replace `/path/to/local/gcp/service-account-file.json` with the path to your Google Cloud service account credentials file on your local machine.
+Update your `.env` file:
+
+```env
+STORAGE_TYPE=gcp
+GOOGLE_APPLICATION_CREDENTIALS=/tmp/service-account-file.json
+```
+
+Then run the container, mounting your service account file:
 
 ```bash
 docker run -d --env-file .env -p 3333:3333 \
--e STORAGE_TYPE=gcp \
--e GOOGLE_APPLICATION_CREDENTIALS=/tmp/service-account-file.json
 -v /path/to/local/gcp/service-account-file.json:/tmp/service-account-file.json \
 storage-service:latest
 ```
 
 ### Amazon Web Services
 
-Replace `YOUR_AWS_ACCESS_KEY_ID` and `YOUR_AWS_SECRET` with your AWS access key ID and secret access key respectively. Also replace the `AVAILABLE_BUCKETS` list with your own bucket names that you have already created in your AWS account.
+Update your `.env` file with AWS credentials:
+
+```env
+STORAGE_TYPE=aws
+REGION=ap-southeast-2
+AWS_ACCESS_KEY_ID=your-aws-access-key-id
+AWS_SECRET_ACCESS_KEY=your-aws-secret-access-key
+AVAILABLE_BUCKETS=verifiable-credentials,private-verifiable-credentials,epcis-events
+```
+
+Then run the container:
 
 ```bash
-docker run -d -p 3333:3333 \
--e STORAGE_TYPE=aws \
--e REGION=ap-southeast-2 \
--e AWS_ACCESS_KEY_ID=YOUR_AWS_ACCESS_KEY_ID \
--e AWS_SECRET_ACCESS_KEY=YOUR_AWS_SECRET \
--e AVAILABLE_BUCKETS=verifiable-credentials,verifiable-credentials,private-verifiable-credentials,epcis-events \
-storage-service:latest
+docker run -d --env-file .env -p 3333:3333 storage-service:latest
 ```
 
 ### Digital Ocean
 
-Replace `YOUR_DO_ACCESS_KEY_ID` and `YOUR_DO_SECRET` with your Digital Ocean access key ID and secret access key respectively. Also replace the `AVAILABLE_BUCKETS` list with your own bucket names that you have already created in your Digital Ocean account.
+Update your `.env` file with Digital Ocean credentials:
+
+```env
+STORAGE_TYPE=digital_ocean
+REGION=syd1
+AWS_ACCESS_KEY_ID=your-do-access-key-id
+AWS_SECRET_ACCESS_KEY=your-do-secret-access-key
+AVAILABLE_BUCKETS=verifiable-credentials,private-verifiable-credentials,epcis-events
+```
+
+Then run the container:
 
 ```bash
-docker run -d -p 3333:3333 \
--e STORAGE_TYPE=digital_ocean \
--e REGION=syd1 \
--e AWS_ACCESS_KEY_ID=YOUR_DO_ACCESS_KEY_ID \
--e AWS_SECRET_ACCESS_KEY=YOUR_DO_SECRET \
--e AVAILABLE_BUCKETS=verifiable-credentials,verifiable-credentials,private-verifiable-credentials,epcis-events \
-storage-service:latest
+docker run -d --env-file .env -p 3333:3333 storage-service:latest
 ```

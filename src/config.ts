@@ -1,6 +1,6 @@
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
 import fs from 'fs';
+import { dirname } from 'path';
+import { fileURLToPath } from 'url';
 const VERSION_FILE = 'version.json';
 
 // The API_VERSION is set manually, it should be updated when having change impact on the API.
@@ -25,5 +25,10 @@ export const AVAILABLE_BUCKETS = process.env.AVAILABLE_BUCKETS
 export const STORAGE_TYPE = process.env.STORAGE_TYPE || 'local'; // local | gcp | aws | digital_ocean
 export const REGION = process.env.REGION || 'ap-southeast-2';
 export const LOCAL_DIRECTORY = process.env.LOCAL_DIRECTORY || 'uploads';
+
+// Runtime getter for API_KEY to ensure it's evaluated at runtime, not build time
+export const getApiKey = () => process.env.API_KEY;
+export const AUTH_HEADER_NAME = 'x-api-key';
+
 export const __filename = fileURLToPath(import.meta.url);
 export const __dirname = dirname(__filename);
