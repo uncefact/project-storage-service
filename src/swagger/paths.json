@@ -62,7 +62,7 @@
         "/credentials": {
             "post": {
                 "summary": "Store private data with automatic encryption.",
-                "description": "Store private data with automatic encryption. The service encrypts your data before storage — you don't need to encrypt it yourself. The response includes a URI (the location of your stored data), a hash (a fingerprint to verify the data hasn't changed), and a key (your unique decryption key). Important: Save the key securely. Without it, your data cannot be decrypted — not even by us. Use this endpoint for sensitive information like verifiable credentials or protected documents.",
+                "description": "Store private data with automatic encryption. The service encrypts your data before storage — you don't need to encrypt it yourself. The response includes a URI (the location of your stored data), a hash (a fingerprint to verify the data hasn't changed), and a key (your unique decryption key).\n\n**Important**: Save the key securely. Without it, your data cannot be decrypted — **not even by us**. Use this endpoint for sensitive information like verifiable credentials or protected documents.",
                 "requestBody": {
                     "content": {
                         "application/json": {
