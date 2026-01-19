@@ -31,7 +31,7 @@ Without that key, no one — including us — can open the box. This is why it's
 
 ### Public Data: `/documents`
 
-Use this endpoint for data you're happy to share publicly. Since documents are stored with predictable UUIDs, they can potentially be discovered by others.
+Use this endpoint for data you're happy to share publicly. Since documents are stored unencrypted at a public URI, they can be read by anyone who obtains the link.
 
 **What happens:**
 1. You send your data to the service
