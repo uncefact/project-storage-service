@@ -2,8 +2,8 @@
     "paths": {
         "/documents": {
             "post": {
-                "summary": "Store a credential.",
-                "description": "Store a credential in the storage service.",
+                "summary": "Store public data without encryption.",
+                "description": "Store public data that doesn't require encryption. The service stores your data as-is and returns a URI (the location of your stored data) and a hash (a fingerprint to verify the data hasn't changed). Use this endpoint for non-sensitive information like public metadata or reference documents.",
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -23,7 +23,7 @@
                 },
                 "responses": {
                     "201": {
-                        "description": "Credential stored successfully.",
+                        "description": "Document stored successfully. Returns the storage location and integrity hash.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -31,10 +31,12 @@
                                     "properties": {
                                         "uri": {
                                             "type": "string",
+                                            "description": "The location where your data is stored.",
                                             "example": "http://localhost:3333/api/1.0.0/verifiable-credentials/123e4567-e89b-12d3-a456-426614174000.json"
                                         },
                                         "hash": {
                                             "type": "string",
+                                            "description": "A fingerprint to verify the data hasn't changed.",
                                             "example": "computed-hash"
                                         }
                                     }
@@ -59,8 +61,8 @@
         },
         "/credentials": {
             "post": {
-                "summary": "Store a credential.",
-                "description": "Store a credential in the storage service.",
+                "summary": "Store private data with automatic encryption.",
+                "description": "Store private data with automatic encryption. The service encrypts your data before storage — you don't need to encrypt it yourself. The response includes a URI (the location of your stored data), a hash (a fingerprint to verify the data hasn't changed), and a key (your unique decryption key). Important: Save the key securely. Without it, your data cannot be decrypted — not even by us. Use this endpoint for sensitive information like verifiable credentials or protected documents.",
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -80,7 +82,7 @@
                 },
                 "responses": {
                     "201": {
-                        "description": "Credential stored successfully.",
+                        "description": "Credential encrypted and stored successfully. Returns the storage location, integrity hash, and decryption key.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -88,14 +90,17 @@
                                     "properties": {
                                         "uri": {
                                             "type": "string",
+                                            "description": "The location where your encrypted data is stored.",
                                             "example": "http://localhost:3333/api/1.0.0/verifiable-credentials/123e4567-e89b-12d3-a456-426614174000.json"
                                         },
                                         "hash": {
                                             "type": "string",
+                                            "description": "A fingerprint to verify the data hasn't changed.",
                                             "example": "computed-hash"
                                         },
                                         "key": {
                                             "type": "string",
+                                            "description": "Your unique decryption key. Save this securely — it's the only way to decrypt your data.",
                                             "example": "encryption-key"
                                         }
                                     }
