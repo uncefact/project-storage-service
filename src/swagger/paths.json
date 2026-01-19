@@ -100,7 +100,7 @@
                                         },
                                         "key": {
                                             "type": "string",
-                                            "description": "Your unique decryption key. Save this securely — it's the only way to decrypt your data.",
+                                            "description": "Your unique decryption key. **Important**: Save this securely. It is required to decrypt your data and **cannot be recovered if lost**.",
                                             "example": "encryption-key"
                                         }
                                     }
