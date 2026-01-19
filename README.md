@@ -24,14 +24,14 @@ The service offers the following functionality:
 
 This service offers two ways to store data, depending on whether your data is public or private.
 
-### Public Data → `/documents`
+### Public Data → [`/documents`](#store-document)
 
 For data that doesn't require protection. The service stores it as-is and returns:
 
 - A **URI** (the location of your stored data)
 - A **hash** (a fingerprint to verify the data hasn't changed)
 
-### Private Data → `/credentials`
+### Private Data → [`/credentials`](#store-credential)
 
 For sensitive data that needs protection. The service automatically encrypts your data before storage — you don't need to encrypt it yourself.
 
