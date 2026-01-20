@@ -34,7 +34,7 @@
                 }
             },
             "409": {
-                "description": "The credential already exists.",
+                "description": "The document already exists.",
                 "content": {
                     "application/json": {
                         "schema": {
@@ -42,7 +42,7 @@
                             "properties": {
                                 "message": {
                                     "type": "string",
-                                    "example": "A credential with the provided ID already exists in the specified bucket."
+                                    "example": "A document with the provided ID already exists in the specified bucket."
                                 }
                             }
                         }
@@ -50,7 +50,7 @@
                 }
             },
             "500": {
-                "description": "An error occurred while storing the credential.",
+                "description": "An error occurred while storing the document.",
                 "content": {
                     "application/json": {
                         "schema": {
@@ -58,7 +58,7 @@
                             "properties": {
                                 "message": {
                                     "type": "string",
-                                    "example": "An unexpected error occurred while storing the credential."
+                                    "example": "An unexpected error occurred while storing the document."
                                 }
                             }
                         }

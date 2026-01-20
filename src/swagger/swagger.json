@@ -12,13 +12,13 @@
   "paths": {
     "/documents": {
       "post": {
-        "summary": "Store a credential.",
-        "description": "Store a credential in the storage service.",
+        "summary": "Store public data without encryption.",
+        "description": "Store public data that doesn't require encryption. This endpoint stores your data as-is and returns a URI (the location of your stored data) and a hash (a fingerprint to verify the data hasn't changed).",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Credential"
+                "$ref": "#/components/schemas/StoreDocumentRequest"
               },
               "examples": {
                 "example1": {
@@ -33,7 +33,7 @@
         },
         "responses": {
           "201": {
-            "description": "Credential stored successfully.",
+            "description": "Document stored successfully. Returns the storage location and integrity hash.",
             "content": {
               "application/json": {
                 "schema": {
@@ -41,10 +41,12 @@
                   "properties": {
                     "uri": {
                       "type": "string",
+                      "description": "The location where your data is stored.",
                       "example": "http://localhost:3333/api/1.0.0/verifiable-credentials/123e4567-e89b-12d3-a456-426614174000.json"
                     },
                     "hash": {
                       "type": "string",
+                      "description": "A fingerprint to verify the data hasn't changed.",
                       "example": "computed-hash"
                     }
                   }
@@ -69,13 +71,13 @@
     },
     "/credentials": {
       "post": {
-        "summary": "Store a credential.",
-        "description": "Store a credential in the storage service.",
+        "summary": "Store private data with automatic encryption.",
+        "description": "Store private data with automatic encryption. This endpoint encrypts your data before storage — you don't need to encrypt it yourself. The response includes a URI (the location of your stored data), a hash (a fingerprint to verify the data hasn't changed), and a key (your unique decryption key).\n\n**Important**: Save the key securely. Without it, your data cannot be decrypted — **not even by us**.",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Credential"
+                "$ref": "#/components/schemas/StoreDocumentRequest"
               },
               "examples": {
                 "example1": {
@@ -90,7 +92,7 @@
         },
         "responses": {
           "201": {
-            "description": "Credential stored successfully.",
+            "description": "Document encrypted and stored successfully. Returns the storage location, integrity hash, and decryption key.",
             "content": {
               "application/json": {
                 "schema": {
@@ -98,14 +100,17 @@
                   "properties": {
                     "uri": {
                       "type": "string",
+                      "description": "The location where your encrypted data is stored.",
                       "example": "http://localhost:3333/api/1.0.0/verifiable-credentials/123e4567-e89b-12d3-a456-426614174000.json"
                     },
                     "hash": {
                       "type": "string",
+                      "description": "A fingerprint to verify the data hasn't changed.",
                       "example": "computed-hash"
                     },
                     "key": {
                       "type": "string",
+                      "description": "Your unique decryption key. **Important**: Save this securely. It is required to decrypt your data and **cannot be recovered if lost**.",
                       "example": "encryption-key"
                     }
                   }
@@ -131,7 +136,7 @@
   },
   "components": {
     "schemas": {
-      "Credential": {
+      "StoreDocumentRequest": {
         "type": "object",
         "properties": {
           "bucket": {
@@ -250,7 +255,7 @@
         }
       },
       "409": {
-        "description": "The credential already exists.",
+        "description": "The document already exists.",
         "content": {
           "application/json": {
             "schema": {
@@ -258,7 +263,7 @@
               "properties": {
                 "message": {
                   "type": "string",
-                  "example": "A credential with the provided ID already exists in the specified bucket."
+                  "example": "A document with the provided ID already exists in the specified bucket."
                 }
               }
             }
@@ -266,7 +271,7 @@
         }
       },
       "500": {
-        "description": "An error occurred while storing the credential.",
+        "description": "An error occurred while storing the document.",
         "content": {
           "application/json": {
             "schema": {
@@ -274,7 +279,7 @@
               "properties": {
                 "message": {
                   "type": "string",
-                  "example": "An unexpected error occurred while storing the credential."
+                  "example": "An unexpected error occurred while storing the document."
                 }
               }
             }
