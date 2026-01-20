@@ -88,7 +88,7 @@ describe('storeCredential Handler', () => {
 
         expect(mockRes.status).toHaveBeenCalledWith(500);
         expect(mockRes.json).toHaveBeenCalledWith({
-            message: 'An unexpected error occurred while storing the credential.',
+            message: 'An unexpected error occurred while storing the document.',
         });
     });
 

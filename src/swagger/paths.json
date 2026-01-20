@@ -3,12 +3,12 @@
         "/documents": {
             "post": {
                 "summary": "Store public data without encryption.",
-                "description": "Store public data that doesn't require encryption. The service stores your data as-is and returns a URI (the location of your stored data) and a hash (a fingerprint to verify the data hasn't changed). Use this endpoint for non-sensitive information like public metadata or reference documents.",
+                "description": "Store public data that doesn't require encryption. This endpoint stores your data as-is and returns a URI (the location of your stored data) and a hash (a fingerprint to verify the data hasn't changed).",
                 "requestBody": {
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "./components/schemas.json#/components/schemas/Credential"
+                                "$ref": "./components/schemas.json#/components/schemas/StoreDocumentRequest"
                             },
                             "examples": {
                                 "example1": {
@@ -62,12 +62,12 @@
         "/credentials": {
             "post": {
                 "summary": "Store private data with automatic encryption.",
-                "description": "Store private data with automatic encryption. The service encrypts your data before storage — you don't need to encrypt it yourself. The response includes a URI (the location of your stored data), a hash (a fingerprint to verify the data hasn't changed), and a key (your unique decryption key).\n\n**Important**: Save the key securely. Without it, your data cannot be decrypted — **not even by us**. Use this endpoint for sensitive information like verifiable credentials or protected documents.",
+                "description": "Store private data with automatic encryption. This endpoint encrypts your data before storage — you don't need to encrypt it yourself. The response includes a URI (the location of your stored data), a hash (a fingerprint to verify the data hasn't changed), and a key (your unique decryption key).\n\n**Important**: Save the key securely. Without it, your data cannot be decrypted — **not even by us**.",
                 "requestBody": {
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "./components/schemas.json#/components/schemas/Credential"
+                                "$ref": "./components/schemas.json#/components/schemas/StoreDocumentRequest"
                             },
                             "examples": {
                                 "example1": {
@@ -82,7 +82,7 @@
                 },
                 "responses": {
                     "201": {
-                        "description": "Credential encrypted and stored successfully. Returns the storage location, integrity hash, and decryption key.",
+                        "description": "Document encrypted and stored successfully. Returns the storage location, integrity hash, and decryption key.",
                         "content": {
                             "application/json": {
                                 "schema": {

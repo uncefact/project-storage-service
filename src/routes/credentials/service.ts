@@ -51,7 +51,7 @@ export class CredentialsService {
             const objectExists = await storageService.objectExists(bucket, credentialId);
 
             if (objectExists) {
-                throw new ConflictError('A credential with the provided ID already exists in the specified bucket.');
+                throw new ConflictError('A document with the provided ID already exists in the specified bucket.');
             }
 
             const stringifiedData = JSON.stringify(data);
@@ -83,7 +83,7 @@ export class CredentialsService {
                 throw err;
             }
 
-            throw new ApplicationError('An unexpected error occurred while encrypting and storing the credential.');
+            throw new ApplicationError('An unexpected error occurred while encrypting and storing the document.');
         }
     }
 }
