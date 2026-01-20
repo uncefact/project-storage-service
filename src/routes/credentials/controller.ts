@@ -34,7 +34,7 @@ export const storeCredential: RequestHandler = async (req, res) => {
         }
 
         res.status(500).json({
-            message: 'An unexpected error occurred while storing the credential.',
+            message: 'An unexpected error occurred while storing the document.',
         });
     }
 };
