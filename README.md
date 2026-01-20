@@ -20,6 +20,31 @@ The service offers the following functionality:
     - A decryption key for the encrypted document (if applicable).
     - The URI of the stored encrypted document.
 
+## Choosing Your Storage Endpoint
+
+This service offers two ways to store data, depending on whether your data is public or private.
+
+### Public Data → [`/documents`](#store-document)
+
+For data that doesn't require protection. The service stores it as-is and returns:
+
+- A **URI** (the location of your stored data)
+- A **hash** (a fingerprint to verify the data hasn't changed)
+
+### Private Data → [`/credentials`](#store-credential)
+
+For sensitive data that needs protection. The service automatically encrypts your data before storage — you don't need to encrypt it yourself.
+
+The response includes:
+
+- A **URI** (the location of your stored data)
+- A **hash** (a fingerprint to verify the data hasn't changed)
+- A **key** (your unique decryption key)
+
+**Save this key securely** — it's the only way to decrypt your data later.
+
+→ [Learn more about storage options](https://uncefact.github.io/project-identity-resolver/docs/storage-options)
+
 ## Prerequisites
 
 - [Node.js](https://nodejs.org/) (v18.18.0)
