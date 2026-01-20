@@ -18,7 +18,7 @@ Not sure which endpoint to use? See [Storage Options](/docs/storage-options) for
 - **Endpoint**: `/api/1.0.0/credentials`
 - **Method**: POST
 - **Authentication**: Required (X-API-Key header)
-- Stores encrypted data with optional ID
+- Encrypts and stores documents with optional ID
 - Returns URI, hash, and encryption key
 
 Test the service using `curl`:
