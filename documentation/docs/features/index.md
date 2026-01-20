@@ -9,7 +9,11 @@ import Disclaimer from './../\_disclaimer.mdx';
 
 ## API Endpoints
 
-### Store Credential
+:::tip Choosing the Right Endpoint
+Not sure which endpoint to use? See [Storage Options](/docs/storage-options) for guidance on when to use `/credentials` (private data with encryption) vs `/documents` (public data without encryption).
+:::
+
+### Store Credential (Private Data)
 
 - **Endpoint**: `/api/1.0.0/credentials`
 - **Method**: POST
@@ -56,7 +60,7 @@ The service will respond similarly to the data below:
 | `hash` | A hash of the data, used to verify your data hasn't been changed. |
 | `key`  | The symmetric key used to decrypt the encrypted data.             |
 
-### Store Document
+### Store Document (Public Data)
 
 - **Endpoint**: `/api/1.0.0/documents`
 - **Method**: POST
