@@ -13,12 +13,12 @@ import Disclaimer from './../\_disclaimer.mdx';
 Not sure which endpoint to use? See [Storage Options](/docs/storage-options) for guidance on when to use `/credentials` (private data with encryption) vs `/documents` (public data without encryption).
 :::
 
-### Store Credential (Private Data)
+### Store Document (Private Data)
 
 - **Endpoint**: `/api/1.0.0/credentials`
 - **Method**: POST
 - **Authentication**: Required (X-API-Key header)
-- Stores encrypted credentials with optional ID
+- Encrypts and stores documents with optional ID
 - Returns URI, hash, and encryption key
 
 Test the service using `curl`:
@@ -66,7 +66,7 @@ The service will respond similarly to the data below:
 - **Method**: POST
 - **Authentication**: Required (X-API-Key header)
 - Stores documents with computed hash
-- Returns URI and document hash
+- Returns URI and hash
 
 Test the service using `curl`:
 

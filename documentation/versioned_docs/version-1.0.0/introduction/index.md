@@ -13,7 +13,7 @@ The Storage Service is an Express REST API that provides secure endpoints to enc
 
 - **Hash Computation**: Ensures data integrity using SHA-256 hash computation
 - **Encryption**: Enhances security through AES-256-GCM encryption
-- **Flexible Storage**: Supports multiple storage backends (Local, AWS S3, Google Cloud Storage)
+- **Flexible Storage**: Supports multiple storage backends (Local, AWS S3, Google Cloud Storage and Digital Ocean object storage)
 - **Data Retrieval**: Returns document hash, decryption key (if applicable), and URI upon successful storage
 
 ## Architecture Overview

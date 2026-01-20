@@ -1,7 +1,7 @@
 # Storage Service
 
 The storage service directory contains an Express REST API
-that provides endpoints to encrypt and store Verifiable Credentials and documents.
+that provides endpoints to encrypt and store documents.
 
 ## Overview
 
@@ -225,62 +225,6 @@ curl -X POST http://localhost:3333/api/1.0.0/credentials \
 ```
 
 If the API key is missing or invalid, the service will return a `401 Unauthorized` response.
-
-## Endpoints
-
-### Store Credential
-
-- **URL**: `/api/1.0.0/credentials`
-- **Method**: `POST`
-- **Authentication**: Required (X-API-Key header)
-- **Request Body**:
-
-    ```json
-    {
-        "bucket": "verifiable-credentials",
-        "data": {
-            "field1": "value1",
-            "field2": "value2"
-        },
-        "id": "123e4567-e89b-12d3-a456-426614174000" // optional
-    }
-    ```
-
-- **Response**:
-
-    ```json
-    {
-        "uri": "http://localhost:3333/api/1.0.0/verifiable-credentials/123e4567-e89b-12d3-a456-426614174000.json",
-        "hash": "computed-hash",
-        "key": "encryption-key"
-    }
-    ```
-
-### Store Document
-
-- **URL**: `/api/1.0.0/documents`
-- **Method**: `POST`
-- **Authentication**: Required (X-API-Key header)
-- **Request Body**:
-
-    ```json
-    {
-        "bucket": "verifiable-credentials",
-        "data": {
-            "document": "content"
-        },
-        "id": "123e4567-e89b-12d3-a456-426614174000" // optional
-    }
-    ```
-
-- **Response**:
-
-    ```json
-    {
-        "uri": "http://localhost:3333/api/1.0.0/verifiable-credentials/123e4567-e89b-12d3-a456-426614174000.json",
-        "hash": "computed-hash"
-    }
-    ```
 
 ## Docker
 
