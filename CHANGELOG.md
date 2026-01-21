@@ -1,5 +1,35 @@
 # Changelog
 
+## [1.1.0](https://github.com/uncefact/project-identity-resolver/compare/1.0.1...v1.1.0) (2026-01-21)
+
+
+### Features
+
+* Add authentication layer ([#30](https://github.com/uncefact/project-identity-resolver/issues/30)) ([cebe460](https://github.com/uncefact/project-identity-resolver/commit/cebe460e966580e62746e3254a8ace02c97c67d3))
+* Add digital ocean storage ([#23](https://github.com/uncefact/project-identity-resolver/issues/23)) ([73d130a](https://github.com/uncefact/project-identity-resolver/commit/73d130aad13b8c6d844c27678f193f74be599049))
+
+
+### Bug Fixes
+
+* Handle trigger package workflow ([#21](https://github.com/uncefact/project-identity-resolver/issues/21)) ([403c205](https://github.com/uncefact/project-identity-resolver/commit/403c205e61433e0e1fd54b8046f4838cb88d745a))
+
+
+### Documentation
+
+* Add release management guide ([#20](https://github.com/uncefact/project-identity-resolver/issues/20)) ([6b3d3b0](https://github.com/uncefact/project-identity-resolver/commit/6b3d3b05d963be4cda82507ee37f933d0815928d))
+* **readme:** Clarify storage endpoint differences ([#35](https://github.com/uncefact/project-identity-resolver/issues/35)) ([22d311c](https://github.com/uncefact/project-identity-resolver/commit/22d311c8dd80722c62d3edac09215dc9b0e68345))
+* **site:** Add storage options guide for public vs private data ([#37](https://github.com/uncefact/project-identity-resolver/issues/37)) ([d643097](https://github.com/uncefact/project-identity-resolver/commit/d6430975da4b3ecbbe655310464300bd13eaaecb))
+* **swagger:** Clarify endpoint encryption behavior ([#36](https://github.com/uncefact/project-identity-resolver/issues/36)) ([1828d52](https://github.com/uncefact/project-identity-resolver/commit/1828d52697255e95a6092f303711f13580afb243))
+* **swagger:** Use generic public/private data terminology ([#39](https://github.com/uncefact/project-identity-resolver/issues/39)) ([e24cec2](https://github.com/uncefact/project-identity-resolver/commit/e24cec2dca8b45843c1019c6272c87deaa1bc0fa))
+* Use generic public/private data terminology ([#38](https://github.com/uncefact/project-identity-resolver/issues/38)) ([568cfd1](https://github.com/uncefact/project-identity-resolver/commit/568cfd1e9a5b8e91ec309cfcc1107bdbf5f22315))
+
+
+### Miscellaneous
+
+* **release:** Bump version to 1.1.0 ([0ed515c](https://github.com/uncefact/project-identity-resolver/commit/0ed515c57285387e31d5e2785ddb408d94518d22))
+* Reset version to 1.0.1 for release-please ([39ec604](https://github.com/uncefact/project-identity-resolver/commit/39ec60490eace12496825bacd707ced33f540e69))
+* Update release-please workflow and config ([333223e](https://github.com/uncefact/project-identity-resolver/commit/333223e2d8da7f4b2ee44e419b4582f83c5544db))
+
 ## [1.0.1](https://github.com/uncefact/project-identity-resolver/compare/1.0.0...v1.0.1) (2025-01-03)
 
 
