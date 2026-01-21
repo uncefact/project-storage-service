@@ -4,6 +4,11 @@
         "title": "Storage Service API"
     },
     "servers": [],
+    "security": [
+        {
+            "ApiKeyAuth": []
+        }
+    ],
     "paths": {
         "$ref": "./paths.json#/paths"
     },
@@ -13,6 +18,17 @@
         },
         "examples": {
             "$ref": "./components/examples.json#/components/examples"
+        },
+        "responses": {
+            "$ref": "./components/responses.json#/components/responses"
+        },
+        "securitySchemes": {
+            "ApiKeyAuth": {
+                "type": "apiKey",
+                "in": "header",
+                "name": "X-API-Key",
+                "description": "API key for authentication. Required for all upload operations."
+            }
         }
     }
 }

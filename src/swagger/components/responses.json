@@ -17,8 +17,8 @@
                     }
                 }
             },
-            "409": {
-                "description": "The credential already exists.",
+            "401": {
+                "description": "Unauthorized. Invalid or missing API key.",
                 "content": {
                     "application/json": {
                         "schema": {
@@ -26,7 +26,23 @@
                             "properties": {
                                 "message": {
                                     "type": "string",
-                                    "example": "A credential with the provided ID already exists in the specified bucket."
+                                    "example": "API key is required. Please provide a valid API key in the X-API-Key header."
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "409": {
+                "description": "The document already exists.",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "message": {
+                                    "type": "string",
+                                    "example": "A document with the provided ID already exists in the specified bucket."
                                 }
                             }
                         }
@@ -34,7 +50,7 @@
                 }
             },
             "500": {
-                "description": "An error occurred while storing the credential.",
+                "description": "An error occurred while storing the document.",
                 "content": {
                     "application/json": {
                         "schema": {
@@ -42,7 +58,7 @@
                             "properties": {
                                 "message": {
                                     "type": "string",
-                                    "example": "An unexpected error occurred while storing the credential."
+                                    "example": "An unexpected error occurred while storing the document."
                                 }
                             }
                         }
