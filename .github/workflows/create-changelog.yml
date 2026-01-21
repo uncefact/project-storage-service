@@ -22,7 +22,6 @@ jobs:
               with:
                   fetch-depth: 2
 
-            # Check if the commit is a release PR and skip the job
             - name: Check if the commit is a release PR
               id: check
               run: |
@@ -37,36 +36,11 @@ jobs:
         if: needs.check-skip.outputs.should_skip != 'true'
 
         steps:
-            - name: Checkout code
-              uses: actions/checkout@v4
-              with:
-                  fetch-depth: 0
-
-            # Get the version from version.json file and store it in the output file
-            - name: Get version from version.json
-              id: retrieve_version
-              run: |
-                  new_version=$(jq -r '.version' version.json)
-                  if [ -z "$new_version" ]; then
-                    echo "Error: version field is empty or not found in version.json!"
-                    exit 1
-                  fi
-                  echo "new_version=$new_version" >> "$GITHUB_OUTPUT"
-
-            # Set release version for changelog
-            - name: Set release version for changelog
-              run: |
-                  git config --global user.email "github-actions[bot]@users.noreply.github.com"
-                  git config --global user.name "github-actions[bot]"
-                  git commit --allow-empty -m "chore: release ${{ steps.retrieve_version.outputs.new_version }}" -m "Release-As: ${{ steps.retrieve_version.outputs.new_version }}"
-                  git push
-
-            # Create release changelog
-            - name: Create release changelog
+            - name: Create release changelog & update version
               id: release
               uses: googleapis/release-please-action@v4
               with:
                   token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
                   target-branch: ${{ github.ref_name }}
                   config-file: .github/workflows/release-please-config.json
-                  manifest-file: .github/workflows/.release-please-manifest-rc.json
+                  manifest-file: .github/workflows/.release-please-manifest.json
