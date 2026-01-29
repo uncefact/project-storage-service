@@ -226,6 +226,21 @@ curl -X POST http://localhost:3333/api/1.0.0/credentials \
 
 If the API key is missing or invalid, the service will return a `401 Unauthorized` response.
 
+## Docker Images
+
+Pre-built Docker images are available on [GitHub Container Registry](https://github.com/uncefact/project-identity-resolver/pkgs/container/project-identity-resolver).
+
+Images support `linux/amd64` and `linux/arm64` architectures (Intel/AMD and Apple Silicon/ARM).
+
+### Pulling Images
+
+```bash
+# Pull a specific version (e.g., 1.1.0)
+docker pull ghcr.io/uncefact/project-identity-resolver:1.1.0
+
+# Or pull the latest release
+docker pull ghcr.io/uncefact/project-identity-resolver:latest
+
 ## Docker
 
 To run the storage service using Docker:
