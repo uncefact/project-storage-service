@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.1.1](https://github.com/uncefact/project-identity-resolver/compare/1.1.0...v1.1.1) (2026-01-29)
+
+
+### Miscellaneous
+
+* Update version.json and generate docs for 1.1.1 ([2b086f4](https://github.com/uncefact/project-identity-resolver/commit/2b086f430dac6051d0aca05f9ddbc476441d0a19))
+
+
+### CI
+
+* Add multi-arch Docker image support and version tagging ([#43](https://github.com/uncefact/project-identity-resolver/issues/43)) ([08d9b97](https://github.com/uncefact/project-identity-resolver/commit/08d9b97be35f0a3dade27303587ceb75469422f0))
+
 ## [1.1.0](https://github.com/uncefact/project-identity-resolver/compare/1.0.1...v1.1.0) (2026-01-21)
 
 

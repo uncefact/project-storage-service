@@ -1,6 +1,6 @@
 {
     "name": "storage_service_traceability",
-    "version": "1.1.0",
+    "version": "1.1.1",
     "scripts": {
         "bundle-swagger": "redocly bundle src/swagger/index.json --output src/swagger/swagger.json",
         "build": "yarn bundle-swagger && webpack --mode production --config webpack.config.cjs",
