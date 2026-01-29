@@ -235,9 +235,11 @@ Images support `linux/amd64` and `linux/arm64` architectures (Intel/AMD and Appl
 ### Pulling Images
 
 ```bash
-# Pull by version
+# Pull a specific version (e.g., 1.1.0)
 docker pull ghcr.io/uncefact/project-identity-resolver:1.1.0
-```
+
+# Or pull the latest release
+docker pull ghcr.io/uncefact/project-identity-resolver:latest
 
 ## Docker
 
