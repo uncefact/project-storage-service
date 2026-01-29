@@ -16,7 +16,27 @@ yarn install
 yarn dev
 ```
 
-## Docker Installation
+## Using Pre-built Docker Images
+
+Pre-built Docker images are available on [GitHub Container Registry](https://github.com/uncefact/project-identity-resolver/pkgs/container/project-identity-resolver).
+
+Images support `linux/amd64` and `linux/arm64` architectures (Intel/AMD and Apple Silicon/ARM).
+
+```bash
+# Pull by version
+docker pull ghcr.io/uncefact/project-identity-resolver:1.1.0
+
+# Copy and configure your environment file
+cp .env.example .env
+# Edit .env and set your API_KEY and other configuration
+
+# Run the container
+docker run -d --env-file .env -p 3333:3333 \
+  -v $(pwd)/uploads:/app/src/uploads:rw \
+  ghcr.io/uncefact/project-identity-resolver:1.1.0
+```
+
+## Building Docker Locally
 
 Build and run with Docker:
 
