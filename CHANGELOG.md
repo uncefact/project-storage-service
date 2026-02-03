@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.1](https://github.com/uncefact/project-identity-resolver/compare/2.0.0...v2.0.1) (2026-02-03)
+
+
+### Documentation
+
+* Fix S3-compatible storage documentation ([8cd6007](https://github.com/uncefact/project-identity-resolver/commit/8cd60077267c93c8727ed89d5565bf4ae81b835f))
+
 ## [2.0.0](https://github.com/uncefact/project-identity-resolver/compare/1.1.1...v2.0.0) (2026-02-03)
 
 
