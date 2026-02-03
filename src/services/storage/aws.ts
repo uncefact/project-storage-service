@@ -31,12 +31,18 @@ const createS3ClientConfig = (): S3ClientConfig => {
  */
 const generateUri = (bucket: string, key: string): string => {
     if (S3_ENDPOINT) {
+        let url: URL;
+        try {
+            url = new URL(S3_ENDPOINT);
+        } catch {
+            throw new Error(`Invalid S3_ENDPOINT format: "${S3_ENDPOINT}" is not a valid URL`);
+        }
+
         if (S3_FORCE_PATH_STYLE) {
             // Path-style: {endpoint}/{bucket}/{key}
-            return `${S3_ENDPOINT}/${bucket}/${key}`;
+            return `${url.origin}/${bucket}/${key}`;
         }
         // Virtual-hosted style with custom endpoint: {protocol}://{bucket}.{host}/{key}
-        const url = new URL(S3_ENDPOINT);
         return `${url.protocol}//${bucket}.${url.host}/${key}`;
     }
     // AWS S3 default: https://{bucket}.s3.amazonaws.com/{key}

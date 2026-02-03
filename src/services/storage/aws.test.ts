@@ -140,5 +140,19 @@ describe('AWSStorageService', () => {
                 new AWSStorageService();
             }).not.toThrow();
         });
+
+        it('should throw an error if S3_ENDPOINT is not a valid URL', async () => {
+            jest.doMock('../../config', () => ({
+                S3_REGION: undefined,
+                S3_ENDPOINT: 'not-a-valid-url',
+                S3_FORCE_PATH_STYLE: false,
+            }));
+            mockSend.mockResolvedValueOnce({});
+            const { AWSStorageService } = require('./aws');
+            const awsStorageService = new AWSStorageService();
+
+            await expect(awsStorageService.uploadFile('test-bucket', 'test-key', 'test-body', 'application/json'))
+                .rejects.toThrow('Invalid S3_ENDPOINT format');
+        });
     });
 });
