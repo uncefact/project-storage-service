@@ -1,11 +1,8 @@
 name: package
 
 on:
-    push:
-        tags:
-            - '*.*.*'
     workflow_dispatch:
-        # Run the workflow when the Release workflow completes
+    # Run the workflow when the Release workflow completes
     workflow_run:
         workflows: ['Release']
         types:
@@ -14,16 +11,19 @@ on:
 jobs:
     build:
         runs-on: ubuntu-latest
-        # Trigger the job only if the Release Tagging job was successful or manually triggered
-        if: ${{ startsWith(github.ref, 'refs/tags/') || github.event.workflow_run.conclusion == 'success' || github.event.ref == 'refs/heads/main' }}
+        # Run if Release workflow succeeded or manually triggered
+        if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
 
         env:
-            # Only push the image if the new tag is pushed or manually triggered
-            PUSH_CONDITION: ${{ startsWith(github.ref, 'refs/tags/') || github.event.workflow_run.conclusion == 'success' || github.ref == 'refs/heads/main' }}
+            # Always push when conditions above are met
+            PUSH_CONDITION: true
 
         steps:
             - name: Checkout
               uses: actions/checkout@v4
+              with:
+                  # On workflow_run, checkout the exact commit that triggered Release
+                  ref: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || github.ref }}
 
             # Get version from version.json for workflow_run triggers
             - name: Get version from version.json
@@ -37,12 +37,10 @@ jobs:
               uses: docker/metadata-action@v5
               with:
                   images: ghcr.io/${{github.repository}}
-                  flavor: |
-                      latest=auto
                   tags: |
-                      type=semver,pattern={{version}}
+                      type=raw,value=${{ steps.get_version.outputs.version }}
+                      type=raw,value=latest
                       type=sha
-                      type=raw,value=${{ steps.get_version.outputs.version }},enable=${{ github.event_name == 'workflow_run' }}
 
             # Set up QEMU for multi-platform builds
             - name: Set up QEMU
