@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.2](https://github.com/uncefact/project-identity-resolver/compare/2.0.1...v2.0.2) (2026-02-03)
+
+
+### Bug Fixes
+
+* **docs:** Add missing code block in installation docs ([13ba6b4](https://github.com/uncefact/project-identity-resolver/commit/13ba6b4058ea078352458a77e06dfeef2aba7282))
+
 ## [2.0.1](https://github.com/uncefact/project-identity-resolver/compare/2.0.0...v2.0.1) (2026-02-03)
 
 

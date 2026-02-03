@@ -22,11 +22,12 @@ Pre-built Docker images are available on [GitHub Container Registry](https://git
 
 Images support `linux/amd64` and `linux/arm64` architectures (Intel/AMD and Apple Silicon/ARM).
 
+```bash
 # Pull the latest image
 docker pull ghcr.io/uncefact/project-identity-resolver:latest
 
-# Alternatively, pull a specific version (e.g., 1.1.0)
-# docker pull ghcr.io/uncefact/project-identity-resolver:1.1.0
+# Alternatively, pull a specific version (e.g., 2.0.1)
+# docker pull ghcr.io/uncefact/project-identity-resolver:2.0.1
 
 # Copy and configure your environment file
 cp .env.example .env
@@ -36,6 +37,7 @@ cp .env.example .env
 docker run -d --env-file .env -p 3333:3333 \
   -v $(pwd)/uploads:/app/src/uploads:rw \
   ghcr.io/uncefact/project-identity-resolver:latest
+```
 
 ## Building Docker Locally
 
