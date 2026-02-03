@@ -1,5 +1,27 @@
 # Changelog
 
+## [2.0.0](https://github.com/uncefact/project-identity-resolver/compare/1.1.1...v2.0.0) (2026-02-03)
+
+
+### ⚠ BREAKING CHANGES
+
+* **release:** S3-compatible storage providers support requires configuration changes for storage provider selection.
+* **storage:** add support for S3-compatible storage providers ([#49](https://github.com/uncefact/project-identity-resolver/issues/49))
+
+### Features
+
+* **storage:** Add support for S3-compatible storage providers ([#49](https://github.com/uncefact/project-identity-resolver/issues/49)) ([f17613b](https://github.com/uncefact/project-identity-resolver/commit/f17613b2c573b572664629cca700acfb5b16b0f4))
+
+
+### Bug Fixes
+
+* **ci:** Improve release and package workflow reliability ([#50](https://github.com/uncefact/project-identity-resolver/issues/50)) ([ecfa519](https://github.com/uncefact/project-identity-resolver/commit/ecfa519f1d8459140e825b4d28579f0139c29135))
+
+
+### Miscellaneous
+
+* **release:** Prepare release 2.0.0 ([db93efd](https://github.com/uncefact/project-identity-resolver/commit/db93efd935c4624b2dba0e42961df8fd87a100ae))
+
 ## [1.1.1](https://github.com/uncefact/project-identity-resolver/compare/1.1.0...v1.1.1) (2026-01-29)
 
 
