@@ -105,17 +105,24 @@ Configure the storage service using the following environment variables:
 ### Storage Configuration
 
 - `STORAGE_TYPE`:
-  The type of storage to use (`local` or `gcp` or `aws`, or `digital_ocean`).
+  The type of storage to use (`local`, `gcp`, or `aws`).
 - `LOCAL_DIRECTORY`:
   The directory for local storage (default: `uploads` in the current directory).
 - `GOOGLE_APPLICATION_CREDENTIALS`:
   The path to the GCP service account file (if using GCP).
-- `REGION`:
-  The region to use (if using AWS or Digital Ocean).
+
+### S3-Compatible Storage (AWS, MinIO, DigitalOcean Spaces, Cloudflare R2, etc.)
+
+- `S3_REGION`:
+  The AWS region (required for AWS S3, optional when using custom endpoint).
+- `S3_ENDPOINT`:
+  Custom endpoint URL for S3-compatible providers (e.g., `http://localhost:9000` for MinIO).
+- `S3_FORCE_PATH_STYLE`:
+  Set to `true` for path-style URLs (required for MinIO, Cloudflare R2).
 - `AWS_ACCESS_KEY_ID`:
-  The access key to use (if using AWS or Digital Ocean).
+  The access key for S3-compatible storage.
 - `AWS_SECRET_ACCESS_KEY`:
-  The secret access key to use (if using AWS or Digital Ocean).
+  The secret access key for S3-compatible storage.
 
 ## Storage Types
 
@@ -160,46 +167,54 @@ yarn start
 
 ### Amazon Web Services (AWS)
 
-For the production environment, we recommend using IAM roles to enhance security and eliminate the need to hardcode AWS credentials.
-To more details about using IAM roles, please refer to the [AWS documentation](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/iam-roles-for-amazon-ec2.html).
-Use Amazon Web Services to store files in an S3 bucket.
-
-Example:
+For production, we recommend using IAM roles. See the [AWS documentation](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/iam-roles-for-amazon-ec2.html).
 
 ```bash
-# Set the storage type to aws
 export STORAGE_TYPE=aws
+export S3_REGION=ap-southeast-2
+export AWS_ACCESS_KEY_ID=your-access-key      # Local development only
+export AWS_SECRET_ACCESS_KEY=your-secret-key  # Local development only
 
-# Set the AWS region
-export REGION=ap-southeast-2
-export AWS_ACCESS_KEY_ID=AWS_ACCESS_KEY_ID # Local development only
-export AWS_SECRET_ACCESS_KEY=AWS_SECRET_ACCESS_KEY # Local development only
-
-# Build the app
-yarn build
-
-# Run the app
-yarn start
+yarn build && yarn start
 ```
 
-### Digital Ocean (DO)
+### S3-Compatible Providers
 
-Example:
+The `aws` storage type supports any S3-compatible provider by configuring a custom endpoint.
+
+**MinIO (local development):**
 
 ```bash
-# Set the storage type to digital_ocean
-export STORAGE_TYPE=digital_ocean
+export STORAGE_TYPE=aws
+export S3_ENDPOINT=http://localhost:9000
+export S3_FORCE_PATH_STYLE=true
+export AWS_ACCESS_KEY_ID=minioadmin
+export AWS_SECRET_ACCESS_KEY=minioadmin
 
-# Set the DO configuration
-export REGION=syd1
-export AWS_ACCESS_KEY_ID=DO_ACCESS_KEY_ID
-export AWS_SECRET_ACCESS_KEY=DO_SECRET_ACCESS_KEY
+yarn build && yarn start
+```
 
-# Build the app
-yarn build
+**DigitalOcean Spaces:**
 
-# Run the app
-yarn start
+```bash
+export STORAGE_TYPE=aws
+export S3_ENDPOINT=https://syd1.digitaloceanspaces.com
+export AWS_ACCESS_KEY_ID=your-do-access-key
+export AWS_SECRET_ACCESS_KEY=your-do-secret-key
+
+yarn build && yarn start
+```
+
+**Cloudflare R2:**
+
+```bash
+export STORAGE_TYPE=aws
+export S3_ENDPOINT=https://<account-id>.r2.cloudflarestorage.com
+export S3_FORCE_PATH_STYLE=true
+export AWS_ACCESS_KEY_ID=your-r2-access-key
+export AWS_SECRET_ACCESS_KEY=your-r2-secret-key
+
+yarn build && yarn start
 ```
 
 ## Cryptography
@@ -260,13 +275,9 @@ docker run -d --env-file .env -p 3333:3333 \
 -v /path/to/local/gcp/service-account-file.json:/tmp/service-account-file.json \
 storage-service:latest
 
-# Start the container using Amazon Web Services (AWS)
-# Update STORAGE_TYPE=aws and AWS credentials in your .env file
-docker run -d --env-file .env -p 3333:3333 \
-storage-service:latest
-
-# Start the container using Digital Ocean (DO)
-# Update STORAGE_TYPE=digital_ocean and credentials in your .env file
+# Start the container using Amazon Web Services (AWS) or S3-compatible storage
+# Update STORAGE_TYPE=aws and S3 credentials in your .env file
+# For S3-compatible providers, also set S3_ENDPOINT and S3_FORCE_PATH_STYLE
 docker run -d --env-file .env -p 3333:3333 \
 storage-service:latest
 ```
