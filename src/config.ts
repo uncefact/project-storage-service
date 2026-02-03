@@ -22,9 +22,13 @@ export const AVAILABLE_BUCKETS = process.env.AVAILABLE_BUCKETS
     ? process.env.AVAILABLE_BUCKETS.split(',')
     : [DEFAULT_BUCKET];
 
-export const STORAGE_TYPE = process.env.STORAGE_TYPE || 'local'; // local | gcp | aws | digital_ocean
-export const REGION = process.env.REGION || 'ap-southeast-2';
+export const STORAGE_TYPE = process.env.STORAGE_TYPE || 'local'; // local | gcp | aws
 export const LOCAL_DIRECTORY = process.env.LOCAL_DIRECTORY || 'uploads';
+
+// S3-compatible storage configuration (used when STORAGE_TYPE=aws)
+export const S3_REGION = process.env.S3_REGION;
+export const S3_ENDPOINT = process.env.S3_ENDPOINT;
+export const S3_FORCE_PATH_STYLE = process.env.S3_FORCE_PATH_STYLE === 'true';
 
 // Runtime getter for API_KEY to ensure it's evaluated at runtime, not build time
 export const getApiKey = () => process.env.API_KEY;

@@ -76,13 +76,13 @@ docker run -d --env-file .env -p 3333:3333 \
 storage-service:latest
 ```
 
-### Amazon Web Services
+### Amazon Web Services (AWS S3)
 
 Update your `.env` file with AWS credentials:
 
 ```env
 STORAGE_TYPE=aws
-REGION=ap-southeast-2
+S3_REGION=ap-southeast-2
 AWS_ACCESS_KEY_ID=your-aws-access-key-id
 AWS_SECRET_ACCESS_KEY=your-aws-secret-access-key
 AVAILABLE_BUCKETS=verifiable-credentials,private-verifiable-credentials,epcis-events
@@ -94,20 +94,50 @@ Then run the container:
 docker run -d --env-file .env -p 3333:3333 storage-service:latest
 ```
 
-### Digital Ocean
+### S3-Compatible Storage Providers
 
-Update your `.env` file with Digital Ocean credentials:
+The service supports any S3-compatible storage provider (MinIO, DigitalOcean Spaces, Cloudflare R2, Backblaze B2, Wasabi, etc.) by configuring a custom endpoint.
+
+#### MinIO
+
+Ideal for local development and self-hosted deployments:
 
 ```env
-STORAGE_TYPE=digital_ocean
-REGION=syd1
+STORAGE_TYPE=aws
+S3_ENDPOINT=http://minio:9000
+S3_FORCE_PATH_STYLE=true
+AWS_ACCESS_KEY_ID=minioadmin
+AWS_SECRET_ACCESS_KEY=minioadmin
+AVAILABLE_BUCKETS=verifiable-credentials
+```
+
+#### DigitalOcean Spaces
+
+```env
+STORAGE_TYPE=aws
+S3_ENDPOINT=https://syd1.digitaloceanspaces.com
 AWS_ACCESS_KEY_ID=your-do-access-key-id
 AWS_SECRET_ACCESS_KEY=your-do-secret-access-key
-AVAILABLE_BUCKETS=verifiable-credentials,private-verifiable-credentials,epcis-events
+AVAILABLE_BUCKETS=verifiable-credentials
 ```
 
-Then run the container:
+#### Cloudflare R2
 
-```bash
-docker run -d --env-file .env -p 3333:3333 storage-service:latest
+```env
+STORAGE_TYPE=aws
+S3_ENDPOINT=https://<account-id>.r2.cloudflarestorage.com
+S3_FORCE_PATH_STYLE=true
+AWS_ACCESS_KEY_ID=your-r2-access-key-id
+AWS_SECRET_ACCESS_KEY=your-r2-secret-access-key
+AVAILABLE_BUCKETS=verifiable-credentials
 ```
+
+### S3 Configuration Reference
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `S3_REGION` | Yes (for AWS S3) | AWS region. Not required when using custom endpoint. |
+| `S3_ENDPOINT` | No | Custom endpoint URL for S3-compatible providers. |
+| `S3_FORCE_PATH_STYLE` | No | Set to `true` for path-style URLs (required for MinIO, R2). |
+| `AWS_ACCESS_KEY_ID` | Yes | Access key for authentication. |
+| `AWS_SECRET_ACCESS_KEY` | Yes | Secret key for authentication. |
