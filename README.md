@@ -13,7 +13,7 @@ The service offers the following functionality:
   Encrypts the document using AES-256-GCM for enhanced security.
 - **Storage**:
   Stores the encrypted document using the specified storage adapter
-  (local file system, AWS, Digital Ocean or Google Cloud Storage).
+  (local file system, AWS S3 and S3-compatible providers, or Google Cloud Storage).
 - **Data Retrieval**:
   Upon successful storage, the service returns:
     - The hash of the original document.
