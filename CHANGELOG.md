@@ -1,20 +1,27 @@
 # Changelog
 
-## [2.0.2](https://github.com/uncefact/project-identity-resolver/compare/2.0.1...v2.0.2) (2026-02-03)
+## [2.0.3](https://github.com/uncefact/project-identity-resolver/compare/2.0.2...2.0.3) (2026-02-04)
+
+
+### Bug Fixes
+
+* **swagger:** Use config values for Swagger UI server URL ([#62](https://github.com/uncefact/project-identity-resolver/issues/62)) ([93b5084](https://github.com/uncefact/project-identity-resolver/commit/93b5084280ca8415741a59fe82b17f323b1c37d4))
+
+## [2.0.2](https://github.com/uncefact/project-identity-resolver/compare/2.0.1...2.0.2) (2026-02-03)
 
 
 ### Bug Fixes
 
 * **docs:** Add missing code block in installation docs ([13ba6b4](https://github.com/uncefact/project-identity-resolver/commit/13ba6b4058ea078352458a77e06dfeef2aba7282))
 
-## [2.0.1](https://github.com/uncefact/project-identity-resolver/compare/2.0.0...v2.0.1) (2026-02-03)
+## [2.0.1](https://github.com/uncefact/project-identity-resolver/compare/2.0.0...2.0.1) (2026-02-03)
 
 
 ### Documentation
 
 * Fix S3-compatible storage documentation ([8cd6007](https://github.com/uncefact/project-identity-resolver/commit/8cd60077267c93c8727ed89d5565bf4ae81b835f))
 
-## [2.0.0](https://github.com/uncefact/project-identity-resolver/compare/1.1.1...v2.0.0) (2026-02-03)
+## [2.0.0](https://github.com/uncefact/project-identity-resolver/compare/1.1.1...2.0.0) (2026-02-03)
 
 
 ### ⚠ BREAKING CHANGES
@@ -30,7 +37,7 @@
 
 * **ci:** Improve release and package workflow reliability ([#50](https://github.com/uncefact/project-identity-resolver/issues/50)) ([ecfa519](https://github.com/uncefact/project-identity-resolver/commit/ecfa519f1d8459140e825b4d28579f0139c29135))
 
-## [1.1.1](https://github.com/uncefact/project-identity-resolver/compare/1.1.0...v1.1.1) (2026-01-29)
+## [1.1.1](https://github.com/uncefact/project-identity-resolver/compare/1.1.0...1.1.1) (2026-01-29)
 
 
 ### Miscellaneous
@@ -42,7 +49,7 @@
 
 * Add multi-arch Docker image support and version tagging ([#43](https://github.com/uncefact/project-identity-resolver/issues/43)) ([08d9b97](https://github.com/uncefact/project-identity-resolver/commit/08d9b97be35f0a3dade27303587ceb75469422f0))
 
-## [1.1.0](https://github.com/uncefact/project-identity-resolver/compare/1.0.1...v1.1.0) (2026-01-21)
+## [1.1.0](https://github.com/uncefact/project-identity-resolver/compare/1.0.1...1.1.0) (2026-01-21)
 
 
 ### Features
@@ -72,7 +79,7 @@
 * Reset version to 1.0.1 for release-please ([39ec604](https://github.com/uncefact/project-identity-resolver/commit/39ec60490eace12496825bacd707ced33f540e69))
 * Update release-please workflow and config ([333223e](https://github.com/uncefact/project-identity-resolver/commit/333223e2d8da7f4b2ee44e419b4582f83c5544db))
 
-## [1.0.1](https://github.com/uncefact/project-identity-resolver/compare/1.0.0...v1.0.1) (2025-01-03)
+## [1.0.1](https://github.com/uncefact/project-identity-resolver/compare/1.0.0...1.0.1) (2025-01-03)
 
 
 ### Miscellaneous
@@ -81,7 +88,7 @@
 * Update script ([389f598](https://github.com/uncefact/project-identity-resolver/commit/389f59855b8047adfccec61155e7621199974678))
 * Update version for hotfix ([20f6272](https://github.com/uncefact/project-identity-resolver/commit/20f62722e9635336731057e079e11f4cd12cc400))
 
-## [1.0.0](https://github.com/uncefact/project-identity-resolver/compare/v1.0.0...v1.0.0) (2025-01-03)
+## [1.0.0](https://github.com/uncefact/project-identity-resolver/compare/1.0.0...1.0.0) (2025-01-03)
 
 
 ### Features
