@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.3](https://github.com/uncefact/project-identity-resolver/compare/2.0.2...v2.0.3) (2026-02-04)
+
+
+### Bug Fixes
+
+* **swagger:** Use config values for Swagger UI server URL ([#62](https://github.com/uncefact/project-identity-resolver/issues/62)) ([93b5084](https://github.com/uncefact/project-identity-resolver/commit/93b5084280ca8415741a59fe82b17f323b1c37d4))
+
 ## [2.0.2](https://github.com/uncefact/project-identity-resolver/compare/2.0.1...v2.0.2) (2026-02-03)
 
 
