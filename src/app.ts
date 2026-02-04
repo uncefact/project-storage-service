@@ -18,7 +18,7 @@ app.use(
         // req.hostname, req.socket.localPort) which reflect the container's internal address.
         // Omit default ports (443 for HTTPS, 80 for HTTP) to produce standard URLs.
         const isDefaultPort =
-            (PROTOCOL === 'https' && String(PORT) === '443') || (PROTOCOL === 'http' && String(PORT) === '80');
+            (PROTOCOL === 'https' && Number(PORT) === 443) || (PROTOCOL === 'http' && Number(PORT) === 80);
         const portSuffix = isDefaultPort ? '' : `:${PORT}`;
         const url = `${PROTOCOL}://${DOMAIN}${portSuffix}/api/${API_VERSION}`;
         swaggerJson = updateSwagger(swaggerJson, { version: API_VERSION, url });
