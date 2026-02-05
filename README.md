@@ -260,7 +260,7 @@ docker pull ghcr.io/uncefact/project-identity-resolver:latest
 docker pull ghcr.io/uncefact/project-identity-resolver:next
 ```
 
-### Running with Docker
+### Building and Running Locally with Docker
 
 ```bash
 # Build the image
