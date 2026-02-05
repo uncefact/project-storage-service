@@ -12,8 +12,10 @@ if (!getApiKey()) {
     process.exit(1);
 }
 
-if (process.env.EXTERNAL_PORT && isNaN(Number(process.env.EXTERNAL_PORT))) {
-    console.error(`❌ ERROR: EXTERNAL_PORT must be a valid port number, got '${process.env.EXTERNAL_PORT}'.`);
+if (isNaN(Number(EXTERNAL_PORT))) {
+    console.error(
+        `❌ ERROR: Invalid port configuration. EXTERNAL_PORT (or PORT as fallback) must be a valid number, but resolved to '${EXTERNAL_PORT}'.`,
+    );
     process.exit(1);
 }
 
