@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.4](https://github.com/uncefact/project-identity-resolver/compare/2.0.3...2.0.4) (2026-02-05)
+
+
+### Bug Fixes
+
+* **ci:** Disable v prefix in release-please tag generation ([#65](https://github.com/uncefact/project-identity-resolver/issues/65)) ([5cf1f52](https://github.com/uncefact/project-identity-resolver/commit/5cf1f52efc5a67feb2689e8e38901a060468b15e))
+
 ## [2.0.3](https://github.com/uncefact/project-identity-resolver/compare/2.0.2...2.0.3) (2026-02-04)
 
 
