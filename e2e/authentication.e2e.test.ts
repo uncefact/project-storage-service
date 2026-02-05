@@ -7,6 +7,7 @@ jest.mock('../src/config', () => ({
     PROTOCOL: 'http',
     DOMAIN: 'localhost',
     PORT: 3333,
+    EXTERNAL_PORT: 3333,
     DEFAULT_BUCKET: 'verifiable-credentials',
     AVAILABLE_BUCKETS: ['verifiable-credentials'],
     STORAGE_TYPE: 'local',
