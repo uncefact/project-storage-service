@@ -96,6 +96,17 @@ yarn test:all
 
 Configure the storage service using the following environment variables:
 
+### Server Configuration
+
+- `PROTOCOL`:
+  HTTP protocol to use (default: `http`).
+- `DOMAIN`:
+  Server domain (default: `localhost`).
+- `PORT`:
+  Server port number (default: `3333`).
+- `EXTERNAL_PORT`:
+  Port used in generated URLs (Swagger UI, storage URIs). Useful when the service runs behind a reverse proxy on a different port. Defaults to the value of `PORT`.
+
 ### Authentication
 
 - `API_KEY`:
@@ -256,9 +267,11 @@ docker pull ghcr.io/uncefact/project-identity-resolver:1.1.0
 # Or pull the latest release
 docker pull ghcr.io/uncefact/project-identity-resolver:latest
 
-## Docker
+# Or pull the latest development image from the next branch
+docker pull ghcr.io/uncefact/project-identity-resolver:next
+```
 
-To run the storage service using Docker:
+### Building and Running Locally with Docker
 
 ```bash
 # Build the image
@@ -267,7 +280,12 @@ docker build -t storage-service:latest .
 # Start the container using local storage
 # Configure your .env file first with API_KEY and other required variables
 docker run -d --env-file .env -p 3333:3333 \
-storage-service:latest
+  storage-service:latest
+
+# If exposing on a different port (e.g., 443), set EXTERNAL_PORT so
+# Swagger and storage URIs reflect the external address:
+# docker run -d --env-file .env -p 443:3333 -e EXTERNAL_PORT=443 \
+#   storage-service:latest
 
 # Start the container using Google Cloud Storage
 # Update STORAGE_TYPE=gcp in your .env file and mount the service account file

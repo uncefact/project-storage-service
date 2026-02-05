@@ -1,7 +1,8 @@
 import fs from 'fs';
 import path from 'path';
 import { IStorageService } from '.';
-import { API_VERSION, DOMAIN, LOCAL_DIRECTORY, PORT, PROTOCOL, __dirname } from '../../config';
+import { API_VERSION, DOMAIN, EXTERNAL_PORT, LOCAL_DIRECTORY, PROTOCOL, __dirname } from '../../config';
+import { buildBaseUrl } from '../../utils';
 
 /**
  * A storage service that uploads files to the local file system.
@@ -27,7 +28,7 @@ export class LocalStorageService implements IStorageService {
 
         // Write JSON data to file
         fs.writeFileSync(filePath, body);
-        return { uri: `${PROTOCOL}://${DOMAIN}:${PORT}/api/${API_VERSION}/${bucket}/${key}` };
+        return { uri: buildBaseUrl(PROTOCOL, DOMAIN, EXTERNAL_PORT, `api/${API_VERSION}/${bucket}/${key}`) };
     }
 
     /**
