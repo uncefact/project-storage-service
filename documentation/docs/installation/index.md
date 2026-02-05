@@ -36,7 +36,7 @@ docker pull ghcr.io/uncefact/project-identity-resolver:latest
 cp .env.example .env
 # Edit .env and set your API_KEY and other configuration
 
-# Run the container using the 'latest' tag
+# Run the container (replace the tag if you pulled a different image above)
 docker run -d --env-file .env -p 3333:3333 \
   -v $(pwd)/uploads:/app/src/uploads:rw \
   ghcr.io/uncefact/project-identity-resolver:latest
