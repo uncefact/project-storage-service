@@ -5,6 +5,7 @@ jest.mock('../../config', () => ({
     DOMAIN: 'localhost',
     LOCAL_DIRECTORY: 'uploads',
     PORT: '3333',
+    EXTERNAL_PORT: '3333',
     PROTOCOL: 'http',
 }));
 

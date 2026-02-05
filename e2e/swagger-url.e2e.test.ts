@@ -5,6 +5,7 @@ const buildConfigMock = (overrides: Record<string, unknown> = {}) => ({
     PROTOCOL: overrides.PROTOCOL ?? 'http',
     DOMAIN: overrides.DOMAIN ?? 'localhost',
     PORT: overrides.PORT ?? 3333,
+    EXTERNAL_PORT: overrides.EXTERNAL_PORT ?? (overrides.PORT ?? 3333),
     DEFAULT_BUCKET: 'verifiable-credentials',
     AVAILABLE_BUCKETS: ['verifiable-credentials'],
     STORAGE_TYPE: 'local',
@@ -69,6 +70,37 @@ describe('Swagger URL E2E Tests', () => {
 
             expect(response.text).toContain('"url": "https://api.example.com/api/1.0.0"');
             expect(response.text).not.toContain('"url": "https://api.example.com:443');
+        });
+    });
+
+    describe('EXTERNAL_PORT override', () => {
+        it('should use EXTERNAL_PORT instead of PORT for Swagger URL', async () => {
+            const response = await getSwaggerInitResponse({ PORT: 3333, EXTERNAL_PORT: 8080 });
+
+            expect(response.text).toContain('"url": "http://localhost:8080/api/1.0.0"');
+            expect(response.text).not.toContain('"url": "http://localhost:3333');
+        });
+
+        it('should omit EXTERNAL_PORT 443 for HTTPS', async () => {
+            const response = await getSwaggerInitResponse({ PROTOCOL: 'https', DOMAIN: 'api.example.com', PORT: 3333, EXTERNAL_PORT: 443 });
+
+            expect(response.text).toContain('"url": "https://api.example.com/api/1.0.0"');
+            expect(response.text).not.toContain('"url": "https://api.example.com:443');
+            expect(response.text).not.toContain('"url": "https://api.example.com:3333');
+        });
+
+        it('should omit EXTERNAL_PORT 80 for HTTP', async () => {
+            const response = await getSwaggerInitResponse({ PROTOCOL: 'http', DOMAIN: 'example.com', PORT: 3333, EXTERNAL_PORT: 80 });
+
+            expect(response.text).toContain('"url": "http://example.com/api/1.0.0"');
+            expect(response.text).not.toContain('"url": "http://example.com:80');
+            expect(response.text).not.toContain('"url": "http://example.com:3333');
+        });
+
+        it('should fall back to PORT when EXTERNAL_PORT is not set', async () => {
+            const response = await getSwaggerInitResponse({ PORT: 9090 });
+
+            expect(response.text).toContain('"url": "http://localhost:9090/api/1.0.0"');
         });
     });
 });
