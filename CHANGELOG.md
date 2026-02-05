@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.1.0](https://github.com/uncefact/project-identity-resolver/compare/2.0.3...2.1.0) (2026-02-05)
+
+
+### Features
+
+* **ci:** Add Docker image workflow for next branch ([#68](https://github.com/uncefact/project-identity-resolver/issues/68)) ([e0a148c](https://github.com/uncefact/project-identity-resolver/commit/e0a148c290208517f5e15df616ddc909a6349f26))
+* **config:** Add EXTERNAL_PORT to decouple server port from URL generation ([#69](https://github.com/uncefact/project-identity-resolver/issues/69)) ([725de2e](https://github.com/uncefact/project-identity-resolver/commit/725de2e9a41f11a654b4f4bc10369cd2ffd256c9))
+
+
+### Bug Fixes
+
+* **ci:** Disable v prefix in release-please tag generation ([#65](https://github.com/uncefact/project-identity-resolver/issues/65)) ([abed7e0](https://github.com/uncefact/project-identity-resolver/commit/abed7e05c1479d2e5552a6e6bd5520619a87863e))
+
 ## [2.0.3](https://github.com/uncefact/project-identity-resolver/compare/2.0.2...2.0.3) (2026-02-04)
 
 
