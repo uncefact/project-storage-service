@@ -5,7 +5,8 @@ import bodyParser from 'body-parser';
 import { router } from './routes';
 import swaggerDocument from './swagger/swagger.json';
 import { updateSwagger } from './swagger/helpers';
-import { API_VERSION, DOMAIN, PORT, PROTOCOL } from './config';
+import { API_VERSION, DOMAIN, EXTERNAL_PORT, PROTOCOL } from './config';
+import { buildBaseUrl } from './utils';
 
 export const app = express();
 
@@ -16,11 +17,7 @@ app.use(
     (req: any, res: any, next: any) => {
         // Build the Swagger server URL from config rather than request internals (req.protocol,
         // req.hostname, req.socket.localPort) which reflect the container's internal address.
-        // Omit default ports (443 for HTTPS, 80 for HTTP) to produce standard URLs.
-        const isDefaultPort =
-            (PROTOCOL === 'https' && Number(PORT) === 443) || (PROTOCOL === 'http' && Number(PORT) === 80);
-        const portSuffix = isDefaultPort ? '' : `:${PORT}`;
-        const url = `${PROTOCOL}://${DOMAIN}${portSuffix}/api/${API_VERSION}`;
+        const url = buildBaseUrl(PROTOCOL, DOMAIN, EXTERNAL_PORT, `api/${API_VERSION}`);
         swaggerJson = updateSwagger(swaggerJson, { version: API_VERSION, url });
         req.swaggerDoc = swaggerJson;
         next();

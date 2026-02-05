@@ -2,7 +2,8 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 import { app } from './app';
-import { API_VERSION, DOMAIN, PORT, PROTOCOL, getApiKey } from './config';
+import { API_VERSION, DOMAIN, EXTERNAL_PORT, PORT, PROTOCOL, getApiKey } from './config';
+import { buildBaseUrl } from './utils';
 
 // Validate required environment variables at runtime
 if (!getApiKey()) {
@@ -11,7 +12,13 @@ if (!getApiKey()) {
     process.exit(1);
 }
 
+if (process.env.EXTERNAL_PORT && isNaN(Number(process.env.EXTERNAL_PORT))) {
+    console.error(`❌ ERROR: EXTERNAL_PORT must be a valid port number, got '${process.env.EXTERNAL_PORT}'.`);
+    process.exit(1);
+}
+
 app.listen(PORT, () => {
-    console.log(`Server is running: ${PROTOCOL}://${DOMAIN}:${PORT}/api/${API_VERSION} 🚀`);
-    console.log(`API documentation: ${PROTOCOL}://${DOMAIN}:${PORT}/api-docs 📚`);
+    const base = buildBaseUrl(PROTOCOL, DOMAIN, EXTERNAL_PORT);
+    console.log(`Server is running: ${base}/api/${API_VERSION} 🚀`);
+    console.log(`API documentation: ${base}/api-docs 📚`);
 });
