@@ -256,9 +256,11 @@ docker pull ghcr.io/uncefact/project-identity-resolver:1.1.0
 # Or pull the latest release
 docker pull ghcr.io/uncefact/project-identity-resolver:latest
 
-## Docker
+# Or pull the latest development image from the next branch
+docker pull ghcr.io/uncefact/project-identity-resolver:next
+```
 
-To run the storage service using Docker:
+### Running with Docker
 
 ```bash
 # Build the image

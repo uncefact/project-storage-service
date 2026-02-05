@@ -29,6 +29,9 @@ docker pull ghcr.io/uncefact/project-identity-resolver:latest
 # Alternatively, pull a specific version (e.g., 2.0.1)
 # docker pull ghcr.io/uncefact/project-identity-resolver:2.0.1
 
+# Or pull the latest development image from the next branch
+# docker pull ghcr.io/uncefact/project-identity-resolver:next
+
 # Copy and configure your environment file
 cp .env.example .env
 # Edit .env and set your API_KEY and other configuration
