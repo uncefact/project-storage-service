@@ -141,4 +141,30 @@ describe('uploadFile Handler', () => {
 
         expect(fs.unlink).toHaveBeenCalledWith('/tmp/upload-fail', expect.any(Function));
     });
+
+    it('should log error when temp file cleanup fails', async () => {
+        const unlinkError = new Error('EACCES: permission denied');
+        (fs.unlink as unknown as jest.Mock).mockImplementation((_path: string, cb: (err: Error | null) => void) => cb(unlinkError));
+        const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
+
+        const mockReq = getMockReq({
+            file: {
+                path: '/tmp/upload-cleanup-fail',
+                mimetype: 'image/png',
+            },
+            body: {
+                bucket: 'bucketName',
+                id: 'b9c1ca4e-6b28-477f-b61d-062645ee3e88',
+            },
+        } as any);
+
+        await uploadFile(mockReq as any, mockRes, mockNext);
+
+        expect(consoleSpy).toHaveBeenCalledWith(
+            expect.stringContaining('Failed to clean up temp file'),
+            unlinkError,
+        );
+
+        consoleSpy.mockRestore();
+    });
 });

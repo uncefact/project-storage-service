@@ -46,7 +46,11 @@ export const uploadFile: RequestHandler = async (req, res) => {
         });
     } finally {
         if (tempPath) {
-            fs.unlink(tempPath, () => {});
+            fs.unlink(tempPath, (err) => {
+                if (err) {
+                    console.error(`[FilesController.uploadFile] Failed to clean up temp file ${tempPath}:`, err);
+                }
+            });
         }
     }
 };

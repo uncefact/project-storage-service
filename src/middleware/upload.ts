@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import multer from 'multer';
 import os from 'os';
 import { ALLOWED_BINARY_TYPES, MAX_BINARY_FILE_SIZE } from '../config';
-import { BadRequestError, PayloadTooLargeError } from '../errors';
+import { ApiError, BadRequestError, PayloadTooLargeError } from '../errors';
 
 const storage = multer.diskStorage({
     destination: os.tmpdir(),
@@ -27,12 +27,16 @@ export const upload = multer({
  * Error-handling middleware for multer upload errors.
  * Converts multer-specific errors into appropriate API errors.
  */
-export const handleUploadError = (err: any, _req: Request, _res: Response, next: NextFunction) => {
+export const handleUploadError = (err: any, _req: Request, res: Response, next: NextFunction) => {
     if (err instanceof multer.MulterError) {
         if (err.code === 'LIMIT_FILE_SIZE') {
-            return next(new PayloadTooLargeError(`File exceeds the maximum allowed size of ${MAX_BINARY_FILE_SIZE} bytes.`));
+            return res.status(413).json({ message: `File exceeds the maximum allowed size of ${MAX_BINARY_FILE_SIZE} bytes.` });
         }
-        return next(new BadRequestError(err.message));
+        return res.status(400).json({ message: err.message });
+    }
+
+    if (err instanceof ApiError) {
+        return res.status(err.statusCode).json({ message: err.message });
     }
 
     next(err);

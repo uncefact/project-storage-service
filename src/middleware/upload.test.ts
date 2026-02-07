@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import multer from 'multer';
-import { BadRequestError, PayloadTooLargeError } from '../errors';
+import { ApiError, BadRequestError, PayloadTooLargeError } from '../errors';
 
 jest.mock('../config', () => ({
     ALLOWED_BINARY_TYPES: ['image/png', 'image/jpeg', 'application/pdf'],
@@ -82,27 +82,43 @@ describe('Upload Middleware', () => {
     });
 
     describe('handleUploadError', () => {
-        it('should convert LIMIT_FILE_SIZE MulterError to PayloadTooLargeError', () => {
+        it('should respond with 413 JSON for LIMIT_FILE_SIZE MulterError', () => {
             const multerError = new multer.MulterError('LIMIT_FILE_SIZE');
 
             handleUploadError(multerError, mockRequest as any, mockResponse as any, mockNext);
 
-            expect(mockNext).toHaveBeenCalledWith(expect.any(PayloadTooLargeError));
-            const passedError = (mockNext as jest.Mock).mock.calls[0][0] as PayloadTooLargeError;
-            expect(passedError.statusCode).toBe(413);
+            expect(mockResponse.status).toHaveBeenCalledWith(413);
+            expect(mockResponse.json).toHaveBeenCalledWith({
+                message: expect.stringContaining('maximum allowed size'),
+            });
+            expect(mockNext).not.toHaveBeenCalled();
         });
 
-        it('should convert other MulterError to BadRequestError', () => {
+        it('should respond with 400 JSON for other MulterErrors', () => {
             const multerError = new multer.MulterError('LIMIT_UNEXPECTED_FILE');
 
             handleUploadError(multerError, mockRequest as any, mockResponse as any, mockNext);
 
-            expect(mockNext).toHaveBeenCalledWith(expect.any(BadRequestError));
-            const passedError = (mockNext as jest.Mock).mock.calls[0][0] as BadRequestError;
-            expect(passedError.statusCode).toBe(400);
+            expect(mockResponse.status).toHaveBeenCalledWith(400);
+            expect(mockResponse.json).toHaveBeenCalledWith({
+                message: expect.any(String),
+            });
+            expect(mockNext).not.toHaveBeenCalled();
         });
 
-        it('should pass non-multer errors through to next', () => {
+        it('should respond with JSON for ApiError instances (e.g. fileFilter rejection)', () => {
+            const badRequestError = new BadRequestError("File type 'application/zip' is not allowed.");
+
+            handleUploadError(badRequestError, mockRequest as any, mockResponse as any, mockNext);
+
+            expect(mockResponse.status).toHaveBeenCalledWith(400);
+            expect(mockResponse.json).toHaveBeenCalledWith({
+                message: expect.stringContaining('not allowed'),
+            });
+            expect(mockNext).not.toHaveBeenCalled();
+        });
+
+        it('should pass unknown errors through to next', () => {
             const genericError = new Error('Something went wrong');
 
             handleUploadError(genericError, mockRequest as any, mockResponse as any, mockNext);

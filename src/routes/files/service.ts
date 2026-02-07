@@ -61,6 +61,11 @@ export class FilesService {
             }
 
             const ext = extension(mimeType);
+
+            if (!ext) {
+                throw new BadRequestError(`Unable to determine file extension for MIME type '${mimeType}'.`);
+            }
+
             const objectName = `${fileId}.${ext}`;
 
             const objectExists = await storageService.objectExists(bucket, objectName);
@@ -69,7 +74,7 @@ export class FilesService {
                 throw new ConflictError('A file with the provided ID already exists in the specified bucket.');
             }
 
-            const hash = cryptoService.computeHash(file as any);
+            const hash = cryptoService.computeHash(file);
 
             const { uri } = await storageService.uploadFile(bucket, objectName, file, mimeType);
 

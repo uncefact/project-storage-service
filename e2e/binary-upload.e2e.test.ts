@@ -144,10 +144,8 @@ describe('Binary Upload E2E Tests', () => {
                 .attach('file', Buffer.from('not a real zip'), { filename: 'test.zip', contentType: 'application/zip' })
                 .field('bucket', 'verifiable-credentials');
 
-            // Multer fileFilter rejection may result in 400 or 500 depending on how
-            // Express routes the error. The key assertion is that it does NOT succeed.
-            expect(response.status).toBeGreaterThanOrEqual(400);
-            expect(response.status).toBeLessThan(600);
+            expect(response.status).toBe(400);
+            expect(response.body.message).toContain('not allowed');
         });
 
         it('should return 400 when bucket is missing', async () => {
