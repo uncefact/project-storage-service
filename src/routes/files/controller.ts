@@ -35,7 +35,7 @@ export const uploadFile: RequestHandler = async (req, res) => {
 
         res.status(201).json(response);
     } catch (err: any) {
-        console.log('[FilesController.uploadFile] An error occurred while uploading the file.', err);
+        console.error('[FilesController.uploadFile] An error occurred while uploading the file.', err);
 
         if (err instanceof ApiError) {
             return res.status(err.statusCode).json({ message: err.message });
