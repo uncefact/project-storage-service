@@ -1,5 +1,22 @@
 # Changelog
 
+## [2.2.0](https://github.com/uncefact/project-identity-resolver/compare/2.1.0...2.2.0) (2026-02-07)
+
+
+### Features
+
+* **files:** Add binary file upload support ([#74](https://github.com/uncefact/project-identity-resolver/issues/74)) ([4032fc1](https://github.com/uncefact/project-identity-resolver/commit/4032fc1ae17e7177efc7e5d7cdd36e804572ab3c))
+
+
+### Bug Fixes
+
+* Dotenv loading order and objectExists key handling ([#76](https://github.com/uncefact/project-identity-resolver/issues/76)) ([c321f3a](https://github.com/uncefact/project-identity-resolver/commit/c321f3af08ccee82f01238fca4716cbd2c4ec153))
+
+
+### Code Refactoring
+
+* **tests:** Read API version from version.json instead of hardcoding ([#75](https://github.com/uncefact/project-identity-resolver/issues/75)) ([45177c9](https://github.com/uncefact/project-identity-resolver/commit/45177c920419e515f5514391f9032d5916ae38a4))
+
 ## [2.1.0](https://github.com/uncefact/project-identity-resolver/compare/2.0.3...2.1.0) (2026-02-05)
 
 
