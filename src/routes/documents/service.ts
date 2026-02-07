@@ -41,13 +41,13 @@ export class DocumentsService {
                 throw new BadRequestError('Data must be a JSON object. Please provide a valid JSON object.');
             }
 
-            const credentialId = id ?? v4();
+            const credentialId = id || v4();
 
             if (!isValidUUID(credentialId)) {
                 throw new BadRequestError(`Invalid id ${credentialId}. Please provide a valid UUID.`);
             }
 
-            const objectExists = await storageService.objectExists(bucket, credentialId);
+            const objectExists = await storageService.objectExists(bucket, credentialId + '.json');
 
             if (objectExists) {
                 throw new ConflictError('A document with the provided ID already exists in the specified bucket.');

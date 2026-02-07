@@ -1,3 +1,8 @@
+// dotenv must be loaded before any other imports so that process.env values
+// are available when the remaining modules evaluate their top-level constants.
+import dotenv from 'dotenv';
+dotenv.config();
+
 import fs from 'fs';
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
