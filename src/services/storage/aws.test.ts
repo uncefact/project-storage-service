@@ -42,6 +42,18 @@ describe('AWSStorageService', () => {
             expect(mockSend).toHaveBeenCalledTimes(1);
         });
 
+        it('should upload a Buffer body successfully', async () => {
+            mockSend.mockResolvedValueOnce({});
+            const { AWSStorageService } = require('./aws');
+            const awsStorageService = new AWSStorageService();
+
+            const buffer = Buffer.from('binary content');
+            const result = await awsStorageService.uploadFile('test-bucket', 'test-key.bin', buffer, 'application/octet-stream');
+
+            expect(result).toEqual({ uri: 'https://test-bucket.s3.amazonaws.com/test-key.bin' });
+            expect(mockSend).toHaveBeenCalledTimes(1);
+        });
+
         it('should throw an error if upload fails', async () => {
             mockSend.mockRejectedValueOnce(new Error('Upload failed'));
             const { AWSStorageService } = require('./aws');

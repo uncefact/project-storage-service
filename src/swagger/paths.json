@@ -32,7 +32,7 @@
                                         "uri": {
                                             "type": "string",
                                             "description": "The location where your data is stored.",
-                                            "example": "http://localhost:3333/api/1.0.0/verifiable-credentials/123e4567-e89b-12d3-a456-426614174000.json"
+                                            "example": "http://localhost:3333/api/1.1.0/verifiable-credentials/123e4567-e89b-12d3-a456-426614174000.json"
                                         },
                                         "hash": {
                                             "type": "string",
@@ -52,6 +52,73 @@
                     },
                     "409": {
                         "$ref": "./components/responses.json#/components/responses/409"
+                    },
+                    "500": {
+                        "$ref": "./components/responses.json#/components/responses/500"
+                    }
+                }
+            }
+        },
+        "/files": {
+            "post": {
+                "summary": "Store public binary files without encryption.",
+                "description": "Store public binary files (images, PDFs, etc.) without encryption. Like `/documents`, this endpoint stores your file as-is — it is not encrypted and is publicly accessible to anyone who obtains the URI. Accepts multipart/form-data with the file and metadata. Returns a URI (the location of your stored file) and a hash (a fingerprint to verify the file hasn't changed).\n\nFor private data that requires encryption, use the `/credentials` endpoint instead.\n\nAllowed file types are configured server-side. Default allowed types: PNG, JPEG, WebP, PDF.",
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "./components/schemas.json#/components/schemas/StoreFileRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "File stored successfully. Returns the storage location and integrity hash.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "uri": {
+                                            "type": "string",
+                                            "description": "The location where your file is stored.",
+                                            "example": "http://localhost:3333/api/1.1.0/files/123e4567-e89b-12d3-a456-426614174000.png"
+                                        },
+                                        "hash": {
+                                            "type": "string",
+                                            "description": "A fingerprint to verify the file hasn't changed.",
+                                            "example": "computed-hash"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "./components/responses.json#/components/responses/400"
+                    },
+                    "401": {
+                        "$ref": "./components/responses.json#/components/responses/401"
+                    },
+                    "409": {
+                        "$ref": "./components/responses.json#/components/responses/409"
+                    },
+                    "413": {
+                        "description": "Payload Too Large. The uploaded file exceeds the maximum allowed size.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "File exceeds the maximum allowed size."
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     },
                     "500": {
                         "$ref": "./components/responses.json#/components/responses/500"
@@ -91,7 +158,7 @@
                                         "uri": {
                                             "type": "string",
                                             "description": "The location where your encrypted data is stored.",
-                                            "example": "http://localhost:3333/api/1.0.0/verifiable-credentials/123e4567-e89b-12d3-a456-426614174000.json"
+                                            "example": "http://localhost:3333/api/1.1.0/verifiable-credentials/123e4567-e89b-12d3-a456-426614174000.json"
                                         },
                                         "hash": {
                                             "type": "string",

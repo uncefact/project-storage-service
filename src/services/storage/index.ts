@@ -11,7 +11,7 @@ export interface IStorageService {
      * @param contentType The MIME type of the file being uploaded.
      * @returns A promise that resolves with the URI of the uploaded file.
      */
-    uploadFile(bucket: string, key: string, body: string, contentType: string): Promise<{ uri: string }>;
+    uploadFile(bucket: string, key: string, body: string | Buffer, contentType: string): Promise<{ uri: string }>;
 
     /**
      * Checks if an object exists in the storage service.
