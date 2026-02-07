@@ -94,7 +94,7 @@ LOCAL_DIRECTORY=uploads
 
 # Buckets
 DEFAULT_BUCKET=verifiable-credentials
-AVAILABLE_BUCKETS=verifiable-credentials,private-verifiable-credentials
+AVAILABLE_BUCKETS=verifiable-credentials,files,private-verifiable-credentials
 ```
 
 ## Basic Usage
