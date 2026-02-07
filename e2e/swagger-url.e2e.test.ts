@@ -1,7 +1,9 @@
 import request from 'supertest';
 
+const { apiVersion: API_VERSION } = require('../version.json');
+
 const buildConfigMock = (overrides: Record<string, unknown> = {}) => ({
-    API_VERSION: '1.0.0',
+    API_VERSION: API_VERSION,
     PROTOCOL: overrides.PROTOCOL ?? 'http',
     DOMAIN: overrides.DOMAIN ?? 'localhost',
     PORT: overrides.PORT ?? 3333,
@@ -32,14 +34,14 @@ describe('Swagger URL E2E Tests', () => {
         it('should omit port 443 for HTTPS', async () => {
             const response = await getSwaggerInitResponse({ PROTOCOL: 'https', DOMAIN: 'api.example.com', PORT: 443 });
 
-            expect(response.text).toContain('"url": "https://api.example.com/api/1.0.0"');
+            expect(response.text).toContain(`"url": "https://api.example.com/api/${API_VERSION}"`);
             expect(response.text).not.toContain('"url": "https://api.example.com:443');
         });
 
         it('should omit port 80 for HTTP', async () => {
             const response = await getSwaggerInitResponse({ PROTOCOL: 'http', DOMAIN: 'example.com', PORT: 80 });
 
-            expect(response.text).toContain('"url": "http://example.com/api/1.0.0"');
+            expect(response.text).toContain(`"url": "http://example.com/api/${API_VERSION}"`);
             expect(response.text).not.toContain('"url": "http://example.com:80');
         });
     });
@@ -48,19 +50,19 @@ describe('Swagger URL E2E Tests', () => {
         it('should include port for HTTP on non-standard port', async () => {
             const response = await getSwaggerInitResponse({ PROTOCOL: 'http', DOMAIN: 'localhost', PORT: 3333 });
 
-            expect(response.text).toContain('"url": "http://localhost:3333/api/1.0.0"');
+            expect(response.text).toContain(`"url": "http://localhost:3333/api/${API_VERSION}"`);
         });
 
         it('should include port for HTTPS on non-standard port', async () => {
             const response = await getSwaggerInitResponse({ PROTOCOL: 'https', DOMAIN: 'api.example.com', PORT: 8443 });
 
-            expect(response.text).toContain('"url": "https://api.example.com:8443/api/1.0.0"');
+            expect(response.text).toContain(`"url": "https://api.example.com:8443/api/${API_VERSION}"`);
         });
 
         it('should include custom port for HTTP', async () => {
             const response = await getSwaggerInitResponse({ PROTOCOL: 'http', DOMAIN: 'dev.example.com', PORT: 8080 });
 
-            expect(response.text).toContain('"url": "http://dev.example.com:8080/api/1.0.0"');
+            expect(response.text).toContain(`"url": "http://dev.example.com:8080/api/${API_VERSION}"`);
         });
     });
 
@@ -68,7 +70,7 @@ describe('Swagger URL E2E Tests', () => {
         it('should handle string port from env correctly', async () => {
             const response = await getSwaggerInitResponse({ PROTOCOL: 'https', DOMAIN: 'api.example.com', PORT: '443' });
 
-            expect(response.text).toContain('"url": "https://api.example.com/api/1.0.0"');
+            expect(response.text).toContain(`"url": "https://api.example.com/api/${API_VERSION}"`);
             expect(response.text).not.toContain('"url": "https://api.example.com:443');
         });
     });
@@ -77,14 +79,14 @@ describe('Swagger URL E2E Tests', () => {
         it('should use EXTERNAL_PORT instead of PORT for Swagger URL', async () => {
             const response = await getSwaggerInitResponse({ PORT: 3333, EXTERNAL_PORT: 8080 });
 
-            expect(response.text).toContain('"url": "http://localhost:8080/api/1.0.0"');
+            expect(response.text).toContain(`"url": "http://localhost:8080/api/${API_VERSION}"`);
             expect(response.text).not.toContain('"url": "http://localhost:3333');
         });
 
         it('should omit EXTERNAL_PORT 443 for HTTPS', async () => {
             const response = await getSwaggerInitResponse({ PROTOCOL: 'https', DOMAIN: 'api.example.com', PORT: 3333, EXTERNAL_PORT: 443 });
 
-            expect(response.text).toContain('"url": "https://api.example.com/api/1.0.0"');
+            expect(response.text).toContain(`"url": "https://api.example.com/api/${API_VERSION}"`);
             expect(response.text).not.toContain('"url": "https://api.example.com:443');
             expect(response.text).not.toContain('"url": "https://api.example.com:3333');
         });
@@ -92,7 +94,7 @@ describe('Swagger URL E2E Tests', () => {
         it('should omit EXTERNAL_PORT 80 for HTTP', async () => {
             const response = await getSwaggerInitResponse({ PROTOCOL: 'http', DOMAIN: 'example.com', PORT: 3333, EXTERNAL_PORT: 80 });
 
-            expect(response.text).toContain('"url": "http://example.com/api/1.0.0"');
+            expect(response.text).toContain(`"url": "http://example.com/api/${API_VERSION}"`);
             expect(response.text).not.toContain('"url": "http://example.com:80');
             expect(response.text).not.toContain('"url": "http://example.com:3333');
         });
@@ -100,7 +102,7 @@ describe('Swagger URL E2E Tests', () => {
         it('should fall back to PORT when EXTERNAL_PORT is not set', async () => {
             const response = await getSwaggerInitResponse({ PORT: 9090 });
 
-            expect(response.text).toContain('"url": "http://localhost:9090/api/1.0.0"');
+            expect(response.text).toContain(`"url": "http://localhost:9090/api/${API_VERSION}"`);
         });
     });
 });
