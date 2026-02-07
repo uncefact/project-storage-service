@@ -68,12 +68,12 @@ export class AWSStorageService implements IStorageService {
      * @param contentType The content type of the file.
      * @returns A promise that resolves to the public URL of the uploaded file.
      */
-    async uploadFile(bucket: string, key: string, body: string, contentType: string) {
+    async uploadFile(bucket: string, key: string, body: string | Buffer, contentType: string) {
         const params: PutObjectCommandInput = {
             Bucket: bucket,
             Key: key,
             Body: body,
-            ContentType: contentType
+            ContentType: contentType,
         };
 
         try {

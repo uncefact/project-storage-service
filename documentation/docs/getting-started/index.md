@@ -51,12 +51,30 @@ The service can be configured through environment variables. If not specified, t
 | `STORAGE_TYPE`    | Storage provider (`local`, `gcp`, or `aws`) | `local`   |
 | `LOCAL_DIRECTORY` | Directory for local file storage            | `uploads` |
 
+
 ### Bucket Configuration
 
 | Variable            | Description                                     | Default                  |
 | ------------------- | ----------------------------------------------- | ------------------------ |
 | `DEFAULT_BUCKET`    | Default storage bucket name                     | `verifiable-credentials` |
-| `AVAILABLE_BUCKETS` | Comma-separated list of allowed storage buckets | `verifiable-credentials` |
+| `AVAILABLE_BUCKETS` | Comma-separated list of allowed storage buckets | `verifiable-credentials,files` |
+
+### File Upload Configuration
+
+| Variable              | Description                                      | Default                                                       |
+| --------------------- | ------------------------------------------------ | ------------------------------------------------------------- |
+| `MAX_BINARY_FILE_SIZE` | Maximum file upload size in bytes               | `10485760` (10 MB)                                            |
+| `ALLOWED_BINARY_TYPES` | Comma-separated list of allowed MIME types      | `image/png,image/jpeg,image/webp,application/pdf`   |
+
+:::caution Disk space considerations for file uploads
+
+Uploaded files are temporarily written to the OS temp directory before being forwarded to storage. Temp files are automatically cleaned up after each upload completes or fails.
+
+When planning your deployment, ensure:
+- **Temp directory disk space** can accommodate concurrent uploads at the configured `MAX_BINARY_FILE_SIZE`. For example, 10 concurrent 10 MB uploads require ~100 MB of temporary disk space.
+- **`MAX_BINARY_FILE_SIZE`** is set appropriately for your use case — lower it if your files are typically smaller.
+
+:::
 
 Example `.env` file for local development:
 
@@ -99,7 +117,7 @@ yarn start
 You can test the service using `curl`. Note that all upload endpoints require authentication via the `X-API-Key` header:
 
 ```bash
-curl -X POST http://localhost:3333/api/1.0.0/credentials \
+curl -X POST http://localhost:3333/api/1.1.0/credentials \
 -H "Content-Type: application/json" \
 -H "X-API-Key: your-secure-api-key-here" \
 -d '{
@@ -114,7 +132,7 @@ The service will respond similarly to the data below:
 
 ```json
 {
-    "uri": "http://localhost:3333/api/1.0.0/verifiable-credentials/e8b32169-582c-421a-a03f-5d1a7ac62d51.json",
+    "uri": "http://localhost:3333/api/1.1.0/verifiable-credentials/e8b32169-582c-421a-a03f-5d1a7ac62d51.json",
     "hash": "d6bb7b579925baa4fe1cec41152b6577003e6a9fde6850321e36ad4ac9b3f30a",
     "key": "f3bee3dc18343aaab66d28fd70a03015d2ddbd5fd3b9ad38fff332c09014598d"
 }

@@ -1,6 +1,28 @@
 {
     "components": {
         "schemas": {
+            "StoreFileRequest": {
+                "type": "object",
+                "required": ["file", "bucket"],
+                "properties": {
+                    "file": {
+                        "type": "string",
+                        "format": "binary",
+                        "description": "The binary file to upload."
+                    },
+                    "bucket": {
+                        "type": "string",
+                        "description": "Name of the bucket where the file will be stored.",
+                        "example": "files"
+                    },
+                    "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Optional UUID for the file. If not provided, one will be generated.",
+                        "example": "123e4567-e89b-12d3-a456-426614174000"
+                    }
+                }
+            },
             "StoreDocumentRequest": {
                 "type": "object",
                 "properties": {

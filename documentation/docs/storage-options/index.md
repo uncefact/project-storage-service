@@ -9,11 +9,12 @@ import Disclaimer from './../\_disclaimer.mdx';
 
 ## Understanding Your Storage Options
 
-This service offers two ways to store data, depending on whether your data is public or private.
+This service offers three ways to store data, depending on whether your data is public or private.
 
 | Use Case | Endpoint | What Happens |
 |----------|----------|--------------|
-| Public data | `/documents` | Stored as-is |
+| Public JSON data | `/documents` | Stored as-is, without encryption |
+| Public binary files (images, PDFs, etc.) | `/files` | Stored as-is, without encryption |
 | Private data | `/credentials` | Automatically encrypted |
 
 ## The Lockbox Analogy
@@ -31,7 +32,7 @@ Without that key, no one — including us — can open the box. This is why it's
 
 ### Public Data: `/documents`
 
-Use this endpoint for data you're happy to share publicly. Since documents are stored unencrypted at a public URI, they can be read by anyone who obtains the link.
+Use this endpoint for JSON data you're happy to share publicly. Since documents are stored unencrypted at a public URI, they can be read by anyone who obtains the link.
 
 **What happens:**
 1. You send your data to the service
@@ -42,6 +43,21 @@ Use this endpoint for data you're happy to share publicly. Since documents are s
 
 ```
 Your Data → Store → URI + Hash
+```
+
+### Public Binary Files: `/files`
+
+Use this endpoint for binary files (images, PDFs, etc.) you're happy to share publicly. Like `/documents`, files are stored as-is without encryption and are publicly accessible to anyone who obtains the URI.
+
+**What happens:**
+1. You upload your file to the service
+2. The service stores it exactly as you sent it
+3. You receive back:
+   - A **URI** — the location where your file is stored
+   - A **hash** — a fingerprint to verify your file hasn't changed
+
+```
+Your File → Store → URI + Hash
 ```
 
 ### Private Data: `/credentials`
@@ -75,14 +91,16 @@ Store it securely immediately after receiving it.
 
 | Scenario | Recommended Endpoint |
 |----------|---------------------|
-| Public data | `/documents` |
+| Public JSON data | `/documents` |
+| Public binary files (images, PDFs, etc.) | `/files` |
 | Private data | `/credentials` |
 
 :::info Note on Data Discovery
 
-Both endpoints use UUIDs as identifiers. UUIDs are designed to be practically impossible to guess or enumerate, so discovery is unlikely. However, if someone does obtain a URI:
+All endpoints use UUIDs as identifiers. UUIDs are designed to be practically impossible to guess or enumerate, so discovery is unlikely. However, if someone does obtain a URI:
 
 - **`/documents`**: The data can be read directly
+- **`/files`**: The file can be accessed directly
 - **`/credentials`**: The data is encrypted and unreadable without the corresponding decryption key
 
 This is why encryption matters for sensitive data — it provides protection even if the URI is somehow discovered.
@@ -99,8 +117,9 @@ For developers who want to understand the encryption:
 
 ### Unencrypted Data Structure
 
-When you store data via `/documents`, the service stores your data exactly as you sent it:
+When you store data via `/documents` or upload files via `/files`, the service stores your content exactly as you sent it — no encryption or transformation is applied.
 
+For `/documents`:
 ```json
 {
     "field1": "value1",
@@ -108,11 +127,13 @@ When you store data via `/documents`, the service stores your data exactly as yo
 }
 ```
 
+For `/files`, the binary file (e.g. PNG, PDF) is stored in its original format.
+
 | Field | Description |
 |-------|-------------|
-| Your data | Stored exactly as provided, with no transformation |
+| Your data/file | Stored exactly as provided, with no transformation or encryption |
 
-This means your data is directly readable by anyone who obtains the URI.
+This means your content is directly accessible to anyone who obtains the URI.
 
 ### Encrypted Data Structure
 

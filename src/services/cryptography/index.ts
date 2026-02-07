@@ -29,12 +29,12 @@ export interface IEncryptionResult {
 
 export interface ICryptographyService {
     /**
-     * Generates a hash from a given string.
-     * @param input The string to hash.
+     * Generates a hash from a given input.
+     * @param input The string or Buffer to hash.
      * @param algorithm The hash algorithm to use (default: SHA-256).
-     * @returns The hash of the input string.
+     * @returns The hash of the input as a hexadecimal string.
      */
-    computeHash(input: string, algorithm?: HashAlgorithm): string;
+    computeHash(input: string | Buffer, algorithm?: HashAlgorithm): string;
 
     /**
      * Generates a cryptographic key.

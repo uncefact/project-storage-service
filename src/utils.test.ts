@@ -42,10 +42,10 @@ describe('buildBaseUrl', () => {
     });
 
     it('should append path when provided', () => {
-        expect(buildBaseUrl('https', 'api.example.com', 443, 'api/1.0.0')).toBe('https://api.example.com/api/1.0.0');
+        expect(buildBaseUrl('https', 'api.example.com', 443, 'api/1.1.0')).toBe('https://api.example.com/api/1.1.0');
     });
 
     it('should append path with non-standard port', () => {
-        expect(buildBaseUrl('http', 'localhost', 3333, 'api/1.0.0')).toBe('http://localhost:3333/api/1.0.0');
+        expect(buildBaseUrl('http', 'localhost', 3333, 'api/1.1.0')).toBe('http://localhost:3333/api/1.1.0');
     });
 });
