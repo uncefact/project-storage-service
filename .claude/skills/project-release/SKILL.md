@@ -34,11 +34,11 @@ git log next --not origin/main --oneline
 
 | Commit Pattern | Version Bump |
 |----------------|--------------|
-| `feat!:` or `BREAKING CHANGE:` in body | MAJOR |
+| "feat!:" or "BREAKING CHANGE:" in body | MAJOR |
 | `feat:` | MINOR |
 | `fix:`, `docs:`, `ci:`, etc. | PATCH |
 
-The `!` after the type indicates a breaking change.
+The "!" after the type indicates a breaking change.
 
 ## Standard Release Process
 
@@ -98,7 +98,7 @@ After generating, review the new versioned docs to confirm they're correct.
 
 ### 6. Commit Release Preparation
 
-**Important**: Do NOT include `BREAKING CHANGE:` in the release commit message if the original feature commit already has `!` or `BREAKING CHANGE:`. This causes duplicate entries in the changelog.
+**Important**: Do NOT include "BREAKING CHANGE:" in the release commit message if the original feature commit already has "!" or "BREAKING CHANGE:". This causes duplicate entries in the changelog.
 
 ```bash
 git add -A
@@ -166,7 +166,7 @@ Same as standard release - PR to main, merge, then merge main back to next.
 ### Duplicate Breaking Changes
 
 **Problem**: Changelog shows same breaking change twice.
-**Cause**: Release commit includes `BREAKING CHANGE:` when original commit already had `!`.
+**Cause**: Release commit includes "BREAKING CHANGE:" when original commit already had "!".
 **Prevention**: Only document breaking changes once, in the original feature commit.
 
 ### Missing Version Updates

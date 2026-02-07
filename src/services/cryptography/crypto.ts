@@ -6,12 +6,12 @@ import { HashAlgorithm, EncryptionAlgorithm, ICryptographyService, ivLengthMap, 
  */
 export class CryptographyService implements ICryptographyService {
     /**
-     * Computes the hash of the input string.
-     * @param {string} input - The input string to compute the hash for.
+     * Computes the hash of the input.
+     * @param {string | Buffer} input - The input string or Buffer to compute the hash for.
      * @param {HashAlgorithm} [algorithm=HashAlgorithm.SHA_256] - The hash algorithm to use.
      * @returns {string} The computed hash as a hexadecimal string.
      */
-    computeHash(input: string, algorithm: HashAlgorithm = HashAlgorithm.SHA_256) {
+    computeHash(input: string | Buffer, algorithm: HashAlgorithm = HashAlgorithm.SHA_256) {
         const hash = crypto.createHash(algorithm).update(input).digest('hex');
 
         return hash;

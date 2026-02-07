@@ -26,6 +26,12 @@ export class ConflictError extends ApiError {
     }
 }
 
+export class PayloadTooLargeError extends ApiError {
+    constructor(message: string) {
+        super(message, 413);
+    }
+}
+
 export class ApplicationError extends ApiError {
     constructor(message: string) {
         super(message, 500);

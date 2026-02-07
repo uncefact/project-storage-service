@@ -22,7 +22,7 @@ The service offers the following functionality:
 
 ## Choosing Your Storage Endpoint
 
-This service offers two ways to store data, depending on whether your data is public or private.
+This service offers three ways to store data, depending on whether your data is public or private and whether it is structured JSON or a binary file.
 
 ### Public Data → [`/documents`](#store-document)
 
@@ -30,6 +30,15 @@ For data that doesn't require protection. The service stores it as-is and return
 
 - A **URI** (the location of your stored data)
 - A **hash** (a fingerprint to verify the data hasn't changed)
+
+### Public Binary Files → [`/files`](#store-file)
+
+For binary files (images, PDFs, etc.) that don't require encryption. The service stores the file as-is via a multipart upload and returns:
+
+- A **URI** (the location of your stored file)
+- A **hash** (a fingerprint to verify the file hasn't changed)
+
+Allowed file types and maximum file size are [configurable](#file-upload-configuration).
 
 ### Private Data → [`/credentials`](#store-credential)
 
@@ -121,6 +130,13 @@ Configure the storage service using the following environment variables:
   The directory for local storage (default: `uploads` in the current directory).
 - `GOOGLE_APPLICATION_CREDENTIALS`:
   The path to the GCP service account file (if using GCP).
+
+### File Upload Configuration
+
+- `MAX_BINARY_FILE_SIZE`:
+  Maximum file size in bytes for binary uploads via `/files` (default: `10485760` — 10 MB).
+- `ALLOWED_BINARY_TYPES`:
+  Comma-separated list of permitted MIME types (default: `image/png,image/jpeg,image/webp,application/pdf`).
 
 ### S3-Compatible Storage (AWS, MinIO, DigitalOcean Spaces, Cloudflare R2, etc.)
 
@@ -239,15 +255,22 @@ The cryptography service uses the following algorithms:
 
 ## Authentication
 
-All upload endpoints (`POST /credentials` and `POST /documents`) require API key authentication via the `X-API-Key` header.
+All upload endpoints (`POST /credentials`, `POST /documents`, and `POST /files`) require API key authentication via the `X-API-Key` header.
 
-Example:
+Examples:
 
 ```bash
-curl -X POST http://localhost:3333/api/1.0.0/credentials \
+# Store a JSON credential (encrypted)
+curl -X POST http://localhost:3333/api/1.1.0/credentials \
 -H "Content-Type: application/json" \
 -H "X-API-Key: your-api-key-here" \
 -d '{"bucket": "verifiable-credentials", "data": {"field1": "value1"}}'
+
+# Upload a binary file
+curl -X POST http://localhost:3333/api/1.1.0/files \
+-H "X-API-Key: your-api-key-here" \
+-F "bucket=files" \
+-F "file=@/path/to/image.png"
 ```
 
 If the API key is missing or invalid, the service will return a `401 Unauthorized` response.
@@ -261,8 +284,8 @@ Images support `linux/amd64` and `linux/arm64` architectures (Intel/AMD and Appl
 ### Pulling Images
 
 ```bash
-# Pull a specific version (e.g., 1.1.0)
-docker pull ghcr.io/uncefact/project-identity-resolver:1.1.0
+# Pull a specific version (e.g., 2.1.0)
+docker pull ghcr.io/uncefact/project-identity-resolver:2.1.0
 
 # Or pull the latest release
 docker pull ghcr.io/uncefact/project-identity-resolver:latest

@@ -1,6 +1,3 @@
-import dotenv from 'dotenv';
-dotenv.config();
-
 import { app } from './app';
 import { API_VERSION, DOMAIN, EXTERNAL_PORT, PORT, PROTOCOL, getApiKey } from './config';
 import { buildBaseUrl } from './utils';
