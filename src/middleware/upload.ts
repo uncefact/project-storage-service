@@ -30,9 +30,10 @@ export const upload = multer({
 export const handleUploadError = (err: any, _req: Request, res: Response, next: NextFunction) => {
     if (err instanceof multer.MulterError) {
         if (err.code === 'LIMIT_FILE_SIZE') {
-            return res.status(413).json({ message: `File exceeds the maximum allowed size of ${MAX_BINARY_FILE_SIZE} bytes.` });
+            err = new PayloadTooLargeError(`File exceeds the maximum allowed size of ${MAX_BINARY_FILE_SIZE} bytes.`);
+        } else {
+            err = new BadRequestError(err.message);
         }
-        return res.status(400).json({ message: err.message });
     }
 
     if (err instanceof ApiError) {

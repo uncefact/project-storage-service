@@ -13,7 +13,7 @@ jest.mock('../src/config', () => {
         PORT: 3333,
         EXTERNAL_PORT: 3333,
         DEFAULT_BUCKET: 'verifiable-credentials',
-        AVAILABLE_BUCKETS: ['verifiable-credentials'],
+        AVAILABLE_BUCKETS: ['verifiable-credentials', 'files'],
         STORAGE_TYPE: 'local',
         REGION: 'ap-southeast-2',
         LOCAL_DIRECTORY: 'uploads',
@@ -73,7 +73,7 @@ describe('Binary Upload E2E Tests', () => {
                 .post(`/api/${API_VERSION}/files`)
                 .set('X-API-Key', 'test-api-key-e2e')
                 .attach('file', MINIMAL_PNG, { filename: 'test.png', contentType: 'image/png' })
-                .field('bucket', 'verifiable-credentials')
+                .field('bucket', 'files')
                 .expect(201);
 
             expect(response.body).toHaveProperty('uri');
@@ -85,7 +85,7 @@ describe('Binary Upload E2E Tests', () => {
                 .post(`/api/${API_VERSION}/files`)
                 .set('X-API-Key', 'test-api-key-e2e')
                 .attach('file', MINIMAL_PDF, { filename: 'test.pdf', contentType: 'application/pdf' })
-                .field('bucket', 'verifiable-credentials')
+                .field('bucket', 'files')
                 .expect(201);
 
             expect(response.body).toHaveProperty('uri');
@@ -98,7 +98,7 @@ describe('Binary Upload E2E Tests', () => {
                 .post(`/api/${API_VERSION}/files`)
                 .set('X-API-Key', 'test-api-key-e2e')
                 .attach('file', MINIMAL_PNG, { filename: 'test.png', contentType: 'image/png' })
-                .field('bucket', 'verifiable-credentials')
+                .field('bucket', 'files')
                 .field('id', customId)
                 .expect(201);
 
