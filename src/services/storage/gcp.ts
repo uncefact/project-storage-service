@@ -19,7 +19,7 @@ export class GCPStorageService implements IStorageService {
      * @param contentType The content type of the file.
      * @returns A promise that resolves to the public URL of the uploaded file.
      */
-    async uploadFile(bucket: string, key: string, body: string, contentType: string) {
+    async uploadFile(bucket: string, key: string, body: string | Buffer, contentType: string) {
         const bucketInstance = this.storage.bucket(bucket);
         const file = bucketInstance.file(key);
 
@@ -42,7 +42,7 @@ export class GCPStorageService implements IStorageService {
      */
     async objectExists(bucket: string, key: string): Promise<boolean> {
         const bucketInstance = this.storage.bucket(bucket);
-        const file = bucketInstance.file(`${key}.json`);
+        const file = bucketInstance.file(key);
 
         try {
             const [exists] = await file.exists();

@@ -19,14 +19,14 @@ export class LocalStorageService implements IStorageService {
      * @param contentType The content type of the file.
      * @returns A promise that resolves to the public URL of the uploaded file.
      */
-    async uploadFile(bucket: string, key: string, body: string, contentType: string) {
+    async uploadFile(bucket: string, key: string, body: string | Buffer, contentType: string) {
         const filePath = path.join(__dirname, LOCAL_DIRECTORY, bucket, key);
 
         const directory = path.dirname(filePath);
         // Create directories if they don't exist
         fs.mkdirSync(directory, { recursive: true });
 
-        // Write JSON data to file
+        // Write data to file
         fs.writeFileSync(filePath, body);
         return { uri: buildBaseUrl(PROTOCOL, DOMAIN, EXTERNAL_PORT, `api/${API_VERSION}/${bucket}/${key}`) };
     }
@@ -38,7 +38,7 @@ export class LocalStorageService implements IStorageService {
      * @returns A promise that resolves to a boolean indicating whether the object exists.
      */
     async objectExists(bucket: string, key: string): Promise<boolean> {
-        const filePath = path.join(__dirname, LOCAL_DIRECTORY, bucket, key + '.json');
+        const filePath = path.join(__dirname, LOCAL_DIRECTORY, bucket, key);
         return new Promise<boolean>((resolve) => {
             fs.access(filePath, fs.constants.F_OK, (err) => {
                 resolve(!err);
