@@ -1,7 +1,6 @@
-import fs from 'fs';
 import request from 'supertest';
 
-const { apiVersion: API_VERSION } = JSON.parse(fs.readFileSync('version.json', 'utf8'));
+const { apiVersion: API_VERSION } = require('../version.json');
 
 const buildConfigMock = (overrides: Record<string, unknown> = {}) => ({
     API_VERSION: API_VERSION,

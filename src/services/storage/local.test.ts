@@ -1,12 +1,9 @@
 import { LocalStorageService } from './local';
 
-// Read version.json before fs is auto-mocked by jest.mock('fs') below.
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { apiVersion: API_VERSION } = JSON.parse(jest.requireActual('fs').readFileSync('version.json', 'utf8'));
+const { apiVersion: API_VERSION } = require('../../../version.json');
 
 jest.mock('../../config', () => {
-    const realFs = jest.requireActual('fs');
-    const { apiVersion } = JSON.parse(realFs.readFileSync('version.json', 'utf8'));
+    const { apiVersion } = require('../../../version.json');
     return {
         API_VERSION: apiVersion,
         DOMAIN: 'localhost',

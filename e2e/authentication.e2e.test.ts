@@ -1,12 +1,11 @@
-import fs from 'fs';
 import { getMockReq, getMockRes } from '@jest-mock/express';
 import { app } from '../src/app';
 import request from 'supertest';
 
-const { apiVersion: API_VERSION } = JSON.parse(fs.readFileSync('version.json', 'utf8'));
+const { apiVersion: API_VERSION } = require('../version.json');
 
 jest.mock('../src/config', () => {
-    const { apiVersion } = JSON.parse(require('fs').readFileSync('version.json', 'utf8'));
+    const { apiVersion } = require('../version.json');
     return {
         API_VERSION: apiVersion,
         PROTOCOL: 'http',
