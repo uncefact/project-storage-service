@@ -1,23 +1,29 @@
+import fs from 'fs';
 import { getMockReq, getMockRes } from '@jest-mock/express';
 import { app } from '../src/app';
 import request from 'supertest';
 
-jest.mock('../src/config', () => ({
-    API_VERSION: '1.0.0',
-    PROTOCOL: 'http',
-    DOMAIN: 'localhost',
-    PORT: 3333,
-    EXTERNAL_PORT: 3333,
-    DEFAULT_BUCKET: 'verifiable-credentials',
-    AVAILABLE_BUCKETS: ['verifiable-credentials'],
-    STORAGE_TYPE: 'local',
-    REGION: 'ap-southeast-2',
-    LOCAL_DIRECTORY: 'uploads',
-    getApiKey: jest.fn(() => process.env.API_KEY),
-    AUTH_HEADER_NAME: 'x-api-key',
-    __filename: '',
-    __dirname: '',
-}));
+const { apiVersion: API_VERSION } = JSON.parse(fs.readFileSync('version.json', 'utf8'));
+
+jest.mock('../src/config', () => {
+    const { apiVersion } = JSON.parse(require('fs').readFileSync('version.json', 'utf8'));
+    return {
+        API_VERSION: apiVersion,
+        PROTOCOL: 'http',
+        DOMAIN: 'localhost',
+        PORT: 3333,
+        EXTERNAL_PORT: 3333,
+        DEFAULT_BUCKET: 'verifiable-credentials',
+        AVAILABLE_BUCKETS: ['verifiable-credentials'],
+        STORAGE_TYPE: 'local',
+        REGION: 'ap-southeast-2',
+        LOCAL_DIRECTORY: 'uploads',
+        getApiKey: jest.fn(() => process.env.API_KEY),
+        AUTH_HEADER_NAME: 'x-api-key',
+        __filename: '',
+        __dirname: '',
+    };
+});
 
 jest.mock('../src/services/storage/local', () => ({
     LocalStorageService: jest.fn().mockImplementation(() => ({
@@ -45,7 +51,7 @@ describe('Authentication E2E Tests', () => {
         process.env.API_KEY = originalApiKey;
     });
 
-    describe('POST /api/1.0.0/documents', () => {
+    describe(`POST /api/${API_VERSION}/documents`, () => {
         const validPayload = {
             bucket: 'verifiable-credentials',
             data: { test: 'data' },
@@ -53,7 +59,7 @@ describe('Authentication E2E Tests', () => {
 
         it('should return 401 when API key is missing', async () => {
             const response = await request(app)
-                .post('/api/1.0.0/documents')
+                .post(`/api/${API_VERSION}/documents`)
                 .send(validPayload)
                 .expect(401);
 
@@ -64,7 +70,7 @@ describe('Authentication E2E Tests', () => {
 
         it('should return 401 when API key is invalid', async () => {
             const response = await request(app)
-                .post('/api/1.0.0/documents')
+                .post(`/api/${API_VERSION}/documents`)
                 .set('X-API-Key', 'invalid-key')
                 .send(validPayload)
                 .expect(401);
@@ -76,7 +82,7 @@ describe('Authentication E2E Tests', () => {
 
         it('should return 201 when API key is valid', async () => {
             const response = await request(app)
-                .post('/api/1.0.0/documents')
+                .post(`/api/${API_VERSION}/documents`)
                 .set('X-API-Key', 'test-api-key-e2e')
                 .send(validPayload)
                 .expect(201);
@@ -90,7 +96,7 @@ describe('Authentication E2E Tests', () => {
             process.env.API_KEY = newKey;
 
             const response = await request(app)
-                .post('/api/1.0.0/documents')
+                .post(`/api/${API_VERSION}/documents`)
                 .set('X-API-Key', newKey)
                 .send(validPayload)
                 .expect(201);
@@ -102,7 +108,7 @@ describe('Authentication E2E Tests', () => {
         });
     });
 
-    describe('POST /api/1.0.0/credentials', () => {
+    describe(`POST /api/${API_VERSION}/credentials`, () => {
         const validPayload = {
             bucket: 'verifiable-credentials',
             data: { test: 'credential' },
@@ -110,7 +116,7 @@ describe('Authentication E2E Tests', () => {
 
         it('should return 401 when API key is missing', async () => {
             const response = await request(app)
-                .post('/api/1.0.0/credentials')
+                .post(`/api/${API_VERSION}/credentials`)
                 .send(validPayload)
                 .expect(401);
 
@@ -121,7 +127,7 @@ describe('Authentication E2E Tests', () => {
 
         it('should return 401 when API key is invalid', async () => {
             const response = await request(app)
-                .post('/api/1.0.0/credentials')
+                .post(`/api/${API_VERSION}/credentials`)
                 .set('X-API-Key', 'wrong-key')
                 .send(validPayload)
                 .expect(401);
@@ -133,7 +139,7 @@ describe('Authentication E2E Tests', () => {
 
         it('should return 201 when API key is valid', async () => {
             const response = await request(app)
-                .post('/api/1.0.0/credentials')
+                .post(`/api/${API_VERSION}/credentials`)
                 .set('X-API-Key', 'test-api-key-e2e')
                 .send(validPayload)
                 .expect(201);
