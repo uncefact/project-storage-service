@@ -33,8 +33,6 @@ describe('LocalStorageService', () => {
         const result = await storageService.uploadFile(bucket, key, body, contentType);
 
         expect(result.uri).toEqual(`http://localhost:3333/api/${API_VERSION}/test-bucket/test-file.json`);
-<<<<<<< HEAD
-=======
     });
 
     it('should upload a Buffer body to the local file system', async () => {
@@ -65,6 +63,5 @@ describe('LocalStorageService', () => {
         expect(methodBody).not.toContain("key + '.json'");
         expect(methodBody).not.toContain('key + ".json"');
         expect(methodBody).not.toContain('`${key}.json`');
->>>>>>> e566602 (feat(files): add binary file upload support)
     });
 });
