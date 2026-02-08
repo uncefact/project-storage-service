@@ -7,7 +7,7 @@ title: Getting Started
 
 Before you begin, ensure you have installed:
 
-- [Node.js](https://nodejs.org/) (v18.18.0)
+- [Node.js](https://nodejs.org/) (v22)
 - [Yarn](https://yarnpkg.com/) (>= 1.22.21)
 
 ## Basic Setup
