@@ -1,5 +1,5 @@
 import cors from 'cors';
-import express from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import swaggerUi from 'swagger-ui-express';
 import bodyParser from 'body-parser';
 import { router } from './routes';
@@ -38,3 +38,11 @@ app.get('/health-check', (req, res) => {
 });
 
 app.use(`/api/${API_VERSION}`, router);
+
+// Global error handler for unhandled errors
+app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
+    console.error('[GlobalErrorHandler] Unhandled error:', err);
+    res.status(500).json({
+        message: 'An unexpected error occurred.',
+    });
+});

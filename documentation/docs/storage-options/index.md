@@ -9,17 +9,16 @@ import Disclaimer from './../\_disclaimer.mdx';
 
 ## Understanding Your Storage Options
 
-This service offers three ways to store data, depending on whether your data is public or private.
+This service offers two ways to store data, depending on whether your data is public or private. Both endpoints accept JSON (`application/json`) and binary files (`multipart/form-data`).
 
 | Use Case | Endpoint | What Happens |
 |----------|----------|--------------|
-| Public JSON data | `/documents` | Stored as-is, without encryption |
-| Public binary files (images, PDFs, etc.) | `/files` | Stored as-is, without encryption |
-| Private data | `/credentials` | Automatically encrypted |
+| Public data (JSON or binary) | `/public` | Stored as-is, without encryption |
+| Private data (JSON or binary) | `/private` | Automatically encrypted |
 
 ## The Lockbox Analogy
 
-Think of the `/credentials` endpoint like a secure lockbox service.
+Think of the `/private` endpoint like a secure lockbox service.
 
 When you store private data:
 1. You hand over your data
@@ -30,51 +29,36 @@ Without that key, no one — including us — can open the box. This is why it's
 
 ## How Each Endpoint Works
 
-### Public Data: `/documents`
+### Public Data: `/public`
 
-Use this endpoint for JSON data you're happy to share publicly. Since documents are stored unencrypted at a public URI, they can be read by anyone who obtains the link.
+Use this endpoint for data or files you're happy to share publicly. Content is stored unencrypted at a public URI, so it can be read by anyone who obtains the link. This endpoint accepts both JSON payloads (`application/json`) and binary file uploads (`multipart/form-data`).
 
 **What happens:**
-1. You send your data to the service
+1. You send your data or file to the service
 2. The service stores it exactly as you sent it
 3. You receive back:
-   - A **URI** — the location where your data is stored
-   - A **hash** — a fingerprint to verify your data hasn't changed
+   - A **URI** — the location where your content is stored
+   - A **hash** — a fingerprint to verify your content hasn't changed
 
 ```
-Your Data → Store → URI + Hash
+Your Data/File → Store → URI + Hash
 ```
 
-### Public Binary Files: `/files`
+### Private Data: `/private`
 
-Use this endpoint for binary files (images, PDFs, etc.) you're happy to share publicly. Like `/documents`, files are stored as-is without encryption and are publicly accessible to anyone who obtains the URI.
+Use this endpoint for any sensitive or private information that should be protected. Like `/public`, this endpoint accepts both JSON payloads (`application/json`) and binary file uploads (`multipart/form-data`). For binary uploads, the encrypted envelope includes a `contentType` field to preserve the original file type.
 
 **What happens:**
-1. You upload your file to the service
-2. The service stores it exactly as you sent it
-3. You receive back:
-   - A **URI** — the location where your file is stored
-   - A **hash** — a fingerprint to verify your file hasn't changed
-
-```
-Your File → Store → URI + Hash
-```
-
-### Private Data: `/credentials`
-
-Use this endpoint for any sensitive or private information that should be protected.
-
-**What happens:**
-1. You send your data to the service
-2. The service encrypts your data automatically (you don't need to encrypt it yourself)
-3. The encrypted data is stored
+1. You send your data or file to the service
+2. The service encrypts your content automatically (you don't need to encrypt it yourself)
+3. The encrypted content is stored
 4. You receive back:
-   - A **URI** — the location where your encrypted data is stored
+   - A **URI** — the location where your encrypted content is stored
    - A **hash** — a fingerprint to verify your data hasn't changed
-   - A **key** — your unique decryption key
+   - A **decryptionKey** — your unique decryption key
 
 ```
-Your Data → Encrypt → Store → URI + Hash + Key
+Your Data/File → Encrypt → Store → URI + Hash + Decryption Key
 ```
 
 :::warning Save Your Key
@@ -91,17 +75,15 @@ Store it securely immediately after receiving it.
 
 | Scenario | Recommended Endpoint |
 |----------|---------------------|
-| Public JSON data | `/documents` |
-| Public binary files (images, PDFs, etc.) | `/files` |
-| Private data | `/credentials` |
+| Public data (JSON or binary) | `/public` |
+| Private or sensitive data (JSON or binary) | `/private` |
 
 :::info Note on Data Discovery
 
 All endpoints use UUIDs as identifiers. UUIDs are designed to be practically impossible to guess or enumerate, so discovery is unlikely. However, if someone does obtain a URI:
 
-- **`/documents`**: The data can be read directly
-- **`/files`**: The file can be accessed directly
-- **`/credentials`**: The data is encrypted and unreadable without the corresponding decryption key
+- **`/public`**: The data or file can be read directly
+- **`/private`**: The data is encrypted and unreadable without the corresponding decryption key
 
 This is why encryption matters for sensitive data — it provides protection even if the URI is somehow discovered.
 
@@ -117,9 +99,9 @@ For developers who want to understand the encryption:
 
 ### Unencrypted Data Structure
 
-When you store data via `/documents` or upload files via `/files`, the service stores your content exactly as you sent it — no encryption or transformation is applied.
+When you store data via `/public`, the service stores your content exactly as you sent it — no encryption or transformation is applied.
 
-For `/documents`:
+For JSON uploads:
 ```json
 {
     "field1": "value1",
@@ -127,7 +109,7 @@ For `/documents`:
 }
 ```
 
-For `/files`, the binary file (e.g. PNG, PDF) is stored in its original format.
+For binary uploads, the file (e.g. PNG, PDF) is stored in its original format.
 
 | Field | Description |
 |-------|-------------|
@@ -137,14 +119,15 @@ This means your content is directly accessible to anyone who obtains the URI.
 
 ### Encrypted Data Structure
 
-When you store data via `/credentials`, the service encrypts your data and stores it in the following structure:
+When you store data via `/private`, the service encrypts your content and stores it in the following structure:
 
 ```json
 {
     "cipherText": "base64-encoded-encrypted-data",
     "iv": "base64-encoded-initialization-vector",
     "tag": "base64-encoded-authentication-tag",
-    "type": "aes-256-gcm"
+    "type": "aes-256-gcm",
+    "contentType": "application/json"
 }
 ```
 
@@ -154,6 +137,7 @@ When you store data via `/credentials`, the service encrypts your data and store
 | `iv` | Initialization vector used for encryption (Base64 encoded) |
 | `tag` | Authentication tag that verifies data integrity (Base64 encoded) |
 | `type` | The encryption algorithm used |
+| `contentType` | The MIME type of the original content before encryption (e.g. `application/json`, `image/png`) |
 
 This structure ensures both **confidentiality** (data is unreadable without the key) and **integrity** (any tampering can be detected via the authentication tag).
 

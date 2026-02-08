@@ -10,21 +10,24 @@ import Disclaimer from './../\_disclaimer.mdx';
 ## API Endpoints
 
 :::tip Choosing the Right Endpoint
-Not sure which endpoint to use? See [Storage Options](/docs/storage-options) for guidance on when to use `/credentials` (private data with encryption) vs `/documents` and `/files` (public data without encryption).
+Not sure which endpoint to use? See [Storage Options](/docs/storage-options) for guidance on when to use `/public` (no encryption) vs `/private` (automatic encryption).
 :::
 
-### Store Document (Private Data)
+### Store Public Data
 
-- **Endpoint**: `/api/1.1.0/credentials`
+- **Endpoint**: `/api/2.0.0/public`
 - **Method**: POST
 - **Authentication**: Required (X-API-Key header)
-- Encrypts and stores documents with optional ID
-- Returns URI, hash, and encryption key
+- **Content Types**: `application/json` or `multipart/form-data`
+- Stores data or files without encryption
+- Returns URI and hash
+
+#### JSON Upload
 
 Test the service using `curl`:
 
 ```bash
-curl -X POST http://localhost:3333/api/1.1.0/credentials \
+curl -X POST http://localhost:3333/api/2.0.0/public \
 -H "Content-Type: application/json" \
 -H "X-API-Key: your-secure-api-key-here" \
 -d '{
@@ -39,18 +42,42 @@ The service will respond similarly to the data below:
 
 ```json
 {
-    "uri": "http://localhost:3333/api/1.1.0/verifiable-credentials/e8b32169-582c-421a-a03f-5d1a7ac62d51.json",
-    "hash": "d6bb7b579925baa4fe1cec41152b6577003e6a9fde6850321e36ad4ac9b3f30a",
-    "key": "f3bee3dc18343aaab66d28fd70a03015d2ddbd5fd3b9ad38fff332c09014598d"
+    "uri": "http://localhost:3333/api/2.0.0/verifiable-credentials/2ad789c7-e513-4523-a826-ab59e1c423cd.json",
+    "hash": "d6bb7b579925baa4fe1cec41152b6577003e6a9fde6850321e36ad4ac9b3f30a"
 }
 ```
 
-#### Request Payload
+#### Binary File Upload
 
-| Field    | Description                                           | Required |
-| -------- | ----------------------------------------------------- | -------- |
-| `bucket` | Name of the bucket where the data will be stored.     | Yes      |
-| `data`   | The actual data to be stored, must be in JSON format. | Yes      |
+```bash
+curl -X POST http://localhost:3333/api/2.0.0/public \
+-H "X-API-Key: your-secure-api-key-here" \
+-F "file=@/path/to/image.png" \
+-F "bucket=files"
+```
+
+```json
+{
+    "uri": "http://localhost:3333/api/2.0.0/files/123e4567-e89b-12d3-a456-426614174000.png",
+    "hash": "d6bb7b579925baa4fe1cec41152b6577003e6a9fde6850321e36ad4ac9b3f30a"
+}
+```
+
+#### Request Payload (JSON)
+
+| Field    | Description                                                             | Required |
+| -------- | ----------------------------------------------------------------------- | -------- |
+| `bucket` | Name of the bucket where the data will be stored.                       | Yes      |
+| `data`   | The actual data to be stored, must be in JSON format.                   | Yes      |
+| `id`     | Optional UUID for the document. If not provided, one will be generated. | No       |
+
+#### Request Payload (Binary)
+
+| Field    | Description                                                         | Required |
+| -------- | ------------------------------------------------------------------- | -------- |
+| `file`   | The binary file to upload.                                          | Yes      |
+| `bucket` | Name of the bucket where the file will be stored.                   | Yes      |
+| `id`     | Optional UUID for the file. If not provided, one will be generated. | No       |
 
 #### Response Data
 
@@ -58,24 +85,27 @@ The service will respond similarly to the data below:
 | ------ | ----------------------------------------------------------------- |
 | `uri`  | The link to the stored data.                                      |
 | `hash` | A hash of the data, used to verify your data hasn't been changed. |
-| `key`  | The symmetric key used to decrypt the encrypted data.             |
 
-### Store Document (Public Data)
+### Store Private Data
 
-- **Endpoint**: `/api/1.1.0/documents`
+- **Endpoint**: `/api/2.0.0/private`
 - **Method**: POST
 - **Authentication**: Required (X-API-Key header)
-- Stores documents with computed hash
-- Returns URI and hash
+- **Content Types**: `application/json` or `multipart/form-data`
+- Automatically encrypts and stores data or files
+- Returns URI, hash, and decryption key
+- Adds a `contentType` field to the encrypted envelope for binary uploads
+
+#### JSON Upload
 
 Test the service using `curl`:
 
 ```bash
-curl -X POST http://localhost:3333/api/1.1.0/documents \
+curl -X POST http://localhost:3333/api/2.0.0/private \
 -H "Content-Type: application/json" \
 -H "X-API-Key: your-secure-api-key-here" \
 -d '{
-  "bucket": "test-verifiable-credentials",
+  "bucket": "verifiable-credentials",
   "data": {
     "field1": "value1"
   }
@@ -86,66 +116,52 @@ The service will respond similarly to the data below:
 
 ```json
 {
-    "uri": "http://localhost:3333/api/1.1.0/test-verifiable-credentials/2ad789c7-e513-4523-a826-ab59e1c423cd.json",
-    "hash": "d6bb7b579925baa4fe1cec41152b6577003e6a9fde6850321e36ad4ac9b3f30a"
+    "uri": "http://localhost:3333/api/2.0.0/verifiable-credentials/e8b32169-582c-421a-a03f-5d1a7ac62d51.json",
+    "hash": "d6bb7b579925baa4fe1cec41152b6577003e6a9fde6850321e36ad4ac9b3f30a",
+    "decryptionKey": "f3bee3dc18343aaab66d28fd70a03015d2ddbd5fd3b9ad38fff332c09014598d"
 }
 ```
 
-#### Request Payload
-
-| Field    | Description                                           | Required |
-| -------- | ----------------------------------------------------- | -------- |
-| `bucket` | Name of the bucket where the data will be stored.     | Yes      |
-| `data`   | The actual data to be stored, must be in JSON format. | Yes      |
-
-#### Response Data
-
-| Field  | Description                                                       |
-| ------ | ----------------------------------------------------------------- |
-| `uri`  | The link to the stored data.                                      |
-| `hash` | A hash of the data, used to verify your data hasn't been changed. |
-
-### Upload File (Public Binary Data)
-
-- **Endpoint**: `/api/1.1.0/files`
-- **Method**: POST
-- **Authentication**: Required (X-API-Key header)
-- Stores public binary files (images, PDFs, etc.) without encryption, similar to `/documents`
-- Files are stored as-is and are publicly accessible to anyone who obtains the URI
-- Returns URI and hash
-
-Upload a file using `curl`:
+#### Binary File Upload
 
 ```bash
-curl -X POST http://localhost:3333/api/1.1.0/files \
+curl -X POST http://localhost:3333/api/2.0.0/private \
 -H "X-API-Key: your-secure-api-key-here" \
 -F "file=@/path/to/image.png" \
 -F "bucket=files"
 ```
 
-The service will respond similarly to the data below:
-
 ```json
 {
-    "uri": "http://localhost:3333/api/1.1.0/files/123e4567-e89b-12d3-a456-426614174000.png",
-    "hash": "d6bb7b579925baa4fe1cec41152b6577003e6a9fde6850321e36ad4ac9b3f30a"
+    "uri": "http://localhost:3333/api/2.0.0/files/123e4567-e89b-12d3-a456-426614174000.json",
+    "hash": "d6bb7b579925baa4fe1cec41152b6577003e6a9fde6850321e36ad4ac9b3f30a",
+    "decryptionKey": "a1bc2de3f4567890abcdef1234567890abcdef1234567890abcdef1234567890"
 }
 ```
 
-#### Request Payload
+#### Request Payload (JSON)
 
-| Field    | Description                                                                    | Required |
-| -------- | ------------------------------------------------------------------------------ | -------- |
-| `file`   | The binary file to upload.                                                     | Yes      |
-| `bucket` | Name of the bucket where the file will be stored.                              | Yes      |
-| `id`     | Optional UUID for the file. If not provided, one will be generated.            | No       |
+| Field    | Description                                                             | Required |
+| -------- | ----------------------------------------------------------------------- | -------- |
+| `bucket` | Name of the bucket where the data will be stored.                       | Yes      |
+| `data`   | The actual data to be stored, must be in JSON format.                   | Yes      |
+| `id`     | Optional UUID for the document. If not provided, one will be generated. | No       |
+
+#### Request Payload (Binary)
+
+| Field    | Description                                                         | Required |
+| -------- | ------------------------------------------------------------------- | -------- |
+| `file`   | The binary file to upload.                                          | Yes      |
+| `bucket` | Name of the bucket where the file will be stored.                   | Yes      |
+| `id`     | Optional UUID for the file. If not provided, one will be generated. | No       |
 
 #### Response Data
 
-| Field  | Description                                                       |
-| ------ | ----------------------------------------------------------------- |
-| `uri`  | The link to the stored file.                                      |
-| `hash` | A hash of the file, used to verify your file hasn't been changed. |
+| Field            | Description                                                       |
+| ---------------- | ----------------------------------------------------------------- |
+| `uri`            | The link to the stored data.                                      |
+| `hash`           | A hash of the data, used to verify your data hasn't been changed. |
+| `decryptionKey`  | The symmetric key used to decrypt the encrypted data.             |
 
 ## Storage Providers
 
