@@ -1,4 +1,6 @@
 import fs from 'fs';
+import os from 'os';
+import path from 'path';
 import { getMockReq, getMockRes } from '@jest-mock/express';
 import { storePublic } from './controller';
 import { PublicService } from './service';
@@ -73,9 +75,10 @@ describe('PublicController', () => {
                 hash: 'mocked-file-hash',
             });
 
+            const tempFilePath = path.join(os.tmpdir(), 'upload-12345');
             const mockReq = getMockReq({
                 file: {
-                    path: '/tmp/upload-12345',
+                    path: tempFilePath,
                     mimetype: 'image/png',
                 } as Express.Multer.File,
                 body: {
@@ -86,7 +89,7 @@ describe('PublicController', () => {
 
             await storePublic(mockReq, mockRes, mockNext);
 
-            expect(fs.promises.readFile).toHaveBeenCalledWith('/tmp/upload-12345');
+            expect(fs.promises.readFile).toHaveBeenCalledWith(path.resolve(tempFilePath));
             expect(mockRes.status).toHaveBeenCalledWith(201);
             expect(mockRes.json).toHaveBeenCalledWith({
                 uri: 'mock-file-uri',
@@ -170,7 +173,7 @@ describe('PublicController', () => {
                 hash: 'mocked-file-hash',
             });
 
-            const tempFilePath = '/tmp/upload-cleanup-test';
+            const tempFilePath = path.join(os.tmpdir(), 'upload-cleanup-test');
             const mockReq = getMockReq({
                 file: {
                     path: tempFilePath,
@@ -183,7 +186,7 @@ describe('PublicController', () => {
 
             await storePublic(mockReq, mockRes, mockNext);
 
-            expect(fs.promises.unlink).toHaveBeenCalledWith(tempFilePath);
+            expect(fs.promises.unlink).toHaveBeenCalledWith(path.resolve(tempFilePath));
         });
         it('should not attempt to clean up when there is no temporary file', async () => {
             jest.spyOn(PublicService.prototype, 'storeDocument').mockResolvedValue({
@@ -207,7 +210,7 @@ describe('PublicController', () => {
         it('should still clean up the temporary file when an error occurs', async () => {
             (fs.promises.readFile as jest.Mock).mockRejectedValueOnce(new Error('Read failure'));
 
-            const tempPath = '/tmp/upload-error-cleanup';
+            const tempPath = path.join(os.tmpdir(), 'upload-error-cleanup');
             const mockReq = getMockReq({
                 file: {
                     path: tempPath,
@@ -220,7 +223,7 @@ describe('PublicController', () => {
 
             await storePublic(mockReq, mockRes, mockNext);
 
-            expect(fs.promises.unlink).toHaveBeenCalledWith(tempPath);
+            expect(fs.promises.unlink).toHaveBeenCalledWith(path.resolve(tempPath));
         });
 
         it('should log an error when temp file cleanup fails', async () => {
@@ -234,20 +237,42 @@ describe('PublicController', () => {
                 hash: 'mocked-hash',
             });
 
+            const tempPath = path.join(os.tmpdir(), 'upload-unlink-error');
             const mockReq = getMockReq({
-                file: { path: '/tmp/upload-unlink-error', mimetype: 'image/png' } as any,
+                file: { path: tempPath, mimetype: 'image/png' } as any,
                 body: { bucket: 'bucketName', id: '550e8400-e29b-41d4-a716-446655440000' },
             });
 
             await storePublic(mockReq, mockRes, mockNext);
 
-            expect(fs.promises.unlink).toHaveBeenCalledWith('/tmp/upload-unlink-error');
+            expect(fs.promises.unlink).toHaveBeenCalledWith(path.resolve(tempPath));
             expect(consoleSpy).toHaveBeenCalledWith(
                 expect.stringContaining('Failed to clean up temp file'),
+                expect.any(String),
                 expect.any(Error),
             );
 
             consoleSpy.mockRestore();
+        });
+
+        it('should return 400 when file path is outside the upload directory', async () => {
+            const mockReq = getMockReq({
+                file: {
+                    path: '/etc/passwd',
+                    mimetype: 'application/octet-stream',
+                } as Express.Multer.File,
+                body: {
+                    bucket: 'bucketName',
+                    id: '123e4567-e89b-12d3-a456-426614174000',
+                },
+            });
+
+            await storePublic(mockReq, mockRes, mockNext);
+
+            expect(mockRes.status).toHaveBeenCalledWith(400);
+            expect(mockRes.json).toHaveBeenCalledWith({
+                message: 'Invalid upload path.',
+            });
         });
     });
 });

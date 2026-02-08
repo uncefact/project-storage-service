@@ -1,8 +1,12 @@
 import fs from 'fs';
+import path from 'path';
+import os from 'os';
 import { RequestHandler } from 'express';
 import { initialiseStorageService, CryptographyService, IStorageService } from '../../services';
 import { PublicService } from './service';
 import { ApiError, BadRequestError } from '../../errors';
+
+const UPLOAD_DIR = path.resolve(os.tmpdir());
 
 /**
  * Handles the request to store a public document or file.
@@ -29,7 +33,10 @@ export const storePublic: RequestHandler = async (req, res) => {
         let response;
 
         if (req.file) {
-            tempPath = req.file.path;
+            tempPath = path.resolve(req.file.path);
+            if (!tempPath.startsWith(UPLOAD_DIR + path.sep)) {
+                throw new BadRequestError('Invalid upload path.');
+            }
             const fileBuffer = await fs.promises.readFile(tempPath);
 
             response = await publicService.storeFile(storageService, cryptoService, {
@@ -63,7 +70,7 @@ export const storePublic: RequestHandler = async (req, res) => {
                 await fs.promises.unlink(tempPath);
             } catch (cleanupErr: any) {
                 if (cleanupErr.code !== 'ENOENT') {
-                    console.error(`[PublicController.storePublic] Failed to clean up temp file ${tempPath}:`, cleanupErr);
+                    console.error('[PublicController.storePublic] Failed to clean up temp file %s:', tempPath, cleanupErr);
                 }
             }
         }
