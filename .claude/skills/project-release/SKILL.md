@@ -13,13 +13,14 @@ This skill guides releases following the repository's release management workflo
 
 This repo uses semantic versioning with three tracked versions:
 
-| Field | Purpose | When to Update |
-|-------|---------|----------------|
-| `version` | Repository/package version | Every release |
-| `apiVersion` | API contract version | Only when API endpoints change |
-| `docVersion` | Documentation version | When new versioned docs are generated |
+| Field        | Purpose                    | When to Update                        |
+| ------------ | -------------------------- | ------------------------------------- |
+| `version`    | Repository/package version | Every release                         |
+| `apiVersion` | API contract version       | Only when API endpoints change        |
+| `docVersion` | Documentation version      | When new versioned docs are generated |
 
 **Location of versions:**
+
 - `package.json` - repository version
 - `version.json` - all three versions
 - `documentation/package.json` - should match docVersion
@@ -32,11 +33,11 @@ Analyze commits on `next` not yet in `main`:
 git log next --not origin/main --oneline
 ```
 
-| Commit Pattern | Version Bump |
-|----------------|--------------|
-| "feat!:" or "BREAKING CHANGE:" in body | MAJOR |
-| `feat:` | MINOR |
-| `fix:`, `docs:`, `ci:`, etc. | PATCH |
+| Commit Pattern                         | Version Bump |
+| -------------------------------------- | ------------ |
+| "feat!:" or "BREAKING CHANGE:" in body | MAJOR        |
+| `feat:`                                | MINOR        |
+| `fix:`, `docs:`, `ci:`, etc.           | PATCH        |
 
 The "!" after the type indicates a breaking change.
 
@@ -60,17 +61,20 @@ git checkout -b release/X.Y.Z
 ### 3. Update Versions
 
 Update ALL version files:
+
 - `package.json` - version field
 - `version.json` - version and docVersion fields
 - `documentation/package.json` - version field (match docVersion)
 
 **Do NOT manually edit:**
+
 - `.github/workflows/.release-please-manifest.json` - managed by release-please
 - `documentation/versions.json` - managed by release:doc script
 
 ### 4. Verify Code
 
 Run ALL verification steps:
+
 ```bash
 yarn lint        # Linting
 yarn test        # Unit tests
@@ -83,11 +87,13 @@ yarn build       # Compilation check
 **Only generate new versioned docs if documentation has changed.**
 
 **Before generating**, manually review source docs:
+
 - Read each page in `documentation/docs/`
 - Check README.md for consistency
 - Verify any breaking changes are already documented
 
 If documentation needs updating, fix source docs first. Then generate:
+
 ```bash
 yarn release:doc
 ```
@@ -115,6 +121,7 @@ git push -u origin release/X.Y.Z
 ```
 
 The changelog pipeline will auto-generate a PR. Review it for:
+
 - Correct categorization of changes
 - No duplicate BREAKING CHANGE entries
 - No unwanted commits (chore commits should be hidden)
@@ -128,6 +135,7 @@ Create PR from `release/X.Y.Z` to `main`. Use **merge commit** (not squash).
 ### 9. Post-Release
 
 After merging to main:
+
 ```bash
 git checkout next && git pull origin next
 git merge origin/main --no-edit
@@ -184,5 +192,6 @@ Same as standard release - PR to main, merge, then merge main back to next.
 ## Reference Documents
 
 For detailed procedures, see:
+
 - `RELEASE_GUIDE.md` - Step-by-step checklist
 - `RELEASE_MANAGEMENT_GUIDE.md` - Strategy and versioning details
