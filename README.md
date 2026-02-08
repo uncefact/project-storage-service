@@ -45,7 +45,7 @@ The response includes:
 
 **Save this key securely** — it's the only way to decrypt your data later.
 
-→ [Learn more about storage options](https://uncefact.github.io/project-identity-resolver/docs/storage-options)
+→ [Learn more about storage options](https://uncefact.github.io/project-storage-service/docs/storage-options)
 
 ## Prerequisites
 
@@ -271,7 +271,7 @@ If the API key is missing or invalid, the service will return a `401 Unauthorize
 
 ## Docker Images
 
-Pre-built Docker images are available on [GitHub Container Registry](https://github.com/uncefact/project-identity-resolver/pkgs/container/project-identity-resolver).
+Pre-built Docker images are available on [GitHub Container Registry](https://github.com/uncefact/project-storage-service/pkgs/container/project-storage-service).
 
 Images support `linux/amd64` and `linux/arm64` architectures (Intel/AMD and Apple Silicon/ARM).
 
@@ -279,13 +279,13 @@ Images support `linux/amd64` and `linux/arm64` architectures (Intel/AMD and Appl
 
 ```bash
 # Pull a specific version (e.g., 2.1.0)
-docker pull ghcr.io/uncefact/project-identity-resolver:2.1.0
+docker pull ghcr.io/uncefact/project-storage-service:2.1.0
 
 # Or pull the latest release
-docker pull ghcr.io/uncefact/project-identity-resolver:latest
+docker pull ghcr.io/uncefact/project-storage-service:latest
 
 # Or pull the latest development image from the next branch
-docker pull ghcr.io/uncefact/project-identity-resolver:next
+docker pull ghcr.io/uncefact/project-storage-service:next
 ```
 
 ### Building and Running Locally with Docker

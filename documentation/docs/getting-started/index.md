@@ -12,7 +12,7 @@ Before you begin, ensure you have installed:
 
 ## Basic Setup
 
-1. Clone the [Storage Service repository](https://github.com/uncefact/project-identity-resolver)
+1. Clone the [Storage Service repository](https://github.com/uncefact/project-storage-service)
 2. Copy `.env.example` to `.env`
 3. Configure your environment variables (see [Configuration section](/docs/getting-started/#configuration))
 4. Install dependencies:

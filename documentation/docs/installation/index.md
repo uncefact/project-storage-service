@@ -5,7 +5,7 @@ title: Installation
 
 ## Local Installation
 
-Clone the [repository](https://github.com/uncefact/project-identity-resolver), install dependencies and run:
+Clone the [repository](https://github.com/uncefact/project-storage-service), install dependencies and run:
 
 ```bash
 yarn install
@@ -14,19 +14,19 @@ yarn dev
 
 ## Using Pre-built Docker Images
 
-Pre-built Docker images are available on [GitHub Container Registry](https://github.com/uncefact/project-identity-resolver/pkgs/container/project-identity-resolver).
+Pre-built Docker images are available on [GitHub Container Registry](https://github.com/uncefact/project-storage-service/pkgs/container/project-storage-service).
 
 Images support `linux/amd64` and `linux/arm64` architectures (Intel/AMD and Apple Silicon/ARM).
 
 ```bash
 # Pull the latest image
-docker pull ghcr.io/uncefact/project-identity-resolver:latest
+docker pull ghcr.io/uncefact/project-storage-service:latest
 
 # Alternatively, pull a specific version (e.g., 2.0.1)
-# docker pull ghcr.io/uncefact/project-identity-resolver:2.0.1
+# docker pull ghcr.io/uncefact/project-storage-service:2.0.1
 
 # Or pull the latest development image from the next branch
-# docker pull ghcr.io/uncefact/project-identity-resolver:next
+# docker pull ghcr.io/uncefact/project-storage-service:next
 
 # Copy and configure your environment file
 cp .env.example .env
@@ -35,7 +35,7 @@ cp .env.example .env
 # Run the container (replace the tag if you pulled a different image above)
 docker run -d --env-file .env -p 3333:3333 \
   -v $(pwd)/uploads:/app/src/uploads:rw \
-  ghcr.io/uncefact/project-identity-resolver:latest
+  ghcr.io/uncefact/project-storage-service:latest
 ```
 
 ## Building Docker Locally

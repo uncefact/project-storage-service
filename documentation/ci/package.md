@@ -38,10 +38,10 @@ Images are built for multiple architectures:
 
 ```bash
 # Latest release by version
-docker pull ghcr.io/uncefact/project-identity-resolver:1.1.0
+docker pull ghcr.io/uncefact/project-storage-service:1.1.0
 
 # Or use latest tag
-docker pull ghcr.io/uncefact/project-identity-resolver:latest
+docker pull ghcr.io/uncefact/project-storage-service:latest
 ```
 
 ## Workflow Steps
