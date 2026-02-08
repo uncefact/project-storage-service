@@ -13,7 +13,7 @@ const config: Config = {
     baseUrl,
 
     organizationName: 'uncefact',
-    projectName: 'project-identity-resolver',
+    projectName: 'project-storage-service',
 
     onBrokenLinks: 'throw',
     onBrokenMarkdownLinks: 'warn',
@@ -33,7 +33,7 @@ const config: Config = {
             {
                 docs: {
                     sidebarPath: './sidebars.ts',
-                    editUrl: 'https://github.com/uncefact/project-identity-resolver/tree/next',
+                    editUrl: 'https://github.com/uncefact/project-storage-service/tree/next',
                     routeBasePath: 'docs',
                     includeCurrentVersion: false,
                 },
@@ -51,7 +51,7 @@ const config: Config = {
 
     themeConfig: {
         slackLink: 'https://join.slack.com/t/uncefact/shared_invite/zt-1d7hd0js1-sS1Xgk8DawQD9VgRvy1QHQ',
-        repoLink: 'https://github.com/uncefact/project-identity-resolver',
+        repoLink: 'https://github.com/uncefact/project-storage-service',
         colorMode: {
             disableSwitch: true,
         },
@@ -81,7 +81,7 @@ const config: Config = {
                 },
                 { to: '/docs/features/', label: 'Features', position: 'right' },
                 {
-                    to: 'https://github.com/uncefact/project-identity-resolver',
+                    to: 'https://github.com/uncefact/project-storage-service',
                     label: 'Contribute',
                     position: 'right',
                 },
@@ -92,7 +92,7 @@ const config: Config = {
                     className: 'navbar-slack-link',
                 },
                 {
-                    href: 'https://github.com/uncefact/project-identity-resolver',
+                    href: 'https://github.com/uncefact/project-storage-service',
                     html: '<svg class="icon"><use xlink:href="#github"></use></svg><span class="menu-item-name">Github</span>',
                     className: 'navbar-github-link',
                     position: 'right',
