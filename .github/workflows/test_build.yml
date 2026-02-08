@@ -40,8 +40,6 @@ jobs:
 
             - name: Run e2e tests
               run: yarn test:e2e:ci
-              env:
-                  API_KEY: test-api-key-ci
 
     build_docs:
         runs-on: ubuntu-latest

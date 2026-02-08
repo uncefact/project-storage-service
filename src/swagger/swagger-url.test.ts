@@ -1,6 +1,6 @@
 import request from 'supertest';
 
-const { apiVersion: API_VERSION } = require('../version.json');
+const { apiVersion: API_VERSION } = require('../../version.json');
 
 const buildConfigMock = (overrides: Record<string, unknown> = {}) => ({
     API_VERSION: API_VERSION,
@@ -19,12 +19,12 @@ const buildConfigMock = (overrides: Record<string, unknown> = {}) => ({
 });
 
 const getSwaggerInitResponse = async (configOverrides: Record<string, unknown> = {}) => {
-    jest.doMock('../src/config', () => buildConfigMock(configOverrides));
-    const { app } = await import('../src/app');
+    jest.doMock('../config', () => buildConfigMock(configOverrides));
+    const { app } = await import('../app');
     return request(app).get('/api-docs/swagger-ui-init.js').expect(200);
 };
 
-describe('Swagger URL E2E Tests', () => {
+describe('Swagger URL Tests', () => {
     afterEach(() => {
         jest.resetModules();
         jest.restoreAllMocks();
