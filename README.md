@@ -49,7 +49,7 @@ The response includes:
 
 ## Prerequisites
 
-- [Node.js](https://nodejs.org/) (v18.18.0)
+- [Node.js](https://nodejs.org/) (v22)
 - [Yarn](https://yarnpkg.com/) (>= 1.22.21)
 
 ## Environment Variables
@@ -347,7 +347,7 @@ The documentation is automatically built and deployed using GitHub Actions throu
 2. Performs the following steps:
 
 - Checks out the repository
-- Sets up Node.js 18 with Yarn cache
+- Sets up Node.js 22 with Yarn cache
 - Installs documentation dependencies
 - Builds the static documentation site
 - Deploys to GitHub Pages using gh-pages branch

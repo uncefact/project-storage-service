@@ -19,7 +19,7 @@ jobs:
             # Setup Node.js environment with caching to optimize dependency installation
             - uses: actions/setup-node@v3
               with:
-                  node-version: 21
+                  node-version: '22'
                   cache: yarn
 
             # Install all required Node.js packages and dependencies for documentation generation
