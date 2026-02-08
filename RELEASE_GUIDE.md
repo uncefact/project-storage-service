@@ -34,7 +34,6 @@ Before starting the release process, ensure:
 ## Version Bumping
 
 1. Determine the new version number based on [Semantic Versioning](https://semver.org/):
-
     - Patch: Bug fixes (e.g., 1.0.1 → 1.0.2)
     - Minor: New features, backward-compatible (e.g., 1.0.2 → 1.1.0)
     - Major: Breaking changes (e.g., 1.1.0 → 2.0.0)
