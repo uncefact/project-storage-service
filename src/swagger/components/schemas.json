@@ -28,7 +28,7 @@
                 "properties": {
                     "bucket": {
                         "type": "string",
-                        "example": "verifiable-credentials"
+                        "example": "documents"
                     },
                     "data": {
                         "type": "object",

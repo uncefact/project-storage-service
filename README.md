@@ -252,13 +252,13 @@ Examples:
 curl -X POST http://localhost:3333/api/2.0.0/public \
 -H "Content-Type: application/json" \
 -H "X-API-Key: your-api-key-here" \
--d '{"bucket": "verifiable-credentials", "data": {"field1": "value1"}}'
+-d '{"bucket": "documents", "data": {"field1": "value1"}}'
 
 # Store private JSON data (encrypted)
 curl -X POST http://localhost:3333/api/2.0.0/private \
 -H "Content-Type: application/json" \
 -H "X-API-Key: your-api-key-here" \
--d '{"bucket": "verifiable-credentials", "data": {"field1": "value1"}}'
+-d '{"bucket": "documents", "data": {"field1": "value1"}}'
 
 # Upload a public binary file
 curl -X POST http://localhost:3333/api/2.0.0/public \

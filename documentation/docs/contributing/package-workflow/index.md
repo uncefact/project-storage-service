@@ -1,5 +1,5 @@
 ---
-sidebar_position: 1
+sidebar_position: 4
 title: Package Workflow
 ---
 
@@ -11,9 +11,8 @@ The Package workflow builds and pushes Docker images for the Storage Service app
 
 This workflow is triggered on:
 
-- Push of tags matching the pattern `*.*.*` (e.g., `1.1.0`)
+- Completion of the `Release` workflow (if it succeeded)
 - Manual trigger via `workflow_dispatch`
-- Completion of the `Release` workflow
 
 ## Docker Images
 

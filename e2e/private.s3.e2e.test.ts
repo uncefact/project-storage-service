@@ -46,7 +46,7 @@ describe('Private API - S3 E2E Tests', () => {
             it('should return 401 when API key is missing', async () => {
                 const response = await request(APP_BASE_URL)
                     .post(`/api/${API_VERSION}/private`)
-                    .send({ bucket: 'verifiable-credentials', data: testDocument })
+                    .send({ bucket: 'documents', data: testDocument })
                     .expect(401);
 
                 expect(response.body).toHaveProperty('message');
@@ -56,7 +56,7 @@ describe('Private API - S3 E2E Tests', () => {
                 const response = await request(APP_BASE_URL)
                     .post(`/api/${API_VERSION}/private`)
                     .set('X-API-Key', 'invalid-key')
-                    .send({ bucket: 'verifiable-credentials', data: testDocument })
+                    .send({ bucket: 'documents', data: testDocument })
                     .expect(401);
 
                 expect(response.body).toHaveProperty('message');
@@ -88,7 +88,7 @@ describe('Private API - S3 E2E Tests', () => {
                 const response = await request(APP_BASE_URL)
                     .post(`/api/${API_VERSION}/private`)
                     .set('X-API-Key', API_KEY)
-                    .send({ bucket: 'verifiable-credentials', data: 'not-an-object' })
+                    .send({ bucket: 'documents', data: 'not-an-object' })
                     .expect(400);
 
                 expect(response.body.message).toContain('Data must be a JSON object');
@@ -98,7 +98,7 @@ describe('Private API - S3 E2E Tests', () => {
                 const response = await request(APP_BASE_URL)
                     .post(`/api/${API_VERSION}/private`)
                     .set('X-API-Key', API_KEY)
-                    .send({ bucket: 'verifiable-credentials', id: 'not-a-uuid', data: testDocument })
+                    .send({ bucket: 'documents', id: 'not-a-uuid', data: testDocument })
                     .expect(400);
 
                 expect(response.body.message).toContain('Invalid id');
@@ -110,7 +110,7 @@ describe('Private API - S3 E2E Tests', () => {
                 const response = await request(APP_BASE_URL)
                     .post(`/api/${API_VERSION}/private`)
                     .set('X-API-Key', API_KEY)
-                    .send({ bucket: 'verifiable-credentials', data: testDocument })
+                    .send({ bucket: 'documents', data: testDocument })
                     .expect(201);
 
                 expect(response.body.uri).toEqual(expect.any(String));
@@ -126,7 +126,7 @@ describe('Private API - S3 E2E Tests', () => {
                 const response = await request(APP_BASE_URL)
                     .post(`/api/${API_VERSION}/private`)
                     .set('X-API-Key', API_KEY)
-                    .send({ bucket: 'verifiable-credentials', id: customId, data: testDocument })
+                    .send({ bucket: 'documents', id: customId, data: testDocument })
                     .expect(201);
 
                 expect(response.body.uri).toEqual(expect.any(String));
@@ -140,13 +140,13 @@ describe('Private API - S3 E2E Tests', () => {
                 await request(APP_BASE_URL)
                     .post(`/api/${API_VERSION}/private`)
                     .set('X-API-Key', API_KEY)
-                    .send({ bucket: 'verifiable-credentials', id: duplicateId, data: testDocument })
+                    .send({ bucket: 'documents', id: duplicateId, data: testDocument })
                     .expect(201);
 
                 const response = await request(APP_BASE_URL)
                     .post(`/api/${API_VERSION}/private`)
                     .set('X-API-Key', API_KEY)
-                    .send({ bucket: 'verifiable-credentials', id: duplicateId, data: testDocument })
+                    .send({ bucket: 'documents', id: duplicateId, data: testDocument })
                     .expect(409);
 
                 expect(response.body.message).toContain('already exists');
@@ -158,7 +158,7 @@ describe('Private API - S3 E2E Tests', () => {
                 const postResponse = await request(APP_BASE_URL)
                     .post(`/api/${API_VERSION}/private`)
                     .set('X-API-Key', API_KEY)
-                    .send({ bucket: 'verifiable-credentials', data: testDocument })
+                    .send({ bucket: 'documents', data: testDocument })
                     .expect(201);
 
                 const resolvedUri = resolveUri(postResponse.body.uri);
@@ -173,7 +173,7 @@ describe('Private API - S3 E2E Tests', () => {
                 const postResponse = await request(APP_BASE_URL)
                     .post(`/api/${API_VERSION}/private`)
                     .set('X-API-Key', API_KEY)
-                    .send({ bucket: 'verifiable-credentials', data: testDocument })
+                    .send({ bucket: 'documents', data: testDocument })
                     .expect(201);
 
                 const resolvedUri = resolveUri(postResponse.body.uri);
@@ -195,7 +195,7 @@ describe('Private API - S3 E2E Tests', () => {
                 const postResponse = await request(APP_BASE_URL)
                     .post(`/api/${API_VERSION}/private`)
                     .set('X-API-Key', API_KEY)
-                    .send({ bucket: 'verifiable-credentials', data: testDocument })
+                    .send({ bucket: 'documents', data: testDocument })
                     .expect(201);
 
                 const { uri, decryptionKey } = postResponse.body;
@@ -213,7 +213,7 @@ describe('Private API - S3 E2E Tests', () => {
                 const postResponse = await request(APP_BASE_URL)
                     .post(`/api/${API_VERSION}/private`)
                     .set('X-API-Key', API_KEY)
-                    .send({ bucket: 'verifiable-credentials', data: testDocument })
+                    .send({ bucket: 'documents', data: testDocument })
                     .expect(201);
 
                 const expectedHash = computeHash(JSON.stringify(testDocument));

@@ -47,7 +47,7 @@
                     "uri": {
                       "type": "string",
                       "description": "The location where your data is stored.",
-                      "example": "http://localhost:3333/api/2.0.0/verifiable-credentials/123e4567-e89b-12d3-a456-426614174000.json"
+                      "example": "http://localhost:3333/api/2.0.0/documents/123e4567-e89b-12d3-a456-426614174000.json"
                     },
                     "hash": {
                       "type": "string",
@@ -127,7 +127,7 @@
                     "uri": {
                       "type": "string",
                       "description": "The location where your encrypted data is stored.",
-                      "example": "http://localhost:3333/api/2.0.0/verifiable-credentials/123e4567-e89b-12d3-a456-426614174000.json"
+                      "example": "http://localhost:3333/api/2.0.0/documents/123e4567-e89b-12d3-a456-426614174000.json"
                     },
                     "hash": {
                       "type": "string",
@@ -183,7 +183,7 @@
         "properties": {
           "bucket": {
             "type": "string",
-            "example": "verifiable-credentials"
+            "example": "documents"
           },
           "data": {
             "type": "object",
@@ -240,7 +240,7 @@
       "ExampleRequest1": {
         "summary": "Verifiable Credential",
         "value": {
-          "bucket": "verifiable-credentials",
+          "bucket": "documents",
           "id": "123e4567-e89b-12d3-a456-426614174000",
           "data": {
             "@context": [
@@ -275,7 +275,7 @@
       "ExampleRequest2": {
         "summary": "Enveloped Verifiable Credential",
         "value": {
-          "bucket": "verifiable-credentials",
+          "bucket": "documents",
           "id": "123e4567-e89b-12d3-a456-426614174001",
           "data": {
             "@context": [
