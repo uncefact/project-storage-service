@@ -14,8 +14,8 @@ export class PrivateService {
      * as a JSON envelope containing the cipher text, IV, auth tag, encryption type,
      * and content type.
      *
-     * @param cryptographyService - The cryptography service used for hashing, key generation, and encryption.
      * @param storageService - The storage service used for uploading the encrypted document.
+     * @param cryptographyService - The cryptography service used for hashing, key generation, and encryption.
      * @param params - An object containing the following properties:
      * @param params.bucket - The name of the bucket where the document will be stored.
      * @param params.id - (Optional) The identifier for the document. If not provided, a UUID will be generated.
@@ -65,7 +65,7 @@ export class PrivateService {
 
             const hash = cryptographyService.computeHash(stringifiedData);
 
-            const key = cryptographyService.generateEncryptionKey();
+            const key = await cryptographyService.generateEncryptionKey();
 
             const encryptedData = cryptographyService.encryptString(stringifiedData, key);
 
@@ -103,8 +103,8 @@ export class PrivateService {
      * with a `.json` extension because the envelope is JSON, regardless of the original
      * file's MIME type.
      *
-     * @param cryptographyService - The cryptography service used for hashing, key generation, and encryption.
      * @param storageService - The storage service used for uploading the encrypted file.
+     * @param cryptographyService - The cryptography service used for hashing, key generation, and encryption.
      * @param params - An object containing the following properties:
      * @param params.bucket - The name of the bucket where the file will be stored.
      * @param params.id - (Optional) The identifier for the file. If not provided, a UUID will be generated.
@@ -162,7 +162,7 @@ export class PrivateService {
 
             const base64Data = file.toString('base64');
 
-            const key = cryptographyService.generateEncryptionKey();
+            const key = await cryptographyService.generateEncryptionKey();
 
             const encryptedData = cryptographyService.encryptString(base64Data, key);
 

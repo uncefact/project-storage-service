@@ -6,20 +6,20 @@ jest.mock('../../config', () => ({
     ALLOWED_UPLOAD_TYPES: ['image/png', 'image/jpeg', 'application/pdf'],
 }));
 
+const storageService = {
+    uploadFile: jest.fn().mockResolvedValue({ uri: 'mock-uri' }),
+    objectExists: jest.fn().mockResolvedValue(false),
+};
+
 const cryptographyService = {
     computeHash: jest.fn().mockReturnValue('mocked-hash'),
-    generateEncryptionKey: jest.fn().mockReturnValue('test-encryption-key'),
+    generateEncryptionKey: jest.fn().mockResolvedValue('test-encryption-key'),
     encryptString: jest.fn().mockReturnValue({
         cipherText: 'encrypted',
         iv: 'test-iv',
         tag: 'test-tag',
         type: 'aes-256-gcm',
     }),
-};
-
-const storageService = {
-    uploadFile: jest.fn().mockResolvedValue({ uri: 'mock-uri' }),
-    objectExists: jest.fn().mockResolvedValue(false),
 };
 
 describe('PrivateService', () => {
@@ -30,6 +30,14 @@ describe('PrivateService', () => {
         jest.clearAllMocks();
         storageService.uploadFile.mockResolvedValue({ uri: 'mock-uri' });
         storageService.objectExists.mockResolvedValue(false);
+        cryptographyService.computeHash.mockReturnValue('mocked-hash');
+        cryptographyService.generateEncryptionKey.mockResolvedValue('test-encryption-key');
+        cryptographyService.encryptString.mockReturnValue({
+            cipherText: 'encrypted',
+            iv: 'test-iv',
+            tag: 'test-tag',
+            type: 'aes-256-gcm',
+        });
     });
 
     describe('encryptAndStoreDocument', () => {
@@ -307,9 +315,7 @@ describe('PrivateService', () => {
         });
 
         it('should propagate error when generateEncryptionKey throws', async () => {
-            cryptographyService.generateEncryptionKey.mockImplementationOnce(() => {
-                throw new Error('Key generation failed');
-            });
+            cryptographyService.generateEncryptionKey.mockRejectedValueOnce(new Error('Key generation failed'));
 
             const params = {
                 bucket: 'bucketName',
@@ -336,7 +342,7 @@ describe('PrivateService', () => {
 
             const result = await service.encryptAndStoreFile(storageService as any, cryptographyService as any, params);
 
-            // Verify encryptString is called with base64-encoded file content
+            // Verify encrypt is called with base64-encoded file content
             expect(cryptographyService.encryptString).toHaveBeenCalledWith(
                 fileBuffer.toString('base64'),
                 'test-encryption-key',
@@ -628,9 +634,7 @@ describe('PrivateService', () => {
         });
 
         it('should propagate error when generateEncryptionKey throws', async () => {
-            cryptographyService.generateEncryptionKey.mockImplementationOnce(() => {
-                throw new Error('Key generation failed');
-            });
+            cryptographyService.generateEncryptionKey.mockRejectedValueOnce(new Error('Key generation failed'));
 
             const params = {
                 bucket: 'bucketName',

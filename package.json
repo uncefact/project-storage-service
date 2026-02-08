@@ -21,6 +21,7 @@
     "dependencies": {
         "@aws-sdk/client-s3": "^3.693.0",
         "@google-cloud/storage": "^7.7.0",
+        "@uncefact/untp-ri-services": "0.1.0-dev.8",
         "body-parser": "^1.20.3",
         "cors": "^2.8.5",
         "dotenv": "^16.4.1",

@@ -42,7 +42,7 @@ export interface ICryptographyService {
      * @param algorithm The encryption algorithm to generate a key for (default: AES-256-GCM).
      * @returns The generated key as a hexadecimal string.
      */
-    generateEncryptionKey(algorithm?: EncryptionAlgorithm): string;
+    generateEncryptionKey(algorithm?: EncryptionAlgorithm): Promise<string>;
 
     /**
      * Encrypts a given string using a cryptographic key.

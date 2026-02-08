@@ -27,8 +27,8 @@ export const storePublic: RequestHandler = async (req, res) => {
 
     try {
         const publicService = new PublicService();
-        const cryptoService = new CryptographyService();
         const storageService: IStorageService = initialiseStorageService();
+        const cryptoService = new CryptographyService();
 
         let response;
 

@@ -11,20 +11,20 @@ jest.mock('../../config', () => ({
     STORAGE_TYPE: 'gcp',
 }));
 
+jest.mock('../../services/cryptography', () => ({
+    CryptographyService: jest.fn().mockImplementation(() => ({
+        computeHash: jest.fn().mockReturnValue('mocked-hash'),
+        generateEncryptionKey: jest.fn().mockResolvedValue('test-encryption-key'),
+        encryptString: jest
+            .fn()
+            .mockReturnValue({ cipherText: 'encrypted', iv: 'test-iv', tag: 'test-tag', type: 'aes-256-gcm' }),
+    })),
+}));
+
 jest.mock('../../services/storage/gcp', () => ({
     GCPStorageService: jest.fn().mockImplementation(() => ({
         uploadFile: jest.fn().mockResolvedValue({ uri: 'mock-uri' }),
         objectExists: jest.fn().mockResolvedValue(false),
-    })),
-}));
-
-jest.mock('../../services/cryptography', () => ({
-    CryptographyService: jest.fn().mockImplementation(() => ({
-        computeHash: jest.fn().mockReturnValue('mocked-hash'),
-        generateEncryptionKey: jest.fn().mockReturnValue('test-encryption-key'),
-        encryptString: jest
-            .fn()
-            .mockReturnValue({ cipherText: 'encrypted', iv: 'test-iv', tag: 'test-tag', type: 'aes-256-gcm' }),
     })),
 }));
 
