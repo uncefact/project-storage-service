@@ -1,0 +1,12 @@
+node_modules
+dist
+coverage
+.git
+.github
+.claude
+documentation
+e2e
+*.md
+.env
+.env.*
+report.json

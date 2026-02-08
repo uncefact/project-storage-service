@@ -33,10 +33,11 @@ export const storePrivate: RequestHandler = async (req, res) => {
         let response;
 
         if (req.file) {
-            tempPath = path.resolve(req.file.path);
-            if (!tempPath.startsWith(UPLOAD_DIR + path.sep)) {
+            const resolvedPath = path.resolve(req.file.path);
+            if (!resolvedPath.startsWith(UPLOAD_DIR + path.sep)) {
                 throw new BadRequestError('Invalid upload path.');
             }
+            tempPath = resolvedPath;
             const fileBuffer = await fs.promises.readFile(tempPath);
 
             response = await privateService.encryptAndStoreFile(storageService, cryptographyService, {
@@ -65,7 +66,7 @@ export const storePrivate: RequestHandler = async (req, res) => {
             message: 'An unexpected error occurred while storing private data.',
         });
     } finally {
-        if (tempPath) {
+        if (tempPath && tempPath.startsWith(UPLOAD_DIR + path.sep)) {
             try {
                 await fs.promises.unlink(tempPath);
             } catch (cleanupErr: any) {
