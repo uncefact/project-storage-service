@@ -22,33 +22,26 @@ The service offers the following functionality:
 
 ## Choosing Your Storage Endpoint
 
-This service offers three ways to store data, depending on whether your data is public or private and whether it is structured JSON or a binary file.
+This service offers two ways to store data, depending on whether your data is public or private.
 
-### Public Data → [`/documents`](#store-document)
+### Public Data → [`/public`](#store-public-data)
 
-For data that doesn't require protection. The service stores it as-is and returns:
+For data that doesn't require protection. Accepts both JSON (`application/json`) and binary files (`multipart/form-data`). The service stores your content as-is and returns:
 
 - A **URI** (the location of your stored data)
 - A **hash** (a fingerprint to verify the data hasn't changed)
 
-### Public Binary Files → [`/files`](#store-file)
+Allowed file types and maximum upload size are [configurable](#file-upload-configuration).
 
-For binary files (images, PDFs, etc.) that don't require encryption. The service stores the file as-is via a multipart upload and returns:
+### Private Data → [`/private`](#store-private-data)
 
-- A **URI** (the location of your stored file)
-- A **hash** (a fingerprint to verify the file hasn't changed)
-
-Allowed file types and maximum file size are [configurable](#file-upload-configuration).
-
-### Private Data → [`/credentials`](#store-credential)
-
-For sensitive data that needs protection. The service automatically encrypts your data before storage — you don't need to encrypt it yourself.
+For sensitive data that needs protection. Accepts both JSON (`application/json`) and binary files (`multipart/form-data`). The service automatically encrypts your data before storage — you don't need to encrypt it yourself.
 
 The response includes:
 
 - A **URI** (the location of your stored data)
 - A **hash** (a fingerprint to verify the data hasn't changed)
-- A **key** (your unique decryption key)
+- A **decryptionKey** (your unique decryption key)
 
 **Save this key securely** — it's the only way to decrypt your data later.
 
@@ -119,7 +112,7 @@ Configure the storage service using the following environment variables:
 ### Authentication
 
 - `API_KEY`:
-  **Required**. The API key used to authenticate upload requests to `/credentials` and `/documents` endpoints.
+  **Required**. The API key used to authenticate upload requests to `/public` and `/private` endpoints.
   The service will not start without this variable set.
 
 ### Storage Configuration
@@ -133,9 +126,9 @@ Configure the storage service using the following environment variables:
 
 ### File Upload Configuration
 
-- `MAX_BINARY_FILE_SIZE`:
-  Maximum file size in bytes for binary uploads via `/files` (default: `10485760` — 10 MB).
-- `ALLOWED_BINARY_TYPES`:
+- `MAX_UPLOAD_SIZE`:
+  Maximum file size in bytes for binary uploads (default: `10485760` — 10 MB).
+- `ALLOWED_UPLOAD_TYPES`:
   Comma-separated list of permitted MIME types (default: `image/png,image/jpeg,image/webp,application/pdf`).
 
 ### S3-Compatible Storage (AWS, MinIO, DigitalOcean Spaces, Cloudflare R2, etc.)
@@ -255,19 +248,25 @@ The cryptography service uses the following algorithms:
 
 ## Authentication
 
-All upload endpoints (`POST /credentials`, `POST /documents`, and `POST /files`) require API key authentication via the `X-API-Key` header.
+All upload endpoints (`POST /public` and `POST /private`) require API key authentication via the `X-API-Key` header.
 
 Examples:
 
 ```bash
-# Store a JSON credential (encrypted)
-curl -X POST http://localhost:3333/api/1.1.0/credentials \
+# Store public JSON data (no encryption)
+curl -X POST http://localhost:3333/api/2.0.0/public \
 -H "Content-Type: application/json" \
 -H "X-API-Key: your-api-key-here" \
 -d '{"bucket": "verifiable-credentials", "data": {"field1": "value1"}}'
 
-# Upload a binary file
-curl -X POST http://localhost:3333/api/1.1.0/files \
+# Store private JSON data (encrypted)
+curl -X POST http://localhost:3333/api/2.0.0/private \
+-H "Content-Type: application/json" \
+-H "X-API-Key: your-api-key-here" \
+-d '{"bucket": "verifiable-credentials", "data": {"field1": "value1"}}'
+
+# Upload a public binary file
+curl -X POST http://localhost:3333/api/2.0.0/public \
 -H "X-API-Key: your-api-key-here" \
 -F "bucket=files" \
 -F "file=@/path/to/image.png"
