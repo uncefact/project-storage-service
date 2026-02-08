@@ -1,10 +1,8 @@
 import request from 'supertest';
-
+import { v4 as uuidv4 } from 'uuid';
 import { APP_BASE_URL, API_KEY, API_VERSION, resolveUri, computeHash, decryptEnvelope, EncryptedEnvelope } from './helpers';
 
 jest.setTimeout(30000);
-
-const { v4: uuidv4 } = require('uuid');
 
 const testDocument = {
     '@context': ['https://www.w3.org/2018/credentials/v1'],

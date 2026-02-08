@@ -10,7 +10,6 @@
         "start": "node dist/index.js",
         "test": "jest --testPathIgnorePatterns=/e2e/",
         "test:e2e": "docker compose -f docker-compose.e2e.yml up -d --build --wait && jest --testMatch='**/e2e/**/*.e2e.test.ts' --coverage=false; EXIT_CODE=$?; docker compose -f docker-compose.e2e.yml down -v; exit $EXIT_CODE",
-        "test:all": "jest --testPathIgnorePatterns=/e2e/",
         "test:ci": "jest --ci --json --coverage --testLocationInResults --outputFile=report.json --testPathIgnorePatterns=/e2e/",
         "test:e2e:ci": "docker compose -f docker-compose.e2e.yml up -d --build --wait && jest --ci --testMatch='**/e2e/**/*.e2e.test.ts' --coverage=false; EXIT_CODE=$?; docker compose -f docker-compose.e2e.yml down -v; exit $EXIT_CODE",
         "watch:build": "webpack --watch --mode development",
