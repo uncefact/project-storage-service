@@ -68,7 +68,7 @@ Images support multiple architectures:
 docker pull ghcr.io/uncefact/project-storage-service:latest
 
 # Pull a specific version (e.g., 2.3.0)
-docker pull ghcr.io/uncefact/project-storage-service:2.3.0
+docker pull ghcr.io/uncefact/project-storage-service:<version>
 
 # Pull the latest development image from the next branch
 docker pull ghcr.io/uncefact/project-storage-service:next
