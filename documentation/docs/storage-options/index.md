@@ -3,10 +3,6 @@ sidebar_position: 3
 title: Storage Options
 ---
 
-import Disclaimer from './../\_disclaimer.mdx';
-
-<Disclaimer />
-
 ## Understanding Your Storage Options
 
 This service offers two ways to store data, depending on whether your data is public or private. Both endpoints accept JSON (`application/json`) and binary files (`multipart/form-data`).

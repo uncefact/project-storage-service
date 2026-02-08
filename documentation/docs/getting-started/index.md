@@ -3,10 +3,6 @@ sidebar_position: 2
 title: Getting Started
 ---
 
-import Disclaimer from './../\_disclaimer.mdx';
-
-<Disclaimer />
-
 ## Prerequisites
 
 Before you begin, ensure you have installed:

@@ -3,10 +3,6 @@ sidebar_position: 1
 title: Introduction
 ---
 
-import Disclaimer from './../\_disclaimer.mdx';
-
-<Disclaimer />
-
 The Storage Service is an Express REST API that provides secure endpoints to encrypt and store Verifiable Credentials and documents. It is designed to offer flexible storage options while maintaining robust security standards.
 
 ## Key Features

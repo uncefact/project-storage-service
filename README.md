@@ -85,13 +85,8 @@ yarn lint
 # Run unit tests
 yarn test
 
-# Run e2e tests
+# Run e2e tests (requires Docker)
 yarn test:e2e
-
-# Run all tests (unit and e2e)
-yarn test:all
-
-
 ```
 
 ## Configuration

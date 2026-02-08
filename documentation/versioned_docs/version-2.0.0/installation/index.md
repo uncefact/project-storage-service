@@ -3,10 +3,6 @@ sidebar_position: 3
 title: Installation
 ---
 
-import Disclaimer from './../\_disclaimer.mdx';
-
-<Disclaimer />
-
 ## Local Installation
 
 Clone the [repository](https://github.com/uncefact/project-identity-resolver), install dependencies and run:
