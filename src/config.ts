@@ -41,8 +41,12 @@ export const getApiKey = () => process.env.API_KEY;
 export const AUTH_HEADER_NAME = 'x-api-key';
 
 // File upload configuration
-export const ALLOWED_UPLOAD_TYPES = (process.env.ALLOWED_UPLOAD_TYPES ||
-    'image/png,image/jpeg,image/webp,application/pdf').split(',').map(s => s.trim()).filter(Boolean);
+export const ALLOWED_UPLOAD_TYPES = (
+    process.env.ALLOWED_UPLOAD_TYPES || 'image/png,image/jpeg,image/webp,application/pdf'
+)
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean);
 export const MAX_UPLOAD_SIZE = parseInt(process.env.MAX_UPLOAD_SIZE || '10485760', 10);
 
 export const __filename = fileURLToPath(import.meta.url);

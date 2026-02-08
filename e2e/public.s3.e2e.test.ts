@@ -17,16 +17,16 @@ const testDocument = {
 // Minimal valid PNG (1x1 transparent pixel)
 const MINIMAL_PNG = Buffer.from(
     '89504e470d0a1a0a0000000d49484452000000010000000108060000001f15c489' +
-    '0000000a49444154789c626000000002000198e195280000000049454e44ae426082',
+        '0000000a49444154789c626000000002000198e195280000000049454e44ae426082',
     'hex',
 );
 
 // Minimal valid PDF
 const MINIMAL_PDF = Buffer.from(
     '%PDF-1.0\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj\n' +
-    '2 0 obj<</Type/Pages/Kids[3 0 R]/Count 1>>endobj\n' +
-    '3 0 obj<</Type/Page/MediaBox[0 0 3 3]/Parent 2 0 R>>endobj\n' +
-    'xref\n0 4\ntrailer<</Size 4/Root 1 0 R>>\nstartxref\n190\n%%EOF',
+        '2 0 obj<</Type/Pages/Kids[3 0 R]/Count 1>>endobj\n' +
+        '3 0 obj<</Type/Page/MediaBox[0 0 3 3]/Parent 2 0 R>>endobj\n' +
+        'xref\n0 4\ntrailer<</Size 4/Root 1 0 R>>\nstartxref\n190\n%%EOF',
 );
 
 // Buffer exceeding 10MB MAX_UPLOAD_SIZE
@@ -35,9 +35,7 @@ const OVERSIZED_FILE = Buffer.alloc(10485761, 0x00);
 describe('Public API - S3 E2E Tests', () => {
     describe('Health Check', () => {
         it('should return 200 OK for /health-check', async () => {
-            const response = await request(APP_BASE_URL)
-                .get('/health-check')
-                .expect(200);
+            const response = await request(APP_BASE_URL).get('/health-check').expect(200);
 
             expect(response.text).toBe('OK');
         });
@@ -255,7 +253,10 @@ describe('Public API - S3 E2E Tests', () => {
                 const response = await request(APP_BASE_URL)
                     .post(`/api/${API_VERSION}/public`)
                     .set('X-API-Key', API_KEY)
-                    .attach('file', Buffer.from('not a real zip'), { filename: 'test.zip', contentType: 'application/zip' })
+                    .attach('file', Buffer.from('not a real zip'), {
+                        filename: 'test.zip',
+                        contentType: 'application/zip',
+                    })
                     .field('bucket', 'files');
 
                 expect(response.status).toBe(400);
@@ -307,7 +308,10 @@ describe('Public API - S3 E2E Tests', () => {
                 const response = await request(APP_BASE_URL)
                     .post(`/api/${API_VERSION}/public`)
                     .set('X-API-Key', API_KEY)
-                    .attach('file', Buffer.from('fake-jpeg-content'), { filename: 'test.jpg', contentType: 'image/jpeg' })
+                    .attach('file', Buffer.from('fake-jpeg-content'), {
+                        filename: 'test.jpg',
+                        contentType: 'image/jpeg',
+                    })
                     .field('bucket', 'files')
                     .expect(201);
 

@@ -9,17 +9,7 @@
         "forceConsistentCasingInFileNames": true,
         "strict": true,
         "resolveJsonModule": true,
-        "types": [
-            "jest",
-            "node"
-        ]
+        "types": ["jest", "node"]
     },
-    "exclude": [
-        "node_modules",
-        "__mocks__",
-        "dist",
-        "documentation/**/*",
-        "e2e/**/*",
-        "**/*.test.ts"
-    ],
+    "exclude": ["node_modules", "__mocks__", "dist", "documentation/**/*", "e2e/**/*", "**/*.test.ts"]
 }

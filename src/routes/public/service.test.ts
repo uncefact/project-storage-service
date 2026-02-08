@@ -42,7 +42,10 @@ describe('PublicService', () => {
         it('should successfully store a document and return uri and hash', async () => {
             const result = await service.storeDocument(mockStorageService, mockCryptoService, validParams);
 
-            expect(mockStorageService.objectExists).toHaveBeenCalledWith('my-bucket', '123e4567-e89b-12d3-a456-426614174000.json');
+            expect(mockStorageService.objectExists).toHaveBeenCalledWith(
+                'my-bucket',
+                '123e4567-e89b-12d3-a456-426614174000.json',
+            );
             expect(mockCryptoService.computeHash).toHaveBeenCalledWith(JSON.stringify(validParams.data));
             expect(mockStorageService.uploadFile).toHaveBeenCalledWith(
                 'my-bucket',
@@ -141,13 +144,13 @@ describe('PublicService', () => {
         it('should throw ConflictError when document already exists', async () => {
             mockStorageService.objectExists.mockResolvedValue(true);
 
-            await expect(
-                service.storeDocument(mockStorageService, mockCryptoService, validParams),
-            ).rejects.toThrow(ConflictError);
+            await expect(service.storeDocument(mockStorageService, mockCryptoService, validParams)).rejects.toThrow(
+                ConflictError,
+            );
 
-            await expect(
-                service.storeDocument(mockStorageService, mockCryptoService, validParams),
-            ).rejects.toThrow('already exists');
+            await expect(service.storeDocument(mockStorageService, mockCryptoService, validParams)).rejects.toThrow(
+                'already exists',
+            );
         });
 
         it('should throw BadRequestError when data is null', async () => {
@@ -215,23 +218,23 @@ describe('PublicService', () => {
         it('should propagate error when objectExists throws', async () => {
             mockStorageService.objectExists.mockRejectedValue(new Error('Storage connection failed'));
 
-            await expect(
-                service.storeDocument(mockStorageService, mockCryptoService, validParams),
-            ).rejects.toThrow(ApplicationError);
-            await expect(
-                service.storeDocument(mockStorageService, mockCryptoService, validParams),
-            ).rejects.toThrow('An unexpected error occurred while storing the document.');
+            await expect(service.storeDocument(mockStorageService, mockCryptoService, validParams)).rejects.toThrow(
+                ApplicationError,
+            );
+            await expect(service.storeDocument(mockStorageService, mockCryptoService, validParams)).rejects.toThrow(
+                'An unexpected error occurred while storing the document.',
+            );
         });
 
         it('should propagate error when uploadFile throws', async () => {
             mockStorageService.uploadFile.mockRejectedValue(new Error('Upload failed'));
 
-            await expect(
-                service.storeDocument(mockStorageService, mockCryptoService, validParams),
-            ).rejects.toThrow(ApplicationError);
-            await expect(
-                service.storeDocument(mockStorageService, mockCryptoService, validParams),
-            ).rejects.toThrow('An unexpected error occurred while storing the document.');
+            await expect(service.storeDocument(mockStorageService, mockCryptoService, validParams)).rejects.toThrow(
+                ApplicationError,
+            );
+            await expect(service.storeDocument(mockStorageService, mockCryptoService, validParams)).rejects.toThrow(
+                'An unexpected error occurred while storing the document.',
+            );
         });
 
         it('should propagate error when computeHash throws', async () => {
@@ -239,12 +242,12 @@ describe('PublicService', () => {
                 throw new Error('Hash computation failed');
             });
 
-            await expect(
-                service.storeDocument(mockStorageService, mockCryptoService, validParams),
-            ).rejects.toThrow(ApplicationError);
-            await expect(
-                service.storeDocument(mockStorageService, mockCryptoService, validParams),
-            ).rejects.toThrow('An unexpected error occurred while storing the document.');
+            await expect(service.storeDocument(mockStorageService, mockCryptoService, validParams)).rejects.toThrow(
+                ApplicationError,
+            );
+            await expect(service.storeDocument(mockStorageService, mockCryptoService, validParams)).rejects.toThrow(
+                'An unexpected error occurred while storing the document.',
+            );
         });
     });
 
@@ -261,7 +264,10 @@ describe('PublicService', () => {
         it('should successfully store a file and return uri and hash', async () => {
             const result = await service.storeFile(mockStorageService, mockCryptoService, validParams);
 
-            expect(mockStorageService.objectExists).toHaveBeenCalledWith('my-bucket', '123e4567-e89b-12d3-a456-426614174000.png');
+            expect(mockStorageService.objectExists).toHaveBeenCalledWith(
+                'my-bucket',
+                '123e4567-e89b-12d3-a456-426614174000.png',
+            );
             expect(mockCryptoService.computeHash).toHaveBeenCalledWith(fileBuffer);
             expect(mockStorageService.uploadFile).toHaveBeenCalledWith(
                 'my-bucket',
@@ -376,13 +382,13 @@ describe('PublicService', () => {
         it('should throw ConflictError when file already exists', async () => {
             mockStorageService.objectExists.mockResolvedValue(true);
 
-            await expect(
-                service.storeFile(mockStorageService, mockCryptoService, validParams),
-            ).rejects.toThrow(ConflictError);
+            await expect(service.storeFile(mockStorageService, mockCryptoService, validParams)).rejects.toThrow(
+                ConflictError,
+            );
 
-            await expect(
-                service.storeFile(mockStorageService, mockCryptoService, validParams),
-            ).rejects.toThrow('already exists');
+            await expect(service.storeFile(mockStorageService, mockCryptoService, validParams)).rejects.toThrow(
+                'already exists',
+            );
         });
 
         it('should correctly infer file extension from MIME type', async () => {
@@ -400,7 +406,9 @@ describe('PublicService', () => {
 
             jest.clearAllMocks();
             mockStorageService.objectExists.mockResolvedValue(false);
-            mockStorageService.uploadFile.mockResolvedValue({ uri: 'https://storage.example.com/my-bucket/test-id.jpg' });
+            mockStorageService.uploadFile.mockResolvedValue({
+                uri: 'https://storage.example.com/my-bucket/test-id.jpg',
+            });
             mockCryptoService.computeHash.mockReturnValue('mocked-hash');
 
             // image/jpeg -> jpg (mime-types maps jpeg to .jpg)
@@ -417,7 +425,9 @@ describe('PublicService', () => {
 
             jest.clearAllMocks();
             mockStorageService.objectExists.mockResolvedValue(false);
-            mockStorageService.uploadFile.mockResolvedValue({ uri: 'https://storage.example.com/my-bucket/test-id.pdf' });
+            mockStorageService.uploadFile.mockResolvedValue({
+                uri: 'https://storage.example.com/my-bucket/test-id.pdf',
+            });
             mockCryptoService.computeHash.mockReturnValue('mocked-hash');
 
             // application/pdf -> pdf
@@ -473,23 +483,23 @@ describe('PublicService', () => {
         it('should propagate error when objectExists throws', async () => {
             mockStorageService.objectExists.mockRejectedValue(new Error('Storage connection failed'));
 
-            await expect(
-                service.storeFile(mockStorageService, mockCryptoService, validParams),
-            ).rejects.toThrow(ApplicationError);
-            await expect(
-                service.storeFile(mockStorageService, mockCryptoService, validParams),
-            ).rejects.toThrow('An unexpected error occurred while storing the file.');
+            await expect(service.storeFile(mockStorageService, mockCryptoService, validParams)).rejects.toThrow(
+                ApplicationError,
+            );
+            await expect(service.storeFile(mockStorageService, mockCryptoService, validParams)).rejects.toThrow(
+                'An unexpected error occurred while storing the file.',
+            );
         });
 
         it('should propagate error when uploadFile throws', async () => {
             mockStorageService.uploadFile.mockRejectedValue(new Error('Upload failed'));
 
-            await expect(
-                service.storeFile(mockStorageService, mockCryptoService, validParams),
-            ).rejects.toThrow(ApplicationError);
-            await expect(
-                service.storeFile(mockStorageService, mockCryptoService, validParams),
-            ).rejects.toThrow('An unexpected error occurred while storing the file.');
+            await expect(service.storeFile(mockStorageService, mockCryptoService, validParams)).rejects.toThrow(
+                ApplicationError,
+            );
+            await expect(service.storeFile(mockStorageService, mockCryptoService, validParams)).rejects.toThrow(
+                'An unexpected error occurred while storing the file.',
+            );
         });
 
         it('should propagate error when computeHash throws', async () => {
@@ -497,12 +507,12 @@ describe('PublicService', () => {
                 throw new Error('Hash computation failed');
             });
 
-            await expect(
-                service.storeFile(mockStorageService, mockCryptoService, validParams),
-            ).rejects.toThrow(ApplicationError);
-            await expect(
-                service.storeFile(mockStorageService, mockCryptoService, validParams),
-            ).rejects.toThrow('An unexpected error occurred while storing the file.');
+            await expect(service.storeFile(mockStorageService, mockCryptoService, validParams)).rejects.toThrow(
+                ApplicationError,
+            );
+            await expect(service.storeFile(mockStorageService, mockCryptoService, validParams)).rejects.toThrow(
+                'An unexpected error occurred while storing the file.',
+            );
         });
 
         it('should successfully store a JPEG file with correct extension', async () => {
@@ -541,7 +551,7 @@ describe('PublicService', () => {
                         ...validParams,
                         mimeType: 'image/png',
                     }),
-                ).rejects.toThrow("Unable to determine file extension");
+                ).rejects.toThrow('Unable to determine file extension');
             } finally {
                 mimeTypes.extension = originalExtension;
             }

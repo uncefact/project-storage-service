@@ -27,11 +27,11 @@ The service can be configured through environment variables. If not specified, t
 
 ### Server Configuration
 
-| Variable        | Description          | Default     |
-| --------------- | -------------------- | ----------- |
-| `PROTOCOL`      | HTTP protocol to use | `http`      |
-| `DOMAIN`        | Server domain        | `localhost` |
-| `PORT`          | Server port number   | `3333`      |
+| Variable        | Description                                                                                                                   | Default         |
+| --------------- | ----------------------------------------------------------------------------------------------------------------------------- | --------------- |
+| `PROTOCOL`      | HTTP protocol to use                                                                                                          | `http`          |
+| `DOMAIN`        | Server domain                                                                                                                 | `localhost`     |
+| `PORT`          | Server port number                                                                                                            | `3333`          |
 | `EXTERNAL_PORT` | Port used in generated URLs (Swagger, storage URIs). Useful when the service runs behind a reverse proxy on a different port. | Value of `PORT` |
 
 ### Authentication Configuration
@@ -47,26 +47,26 @@ The service can be configured through environment variables. If not specified, t
 | `STORAGE_TYPE`    | Storage provider (`local`, `gcp`, or `aws`) | `local`   |
 | `LOCAL_DIRECTORY` | Directory for local file storage            | `uploads` |
 
-
 ### Bucket Configuration
 
-| Variable            | Description                                     | Default                  |
-| ------------------- | ----------------------------------------------- | ------------------------ |
-| `DEFAULT_BUCKET`    | Default storage bucket name                     | `verifiable-credentials` |
+| Variable            | Description                                     | Default                        |
+| ------------------- | ----------------------------------------------- | ------------------------------ |
+| `DEFAULT_BUCKET`    | Default storage bucket name                     | `verifiable-credentials`       |
 | `AVAILABLE_BUCKETS` | Comma-separated list of allowed storage buckets | `verifiable-credentials,files` |
 
 ### File Upload Configuration
 
-| Variable              | Description                                      | Default                                                       |
-| --------------------- | ------------------------------------------------ | ------------------------------------------------------------- |
-| `MAX_UPLOAD_SIZE`     | Maximum file upload size in bytes                | `10485760` (10 MB)                                            |
-| `ALLOWED_UPLOAD_TYPES` | Comma-separated list of allowed MIME types      | `image/png,image/jpeg,image/webp,application/pdf`   |
+| Variable               | Description                                | Default                                           |
+| ---------------------- | ------------------------------------------ | ------------------------------------------------- |
+| `MAX_UPLOAD_SIZE`      | Maximum file upload size in bytes          | `10485760` (10 MB)                                |
+| `ALLOWED_UPLOAD_TYPES` | Comma-separated list of allowed MIME types | `image/png,image/jpeg,image/webp,application/pdf` |
 
 :::caution Disk space considerations for file uploads
 
 Uploaded files are temporarily written to the OS temp directory before being forwarded to storage. Temp files are automatically cleaned up after each upload completes or fails.
 
 When planning your deployment, ensure:
+
 - **Temp directory disk space** can accommodate concurrent uploads at the configured `MAX_UPLOAD_SIZE`. For example, 10 concurrent 10 MB uploads require ~100 MB of temporary disk space.
 - **`MAX_UPLOAD_SIZE`** is set appropriately for your use case — lower it if your files are typically smaller.
 

@@ -153,11 +153,11 @@ curl -X POST http://localhost:3333/api/2.0.0/private \
 
 #### Response Data
 
-| Field            | Description                                                       |
-| ---------------- | ----------------------------------------------------------------- |
-| `uri`            | The link to the stored data.                                      |
-| `hash`           | A hash of the data, used to verify your data hasn't been changed. |
-| `decryptionKey`  | The symmetric key used to decrypt the encrypted data.             |
+| Field           | Description                                                       |
+| --------------- | ----------------------------------------------------------------- |
+| `uri`           | The link to the stored data.                                      |
+| `hash`          | A hash of the data, used to verify your data hasn't been changed. |
+| `decryptionKey` | The symmetric key used to decrypt the encrypted data.             |
 
 ## Storage Providers
 

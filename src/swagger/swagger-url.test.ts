@@ -7,7 +7,7 @@ const buildConfigMock = (overrides: Record<string, unknown> = {}) => ({
     PROTOCOL: overrides.PROTOCOL ?? 'http',
     DOMAIN: overrides.DOMAIN ?? 'localhost',
     PORT: overrides.PORT ?? 3333,
-    EXTERNAL_PORT: overrides.EXTERNAL_PORT ?? (overrides.PORT ?? 3333),
+    EXTERNAL_PORT: overrides.EXTERNAL_PORT ?? overrides.PORT ?? 3333,
     DEFAULT_BUCKET: 'verifiable-credentials',
     AVAILABLE_BUCKETS: ['verifiable-credentials'],
     STORAGE_TYPE: 'local',
@@ -68,7 +68,11 @@ describe('Swagger URL Tests', () => {
 
     describe('string port values from environment variables', () => {
         it('should handle string port from env correctly', async () => {
-            const response = await getSwaggerInitResponse({ PROTOCOL: 'https', DOMAIN: 'api.example.com', PORT: '443' });
+            const response = await getSwaggerInitResponse({
+                PROTOCOL: 'https',
+                DOMAIN: 'api.example.com',
+                PORT: '443',
+            });
 
             expect(response.text).toContain(`"url": "https://api.example.com/api/${API_VERSION}"`);
             expect(response.text).not.toContain('"url": "https://api.example.com:443');
@@ -84,7 +88,12 @@ describe('Swagger URL Tests', () => {
         });
 
         it('should omit EXTERNAL_PORT 443 for HTTPS', async () => {
-            const response = await getSwaggerInitResponse({ PROTOCOL: 'https', DOMAIN: 'api.example.com', PORT: 3333, EXTERNAL_PORT: 443 });
+            const response = await getSwaggerInitResponse({
+                PROTOCOL: 'https',
+                DOMAIN: 'api.example.com',
+                PORT: 3333,
+                EXTERNAL_PORT: 443,
+            });
 
             expect(response.text).toContain(`"url": "https://api.example.com/api/${API_VERSION}"`);
             expect(response.text).not.toContain('"url": "https://api.example.com:443');
@@ -92,7 +101,12 @@ describe('Swagger URL Tests', () => {
         });
 
         it('should omit EXTERNAL_PORT 80 for HTTP', async () => {
-            const response = await getSwaggerInitResponse({ PROTOCOL: 'http', DOMAIN: 'example.com', PORT: 3333, EXTERNAL_PORT: 80 });
+            const response = await getSwaggerInitResponse({
+                PROTOCOL: 'http',
+                DOMAIN: 'example.com',
+                PORT: 3333,
+                EXTERNAL_PORT: 80,
+            });
 
             expect(response.text).toContain(`"url": "http://example.com/api/${API_VERSION}"`);
             expect(response.text).not.toContain('"url": "http://example.com:80');

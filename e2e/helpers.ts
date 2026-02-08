@@ -1,6 +1,6 @@
 import crypto from 'crypto';
 
-const { apiVersion: API_VERSION } = require('../version.json');
+import { apiVersion as API_VERSION } from '../version.json';
 
 /** Base URL for the containerised app */
 export const APP_BASE_URL = 'http://localhost:3334';

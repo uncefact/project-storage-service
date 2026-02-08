@@ -34,9 +34,7 @@ describe('ApiKeyAuthenticationService', () => {
             const result = await authService.authenticate(mockRequest as Request);
 
             expect(result.authenticated).toBe(false);
-            expect(result.error).toBe(
-                'API key is required. Please provide a valid API key in the X-API-Key header.',
-            );
+            expect(result.error).toBe('API key is required. Please provide a valid API key in the X-API-Key header.');
         });
 
         it('should return authenticated false when API key is invalid', async () => {
@@ -79,4 +77,3 @@ describe('ApiKeyAuthenticationService', () => {
         });
     });
 });
-

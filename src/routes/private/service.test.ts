@@ -40,7 +40,11 @@ describe('PrivateService', () => {
                 data: { key: 'value' },
             };
 
-            const result = await service.encryptAndStoreDocument(storageService as any, cryptographyService as any, params);
+            const result = await service.encryptAndStoreDocument(
+                storageService as any,
+                cryptographyService as any,
+                params,
+            );
 
             expect(cryptographyService.encryptString).toHaveBeenCalledWith(
                 JSON.stringify(params.data),
@@ -96,7 +100,11 @@ describe('PrivateService', () => {
                 data: { key: 'value' },
             };
 
-            const result = await service.encryptAndStoreDocument(storageService as any, cryptographyService as any, params);
+            const result = await service.encryptAndStoreDocument(
+                storageService as any,
+                cryptographyService as any,
+                params,
+            );
 
             expect(result).toEqual(
                 expect.objectContaining({
@@ -195,17 +203,20 @@ describe('PrivateService', () => {
                 data: {},
             };
 
-            const result = await service.encryptAndStoreDocument(storageService as any, cryptographyService as any, params);
-
-            expect(cryptographyService.encryptString).toHaveBeenCalledWith(
-                JSON.stringify({}),
-                'test-encryption-key',
+            const result = await service.encryptAndStoreDocument(
+                storageService as any,
+                cryptographyService as any,
+                params,
             );
-            expect(result).toEqual(expect.objectContaining({
-                uri: expect.any(String),
-                hash: expect.any(String),
-                decryptionKey: expect.any(String),
-            }));
+
+            expect(cryptographyService.encryptString).toHaveBeenCalledWith(JSON.stringify({}), 'test-encryption-key');
+            expect(result).toEqual(
+                expect.objectContaining({
+                    uri: expect.any(String),
+                    hash: expect.any(String),
+                    decryptionKey: expect.any(String),
+                }),
+            );
         });
 
         it('should throw BadRequestError when bucket is an empty string', async () => {
@@ -222,7 +233,11 @@ describe('PrivateService', () => {
         it('should generate a UUID when id is an empty string', async () => {
             const params = { bucket: 'bucketName', id: '', data: { key: 'value' } };
 
-            const result = await service.encryptAndStoreDocument(storageService as any, cryptographyService as any, params);
+            const result = await service.encryptAndStoreDocument(
+                storageService as any,
+                cryptographyService as any,
+                params,
+            );
 
             expect(result).toHaveProperty('uri');
             expect(storageService.uploadFile).toHaveBeenCalled();
@@ -539,11 +554,13 @@ describe('PrivateService', () => {
                 Buffer.alloc(0).toString('base64'),
                 'test-encryption-key',
             );
-            expect(result).toEqual(expect.objectContaining({
-                uri: expect.any(String),
-                hash: expect.any(String),
-                decryptionKey: expect.any(String),
-            }));
+            expect(result).toEqual(
+                expect.objectContaining({
+                    uri: expect.any(String),
+                    hash: expect.any(String),
+                    decryptionKey: expect.any(String),
+                }),
+            );
         });
 
         it('should propagate error when objectExists throws', async () => {

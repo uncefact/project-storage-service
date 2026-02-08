@@ -7,17 +7,17 @@ This PR [adds/removes/fixes/replaces] the [feature/bug/etc].
 
 ## What type of PR is this? (check all applicable)
 
--   [ ] 🍕 Feature
--   [ ] 🐛 Bug Fix
--   [ ] 📝 Documentation Update
--   [ ] 🎨 Style
--   [ ] 🧑‍💻 Code Refactor
--   [ ] 🔥 Performance Improvements
--   [ ] ✅ Test
--   [ ] 🤖 Build
--   [ ] 🔁 CI
--   [ ] 📦 Chore (Release)
--   [ ] ⏩ Revert
+- [ ] 🍕 Feature
+- [ ] 🐛 Bug Fix
+- [ ] 📝 Documentation Update
+- [ ] 🎨 Style
+- [ ] 🧑‍💻 Code Refactor
+- [ ] 🔥 Performance Improvements
+- [ ] ✅ Test
+- [ ] 🤖 Build
+- [ ] 🔁 CI
+- [ ] 📦 Chore (Release)
+- [ ] ⏩ Revert
 
 ## Related Tickets & Documents
 
@@ -32,15 +32,15 @@ https://docs.github.com/en/free-pro-team@latest/github/managing-your-work-on-git
 
 ## Added tests?
 
--   [ ] 👍 yes
--   [ ] 🙅 no, because they aren't needed
--   [ ] 🙋 no, because I need help
+- [ ] 👍 yes
+- [ ] 🙅 no, because they aren't needed
+- [ ] 🙋 no, because I need help
 
 ## Added to documentation?
 
--   [ ] 📜 README.md
--   [ ] 📕 storybook
--   [ ] 🙅 no documentation needed
+- [ ] 📜 README.md
+- [ ] 📕 storybook
+- [ ] 🙅 no documentation needed
 
 ## [optional] Are there any post-deployment tasks we need to perform?
 

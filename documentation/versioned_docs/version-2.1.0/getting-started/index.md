@@ -27,11 +27,11 @@ The service can be configured through environment variables. If not specified, t
 
 ### Server Configuration
 
-| Variable        | Description          | Default     |
-| --------------- | -------------------- | ----------- |
-| `PROTOCOL`      | HTTP protocol to use | `http`      |
-| `DOMAIN`        | Server domain        | `localhost` |
-| `PORT`          | Server port number   | `3333`      |
+| Variable        | Description                                                                                                                   | Default         |
+| --------------- | ----------------------------------------------------------------------------------------------------------------------------- | --------------- |
+| `PROTOCOL`      | HTTP protocol to use                                                                                                          | `http`          |
+| `DOMAIN`        | Server domain                                                                                                                 | `localhost`     |
+| `PORT`          | Server port number                                                                                                            | `3333`          |
 | `EXTERNAL_PORT` | Port used in generated URLs (Swagger, storage URIs). Useful when the service runs behind a reverse proxy on a different port. | Value of `PORT` |
 
 ### Authentication Configuration

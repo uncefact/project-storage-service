@@ -22,15 +22,16 @@ The workflow builds a single image variant using the root `Dockerfile`.
 ### Multi-Platform Support
 
 Images are built for multiple architectures:
+
 - `linux/amd64` (Intel/AMD)
 - `linux/arm64` (Apple Silicon, ARM servers)
 
 ### Image Tags
 
-| Tag Pattern | Example | Description |
-|-------------|---------|-------------|
-| `{version}` | `1.1.0` | Version-tagged image |
-| `latest` | `latest` | Latest release |
+| Tag Pattern  | Example       | Description           |
+| ------------ | ------------- | --------------------- |
+| `{version}`  | `1.1.0`       | Version-tagged image  |
+| `latest`     | `latest`      | Latest release        |
 | `sha-{hash}` | `sha-f30ab65` | Commit-specific image |
 
 ## Pulling Images

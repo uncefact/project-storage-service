@@ -17,7 +17,9 @@ if (isNaN(Number(EXTERNAL_PORT))) {
 }
 
 if (isNaN(MAX_UPLOAD_SIZE) || MAX_UPLOAD_SIZE <= 0) {
-    console.error(`MAX_UPLOAD_SIZE must be a positive number (in bytes). Current value: '${process.env.MAX_UPLOAD_SIZE}'.`);
+    console.error(
+        `MAX_UPLOAD_SIZE must be a positive number (in bytes). Current value: '${process.env.MAX_UPLOAD_SIZE}'.`,
+    );
     process.exit(1);
 }
 

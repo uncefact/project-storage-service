@@ -22,7 +22,9 @@ jest.mock('../../services/cryptography', () => ({
     CryptographyService: jest.fn().mockImplementation(() => ({
         computeHash: jest.fn().mockReturnValue('mocked-hash'),
         generateEncryptionKey: jest.fn().mockReturnValue('test-encryption-key'),
-        encryptString: jest.fn().mockReturnValue({ cipherText: 'encrypted', iv: 'test-iv', tag: 'test-tag', type: 'aes-256-gcm' }),
+        encryptString: jest
+            .fn()
+            .mockReturnValue({ cipherText: 'encrypted', iv: 'test-iv', tag: 'test-tag', type: 'aes-256-gcm' }),
     })),
 }));
 
@@ -239,7 +241,7 @@ describe('Private Controller', () => {
 
         it('should log an error when temp file cleanup fails', async () => {
             (fs.promises.unlink as jest.Mock).mockRejectedValueOnce(
-                Object.assign(new Error('EACCES: permission denied'), { code: 'EACCES' })
+                Object.assign(new Error('EACCES: permission denied'), { code: 'EACCES' }),
             );
             const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
 

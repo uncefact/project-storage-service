@@ -20,8 +20,11 @@ jobs:
             - name: Install dependencies
               run: yarn install
 
+            - name: Check formatting
+              run: yarn format:check
+
             - name: Check linting
-              run: yarn lint
+              run: yarn lint:check
 
             - name: Run unit tests
               run: yarn test:ci

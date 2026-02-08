@@ -10,7 +10,11 @@ const storage = multer.diskStorage({
 
 const fileFilter: multer.Options['fileFilter'] = (_req, file, cb) => {
     if (!ALLOWED_UPLOAD_TYPES.includes(file.mimetype)) {
-        return cb(new BadRequestError(`File type '${file.mimetype}' is not allowed. Allowed types: ${ALLOWED_UPLOAD_TYPES.join(', ')}`));
+        return cb(
+            new BadRequestError(
+                `File type '${file.mimetype}' is not allowed. Allowed types: ${ALLOWED_UPLOAD_TYPES.join(', ')}`,
+            ),
+        );
     }
     cb(null, true);
 };

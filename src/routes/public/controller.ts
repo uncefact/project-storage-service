@@ -71,7 +71,11 @@ export const storePublic: RequestHandler = async (req, res) => {
                 await fs.promises.unlink(tempPath);
             } catch (cleanupErr: any) {
                 if (cleanupErr.code !== 'ENOENT') {
-                    console.error('[PublicController.storePublic] Failed to clean up temp file %s:', tempPath, cleanupErr);
+                    console.error(
+                        '[PublicController.storePublic] Failed to clean up temp file %s:',
+                        tempPath,
+                        cleanupErr,
+                    );
                 }
             }
         }

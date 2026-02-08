@@ -7,17 +7,18 @@ title: Storage Options
 
 This service offers three ways to store data, depending on whether your data is public or private.
 
-| Use Case | Endpoint | What Happens |
-|----------|----------|--------------|
-| Public JSON data | `/documents` | Stored as-is, without encryption |
-| Public binary files (images, PDFs, etc.) | `/files` | Stored as-is, without encryption |
-| Private data | `/credentials` | Automatically encrypted |
+| Use Case                                 | Endpoint       | What Happens                     |
+| ---------------------------------------- | -------------- | -------------------------------- |
+| Public JSON data                         | `/documents`   | Stored as-is, without encryption |
+| Public binary files (images, PDFs, etc.) | `/files`       | Stored as-is, without encryption |
+| Private data                             | `/credentials` | Automatically encrypted          |
 
 ## The Lockbox Analogy
 
 Think of the `/credentials` endpoint like a secure lockbox service.
 
 When you store private data:
+
 1. You hand over your data
 2. The service locks it in a secure box
 3. You receive the only key
@@ -31,11 +32,12 @@ Without that key, no one — including us — can open the box. This is why it's
 Use this endpoint for JSON data you're happy to share publicly. Since documents are stored unencrypted at a public URI, they can be read by anyone who obtains the link.
 
 **What happens:**
+
 1. You send your data to the service
 2. The service stores it exactly as you sent it
 3. You receive back:
-   - A **URI** — the location where your data is stored
-   - A **hash** — a fingerprint to verify your data hasn't changed
+    - A **URI** — the location where your data is stored
+    - A **hash** — a fingerprint to verify your data hasn't changed
 
 ```
 Your Data → Store → URI + Hash
@@ -46,11 +48,12 @@ Your Data → Store → URI + Hash
 Use this endpoint for binary files (images, PDFs, etc.) you're happy to share publicly. Like `/documents`, files are stored as-is without encryption and are publicly accessible to anyone who obtains the URI.
 
 **What happens:**
+
 1. You upload your file to the service
 2. The service stores it exactly as you sent it
 3. You receive back:
-   - A **URI** — the location where your file is stored
-   - A **hash** — a fingerprint to verify your file hasn't changed
+    - A **URI** — the location where your file is stored
+    - A **hash** — a fingerprint to verify your file hasn't changed
 
 ```
 Your File → Store → URI + Hash
@@ -61,13 +64,14 @@ Your File → Store → URI + Hash
 Use this endpoint for any sensitive or private information that should be protected.
 
 **What happens:**
+
 1. You send your data to the service
 2. The service encrypts your data automatically (you don't need to encrypt it yourself)
 3. The encrypted data is stored
 4. You receive back:
-   - A **URI** — the location where your encrypted data is stored
-   - A **hash** — a fingerprint to verify your data hasn't changed
-   - A **key** — your unique decryption key
+    - A **URI** — the location where your encrypted data is stored
+    - A **hash** — a fingerprint to verify your data hasn't changed
+    - A **key** — your unique decryption key
 
 ```
 Your Data → Encrypt → Store → URI + Hash + Key
@@ -85,11 +89,11 @@ Store it securely immediately after receiving it.
 
 ## When to Use Which Endpoint
 
-| Scenario | Recommended Endpoint |
-|----------|---------------------|
-| Public JSON data | `/documents` |
-| Public binary files (images, PDFs, etc.) | `/files` |
-| Private data | `/credentials` |
+| Scenario                                 | Recommended Endpoint |
+| ---------------------------------------- | -------------------- |
+| Public JSON data                         | `/documents`         |
+| Public binary files (images, PDFs, etc.) | `/files`             |
+| Private data                             | `/credentials`       |
 
 :::info Note on Data Discovery
 
@@ -116,6 +120,7 @@ For developers who want to understand the encryption:
 When you store data via `/documents` or upload files via `/files`, the service stores your content exactly as you sent it — no encryption or transformation is applied.
 
 For `/documents`:
+
 ```json
 {
     "field1": "value1",
@@ -125,8 +130,8 @@ For `/documents`:
 
 For `/files`, the binary file (e.g. PNG, PDF) is stored in its original format.
 
-| Field | Description |
-|-------|-------------|
+| Field          | Description                                                      |
+| -------------- | ---------------------------------------------------------------- |
 | Your data/file | Stored exactly as provided, with no transformation or encryption |
 
 This means your content is directly accessible to anyone who obtains the URI.
@@ -144,12 +149,12 @@ When you store data via `/credentials`, the service encrypts your data and store
 }
 ```
 
-| Field | Description |
-|-------|-------------|
-| `cipherText` | Your encrypted data (Base64 encoded) |
-| `iv` | Initialization vector used for encryption (Base64 encoded) |
-| `tag` | Authentication tag that verifies data integrity (Base64 encoded) |
-| `type` | The encryption algorithm used |
+| Field        | Description                                                      |
+| ------------ | ---------------------------------------------------------------- |
+| `cipherText` | Your encrypted data (Base64 encoded)                             |
+| `iv`         | Initialization vector used for encryption (Base64 encoded)       |
+| `tag`        | Authentication tag that verifies data integrity (Base64 encoded) |
+| `type`       | The encryption algorithm used                                    |
 
 This structure ensures both **confidentiality** (data is unreadable without the key) and **integrity** (any tampering can be detected via the authentication tag).
 

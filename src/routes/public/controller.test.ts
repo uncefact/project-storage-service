@@ -228,7 +228,7 @@ describe('PublicController', () => {
 
         it('should log an error when temp file cleanup fails', async () => {
             (fs.promises.unlink as jest.Mock).mockRejectedValueOnce(
-                Object.assign(new Error('EACCES: permission denied'), { code: 'EACCES' })
+                Object.assign(new Error('EACCES: permission denied'), { code: 'EACCES' }),
             );
             const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
 

@@ -15,6 +15,7 @@ The Storage Service is an Express REST API that provides secure endpoints to enc
 ## Architecture Overview
 
 The service implements a modular architecture that separates concerns between:
+
 - Storage adapters for different providers
 - Cryptographic operations
 - REST API endpoints

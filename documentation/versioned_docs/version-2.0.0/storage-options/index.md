@@ -7,9 +7,9 @@ title: Storage Options
 
 This service offers two ways to store data, depending on whether your data is public or private.
 
-| Use Case | Endpoint | What Happens |
-|----------|----------|--------------|
-| Public data | `/documents` | Stored as-is |
+| Use Case     | Endpoint       | What Happens            |
+| ------------ | -------------- | ----------------------- |
+| Public data  | `/documents`   | Stored as-is            |
 | Private data | `/credentials` | Automatically encrypted |
 
 ## The Lockbox Analogy
@@ -17,6 +17,7 @@ This service offers two ways to store data, depending on whether your data is pu
 Think of the `/credentials` endpoint like a secure lockbox service.
 
 When you store private data:
+
 1. You hand over your data
 2. The service locks it in a secure box
 3. You receive the only key
@@ -30,11 +31,12 @@ Without that key, no one — including us — can open the box. This is why it's
 Use this endpoint for data you're happy to share publicly. Since documents are stored unencrypted at a public URI, they can be read by anyone who obtains the link.
 
 **What happens:**
+
 1. You send your data to the service
 2. The service stores it exactly as you sent it
 3. You receive back:
-   - A **URI** — the location where your data is stored
-   - A **hash** — a fingerprint to verify your data hasn't changed
+    - A **URI** — the location where your data is stored
+    - A **hash** — a fingerprint to verify your data hasn't changed
 
 ```
 Your Data → Store → URI + Hash
@@ -45,13 +47,14 @@ Your Data → Store → URI + Hash
 Use this endpoint for any sensitive or private information that should be protected.
 
 **What happens:**
+
 1. You send your data to the service
 2. The service encrypts your data automatically (you don't need to encrypt it yourself)
 3. The encrypted data is stored
 4. You receive back:
-   - A **URI** — the location where your encrypted data is stored
-   - A **hash** — a fingerprint to verify your data hasn't changed
-   - A **key** — your unique decryption key
+    - A **URI** — the location where your encrypted data is stored
+    - A **hash** — a fingerprint to verify your data hasn't changed
+    - A **key** — your unique decryption key
 
 ```
 Your Data → Encrypt → Store → URI + Hash + Key
@@ -69,10 +72,10 @@ Store it securely immediately after receiving it.
 
 ## When to Use Which Endpoint
 
-| Scenario | Recommended Endpoint |
-|----------|---------------------|
-| Public data | `/documents` |
-| Private data | `/credentials` |
+| Scenario     | Recommended Endpoint |
+| ------------ | -------------------- |
+| Public data  | `/documents`         |
+| Private data | `/credentials`       |
 
 :::info Note on Data Discovery
 
@@ -104,8 +107,8 @@ When you store data via `/documents`, the service stores your data exactly as yo
 }
 ```
 
-| Field | Description |
-|-------|-------------|
+| Field     | Description                                        |
+| --------- | -------------------------------------------------- |
 | Your data | Stored exactly as provided, with no transformation |
 
 This means your data is directly readable by anyone who obtains the URI.
@@ -123,12 +126,12 @@ When you store data via `/credentials`, the service encrypts your data and store
 }
 ```
 
-| Field | Description |
-|-------|-------------|
-| `cipherText` | Your encrypted data (Base64 encoded) |
-| `iv` | Initialization vector used for encryption (Base64 encoded) |
-| `tag` | Authentication tag that verifies data integrity (Base64 encoded) |
-| `type` | The encryption algorithm used |
+| Field        | Description                                                      |
+| ------------ | ---------------------------------------------------------------- |
+| `cipherText` | Your encrypted data (Base64 encoded)                             |
+| `iv`         | Initialization vector used for encryption (Base64 encoded)       |
+| `tag`        | Authentication tag that verifies data integrity (Base64 encoded) |
+| `type`       | The encryption algorithm used                                    |
 
 This structure ensures both **confidentiality** (data is unreadable without the key) and **integrity** (any tampering can be detected via the authentication tag).
 

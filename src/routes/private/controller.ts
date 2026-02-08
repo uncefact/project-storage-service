@@ -71,7 +71,11 @@ export const storePrivate: RequestHandler = async (req, res) => {
                 await fs.promises.unlink(tempPath);
             } catch (cleanupErr: any) {
                 if (cleanupErr.code !== 'ENOENT') {
-                    console.error('[PrivateController.storePrivate] Failed to clean up temp file %s:', tempPath, cleanupErr);
+                    console.error(
+                        '[PrivateController.storePrivate] Failed to clean up temp file %s:',
+                        tempPath,
+                        cleanupErr,
+                    );
                 }
             }
         }

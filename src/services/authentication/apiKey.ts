@@ -51,4 +51,3 @@ export class ApiKeyAuthenticationService implements IAuthenticationService {
         return { authenticated: true };
     }
 }
-
