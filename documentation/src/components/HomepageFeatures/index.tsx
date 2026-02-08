@@ -2,42 +2,42 @@ import clsx from 'clsx';
 
 const FeatureList = [
     {
-        title: 'Standard Storage',
-        Svg: require('@site/static/img/standard-storage-icon.svg').default,
+        title: 'Public Data',
+        Svg: require('@site/static/img/public-data-icon.svg').default,
         description: (
             <>
-                Store and manage data with our basic storage API. Support multiple storage providers without additional
-                complexity.
+                Store documents and files that anyone can access. Content is stored as-is and available at a public link
+                — no authentication required to retrieve it.
             </>
         ),
     },
     {
-        title: 'Encrypted Storage',
-        Svg: require('@site/static/img/encrypted-storage-icon.svg').default,
+        title: 'Private Data',
+        Svg: require('@site/static/img/private-data-icon.svg').default,
         description: (
             <>
-                Keep your data secure with our encrypted storage solution. Built-in encryption ensures your data remains
-                protected at rest.
+                Automatically encrypt sensitive data before storage. You receive the only decryption key; without it,
+                nobody — including the server — can read your data.
             </>
         ),
     },
     {
-        title: 'Provider Flexibility',
-        Svg: require('@site/static/img/cloud-provider-icon.svg').default,
+        title: 'Flexible Storage',
+        Svg: require('@site/static/img/flexible-deployment-icon.svg').default,
         description: (
             <>
-                Choose from multiple storage providers or use local storage. Simple configuration lets you switch
-                providers without code changes.
+                Works with AWS S3, Google Cloud, or any S3-compatible provider. Switch storage backends without changing
+                your integration.
             </>
         ),
     },
     {
-        title: 'Secure Cryptography',
-        Svg: require('@site/static/img/compliance-icon.svg').default,
+        title: 'Data Integrity',
+        Svg: require('@site/static/img/data-integrity-icon.svg').default,
         description: (
             <>
-                Protect your data with industry-standard SHA-256 hashing and AES-256-GCM encryption. Maintain data
-                integrity and security across all storage operations.
+                Every upload produces a unique hash — a fingerprint you can use later to verify your data has not been
+                tampered with.
             </>
         ),
     },

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="currentColor">
+  <!-- Padlock shackle -->
+  <path d="M20 28V20a12 12 0 0 1 24 0v8" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Padlock body -->
+  <rect x="14" y="28" width="36" height="28" rx="4" ry="4" fill="none" stroke="currentColor" stroke-width="3"/>
+  <!-- Keyhole circle -->
+  <circle cx="32" cy="40" r="4" fill="currentColor"/>
+  <!-- Keyhole slot -->
+  <path d="M32 44v6" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+</svg>

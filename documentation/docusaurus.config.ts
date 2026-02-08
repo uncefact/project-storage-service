@@ -6,7 +6,7 @@ const baseUrl = process.env.DOCS_BASE_URL || '/';
 
 const config: Config = {
     title: 'Storage Service',
-    tagline: 'A secure credential storage solution that complies with UNTP standards.',
+    tagline: 'A simple API for storing public documents and encrypting private data.',
     favicon: 'img/favicon.ico',
 
     url,
@@ -15,7 +15,8 @@ const config: Config = {
     organizationName: 'uncefact',
     projectName: 'project-storage-service',
 
-    onBrokenLinks: 'throw',
+    // TODO: revert to 'throw' after cutting a new versioned docs snapshot
+    onBrokenLinks: 'warn',
     onBrokenMarkdownLinks: 'warn',
 
     i18n: {
@@ -55,11 +56,11 @@ const config: Config = {
         colorMode: {
             disableSwitch: true,
         },
-        image: 'img/un-crm-social-card.png',
+        image: 'img/unece-social-card.png',
         navbar: {
             title: 'Storage Service',
             logo: {
-                alt: 'UNTP Storage Service Logo',
+                alt: 'Storage Service Logo',
                 src: 'img/logo.svg',
             },
             items: [
@@ -68,23 +69,9 @@ const config: Config = {
                     position: 'left',
                     dropdownActiveClassDisabled: true,
                 },
-                { to: '/docs/introduction/', label: 'Introduction', position: 'right' },
-                {
-                    to: '/docs/getting-started/',
-                    label: 'Getting started',
-                    position: 'right',
-                },
-                {
-                    to: '/docs/installation/',
-                    label: 'Installation',
-                    position: 'right',
-                },
-                { to: '/docs/features/', label: 'Features', position: 'right' },
-                {
-                    to: 'https://github.com/uncefact/project-storage-service',
-                    label: 'Contribute',
-                    position: 'right',
-                },
+                { to: '/docs/understanding/introduction/', label: 'Overview', position: 'right' },
+                { to: '/docs/developer-guide/api-reference/', label: 'Developer Guide', position: 'right' },
+                { to: '/docs/deployment-guide/installation/', label: 'Deployment Guide', position: 'right' },
                 {
                     href: 'https://uncefact.slack.com/archives/C03L1LDU1ED',
                     position: 'right',

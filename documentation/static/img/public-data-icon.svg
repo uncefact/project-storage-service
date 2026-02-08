@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="currentColor">
+  <!-- Document body -->
+  <path d="M16 4h22l12 12v40a4 4 0 0 1-4 4H16a4 4 0 0 1-4-4V8a4 4 0 0 1 4-4z" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
+  <!-- Folded corner -->
+  <path d="M38 4v12h12" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
+  <!-- Globe circle -->
+  <circle cx="31" cy="38" r="10" fill="none" stroke="currentColor" stroke-width="2.5"/>
+  <!-- Globe horizontal line -->
+  <path d="M21 38h20" fill="none" stroke="currentColor" stroke-width="2"/>
+  <!-- Globe vertical ellipse -->
+  <ellipse cx="31" cy="38" rx="5" ry="10" fill="none" stroke="currentColor" stroke-width="2"/>
+</svg>

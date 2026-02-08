@@ -46,7 +46,7 @@ describe('Public API - S3 E2E Tests', () => {
             it('should return 401 when API key is missing', async () => {
                 const response = await request(APP_BASE_URL)
                     .post(`/api/${API_VERSION}/public`)
-                    .send({ bucket: 'verifiable-credentials', data: testDocument })
+                    .send({ bucket: 'documents', data: testDocument })
                     .expect(401);
 
                 expect(response.body.message).toContain('API key is required');
@@ -56,7 +56,7 @@ describe('Public API - S3 E2E Tests', () => {
                 const response = await request(APP_BASE_URL)
                     .post(`/api/${API_VERSION}/public`)
                     .set('X-API-Key', 'wrong-api-key')
-                    .send({ bucket: 'verifiable-credentials', data: testDocument })
+                    .send({ bucket: 'documents', data: testDocument })
                     .expect(401);
 
                 expect(response.body.message).toContain('Invalid API key');
@@ -88,7 +88,7 @@ describe('Public API - S3 E2E Tests', () => {
                 const response = await request(APP_BASE_URL)
                     .post(`/api/${API_VERSION}/public`)
                     .set('X-API-Key', API_KEY)
-                    .send({ bucket: 'verifiable-credentials', data: 'not-an-object' })
+                    .send({ bucket: 'documents', data: 'not-an-object' })
                     .expect(400);
 
                 expect(response.body.message).toContain('Data must be a JSON object');
@@ -98,7 +98,7 @@ describe('Public API - S3 E2E Tests', () => {
                 const response = await request(APP_BASE_URL)
                     .post(`/api/${API_VERSION}/public`)
                     .set('X-API-Key', API_KEY)
-                    .send({ bucket: 'verifiable-credentials', id: 'not-a-uuid', data: { test: 'data' } })
+                    .send({ bucket: 'documents', id: 'not-a-uuid', data: { test: 'data' } })
                     .expect(400);
 
                 expect(response.body.message).toContain('Invalid id');
@@ -110,7 +110,7 @@ describe('Public API - S3 E2E Tests', () => {
                 const response = await request(APP_BASE_URL)
                     .post(`/api/${API_VERSION}/public`)
                     .set('X-API-Key', API_KEY)
-                    .send({ bucket: 'verifiable-credentials', data: testDocument })
+                    .send({ bucket: 'documents', data: testDocument })
                     .expect(201);
 
                 expect(response.body.uri).toEqual(expect.any(String));
@@ -124,7 +124,7 @@ describe('Public API - S3 E2E Tests', () => {
                 const response = await request(APP_BASE_URL)
                     .post(`/api/${API_VERSION}/public`)
                     .set('X-API-Key', API_KEY)
-                    .send({ bucket: 'verifiable-credentials', id: customId, data: testDocument })
+                    .send({ bucket: 'documents', id: customId, data: testDocument })
                     .expect(201);
 
                 expect(response.body.uri).toEqual(expect.any(String));
@@ -137,7 +137,7 @@ describe('Public API - S3 E2E Tests', () => {
                 const first = await request(APP_BASE_URL)
                     .post(`/api/${API_VERSION}/public`)
                     .set('X-API-Key', API_KEY)
-                    .send({ bucket: 'verifiable-credentials', id: duplicateId, data: testDocument })
+                    .send({ bucket: 'documents', id: duplicateId, data: testDocument })
                     .expect(201);
 
                 expect(first.body.uri).toEqual(expect.any(String));
@@ -145,7 +145,7 @@ describe('Public API - S3 E2E Tests', () => {
                 const second = await request(APP_BASE_URL)
                     .post(`/api/${API_VERSION}/public`)
                     .set('X-API-Key', API_KEY)
-                    .send({ bucket: 'verifiable-credentials', id: duplicateId, data: testDocument })
+                    .send({ bucket: 'documents', id: duplicateId, data: testDocument })
                     .expect(409);
 
                 expect(second.body.message).toContain('already exists');
@@ -157,7 +157,7 @@ describe('Public API - S3 E2E Tests', () => {
                 const response = await request(APP_BASE_URL)
                     .post(`/api/${API_VERSION}/public`)
                     .set('X-API-Key', API_KEY)
-                    .send({ bucket: 'verifiable-credentials', data: testDocument })
+                    .send({ bucket: 'documents', data: testDocument })
                     .expect(201);
 
                 const uri = response.body.uri;
@@ -172,7 +172,7 @@ describe('Public API - S3 E2E Tests', () => {
                 const response = await request(APP_BASE_URL)
                     .post(`/api/${API_VERSION}/public`)
                     .set('X-API-Key', API_KEY)
-                    .send({ bucket: 'verifiable-credentials', data: testDocument })
+                    .send({ bucket: 'documents', data: testDocument })
                     .expect(201);
 
                 const expectedHash = computeHash(JSON.stringify(testDocument));
