@@ -119,7 +119,7 @@ https://documents.example.com/123e4567.json
 ```
 
 :::info How it works
-`S3_PUBLIC_URL` changes **only** the URI returned in API responses. It does not affect where files are uploaded to or how the service communicates with your storage provider. The upload path remains: **Service → `S3_ENDPOINT` → Storage Provider**. The response URI becomes: **`S3_PUBLIC_URL`/key**.
+`S3_PUBLIC_URL` changes **only** the URI returned in API responses. It does not affect where files are uploaded to or how the service communicates with your storage provider. The upload path remains unchanged, whether that uses `S3_ENDPOINT` or the default AWS S3 regional endpoint. The response URI becomes: **`S3_PUBLIC_URL`/key**.
 :::
 
 ### Example: DigitalOcean Spaces with CDN
@@ -140,5 +140,7 @@ In this configuration:
 - Your CDN custom domain (`documents.example.com`) should be configured to serve content from the Spaces bucket
 
 :::note
-When `S3_PUBLIC_URL` is set, the bucket name is **not** included in the generated URI. This assumes your CDN or custom domain already points to a specific bucket.
+When `S3_PUBLIC_URL` is set, the bucket name is **not** included in the generated URI. This assumes your CDN or custom domain already points to a specific bucket. If you use multiple buckets (via `AVAILABLE_BUCKETS`), all generated URIs will share the same `S3_PUBLIC_URL` base.
+
+Only the origin (protocol, hostname, and port) of `S3_PUBLIC_URL` is used. Any path component (e.g. `https://cdn.example.com/subpath`) is ignored.
 :::

@@ -190,6 +190,45 @@ describe('AWSStorageService', () => {
             expect(result).toEqual({ uri: 'https://documents.labs.pyx.io/test-key.json' });
         });
 
+        it('should ignore path portion of S3_PUBLIC_URL (only origin is used)', async () => {
+            jest.doMock('../../config', () => ({
+                S3_REGION: undefined,
+                S3_ENDPOINT: 'https://syd1.digitaloceanspaces.com',
+                S3_FORCE_PATH_STYLE: false,
+                S3_PUBLIC_URL: 'https://cdn.example.com/some/subpath',
+            }));
+            mockSend.mockResolvedValueOnce({});
+            const { AWSStorageService } = require('./aws');
+            const awsStorageService = new AWSStorageService();
+            const result = await awsStorageService.uploadFile(
+                'test-bucket',
+                'test-key',
+                'test-body',
+                'application/json',
+            );
+            // Only the origin is used; path components are intentionally discarded
+            expect(result).toEqual({ uri: 'https://cdn.example.com/test-key' });
+        });
+
+        it('should preserve non-standard port in S3_PUBLIC_URL', async () => {
+            jest.doMock('../../config', () => ({
+                S3_REGION: undefined,
+                S3_ENDPOINT: 'http://localhost:9000',
+                S3_FORCE_PATH_STYLE: true,
+                S3_PUBLIC_URL: 'https://cdn.example.com:8080',
+            }));
+            mockSend.mockResolvedValueOnce({});
+            const { AWSStorageService } = require('./aws');
+            const awsStorageService = new AWSStorageService();
+            const result = await awsStorageService.uploadFile(
+                'test-bucket',
+                'test-key',
+                'test-body',
+                'application/json',
+            );
+            expect(result).toEqual({ uri: 'https://cdn.example.com:8080/test-key' });
+        });
+
         it('should take precedence over S3_ENDPOINT and S3_FORCE_PATH_STYLE', async () => {
             jest.doMock('../../config', () => ({
                 S3_REGION: undefined,
