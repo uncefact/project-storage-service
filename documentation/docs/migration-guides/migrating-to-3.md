@@ -1,6 +1,9 @@
-# Migrating from 2.x to 3.0.0
+---
+sidebar_position: 1
+title: Migrating to 3.0.0
+---
 
-This guide covers all breaking changes when upgrading from version 2.x to 3.0.0.
+This guide is for users upgrading from version 2.x to 3.0.0. It covers all breaking changes, including endpoint consolidation, environment variable renames, and infrastructure updates. Work through each section to ensure a smooth transition.
 
 ## API Endpoint Changes
 
@@ -31,7 +34,7 @@ The three separate endpoints have been consolidated into two, organised by data 
 
 Replace all API calls:
 
-```
+```diff
 # Public JSON data
 - POST /api/2.0.0/documents
 + POST /api/3.0.0/public
@@ -65,7 +68,9 @@ The `/private` endpoint response field for the decryption key has been renamed f
 }
 ```
 
-Update any code that reads the `key` field from `/credentials` responses to use `decryptionKey` from `/private` responses instead.
+:::warning
+Update any code that reads the `key` field from `/credentials` responses to use `decryptionKey` from `/private` responses instead. Failing to update this will cause errors wherever decryption keys are parsed from the API response.
+:::
 
 ## Environment Variable Changes
 
@@ -76,7 +81,11 @@ Update any code that reads the `key` field from `/credentials` responses to use 
 | `MAX_BINARY_FILE_SIZE` | `MAX_UPLOAD_SIZE`      | `10485760` (10 MB)                                |
 | `ALLOWED_BINARY_TYPES` | `ALLOWED_UPLOAD_TYPES` | `image/png,image/jpeg,image/webp,application/pdf` |
 
-The old variable names are no longer recognised. Update your `.env` files and deployment configurations.
+:::warning
+The old variable names are no longer recognised. Update your `.env` files and deployment configurations before upgrading.
+:::
+
+For the full list of environment variables and their defaults, see [Configuration](../deployment-guide/configuration/).
 
 ### Changed default bucket names
 
@@ -85,11 +94,15 @@ The old variable names are no longer recognised. Update your `.env` files and de
 | `DEFAULT_BUCKET=verifiable-credentials`                                         | `DEFAULT_BUCKET=documents`          |
 | `AVAILABLE_BUCKETS=verifiable-credentials,files,private-verifiable-credentials` | `AVAILABLE_BUCKETS=documents,files` |
 
-If you rely on the default bucket names, update your `AVAILABLE_BUCKETS` and `DEFAULT_BUCKET` environment variables. If you already set these explicitly, no change is needed.
+:::info
+If you already set `DEFAULT_BUCKET` and `AVAILABLE_BUCKETS` explicitly in your configuration, no change is needed. This only affects deployments relying on the default values.
+:::
 
 ## Node.js Version
 
 The minimum Node.js version is now **22** (previously 18). Update your runtime environment, CI pipelines, and Docker base images accordingly.
+
+See [Installation](../deployment-guide/installation/) for up-to-date prerequisites and setup instructions.
 
 ## Repository Rename
 
@@ -115,31 +128,22 @@ docker pull ghcr.io/uncefact/project-identity-resolver:latest
 docker pull ghcr.io/uncefact/project-storage-service:3.0.0
 ```
 
-The old image name (`project-identity-resolver`) will not receive new versions.
+:::warning
+The old image name (`project-identity-resolver`) will not receive new versions. Update your deployment scripts and CI pipelines to pull from `ghcr.io/uncefact/project-storage-service`.
+:::
 
 ### GitHub Pages
 
 Documentation has moved from `uncefact.github.io/project-identity-resolver` to `uncefact.github.io/project-storage-service`. The old URL redirects automatically, but you should update any bookmarks or links.
 
-### What redirects automatically
+### What redirects
 
-- Git clone, fetch, and push (GitHub handles this indefinitely)
-- Browser links to the repository, issues, and pull requests
+- GitHub Pages root URL (redirects to the new site, but deep links will 404)
 
 ### What does not redirect
 
+- Git clone, fetch, and push (the old repo name now points to a redirect-only repository)
+- Browser links to the old repository, issues, and pull requests
 - Docker image pulls (old image name will stop receiving updates)
-- GitHub Pages URL (different subdirectory)
+- Deep links to specific documentation pages
 - Any hardcoded references to the old GHCR package name in CI pipelines
-
-## Summary Checklist
-
-- [ ] Update API endpoint paths (`/documents` → `/public`, `/files` → `/public`, `/credentials` → `/private`)
-- [ ] Update API version in paths (`2.0.0` → `3.0.0`)
-- [ ] Update response parsing (`key` → `decryptionKey` for private data)
-- [ ] Rename environment variables (`MAX_BINARY_FILE_SIZE` → `MAX_UPLOAD_SIZE`, `ALLOWED_BINARY_TYPES` → `ALLOWED_UPLOAD_TYPES`)
-- [ ] Review default bucket names if not explicitly configured
-- [ ] Upgrade Node.js to v22+
-- [ ] Update Docker image references to `ghcr.io/uncefact/project-storage-service`
-- [ ] Update git remote URL (optional; old URL redirects)
-- [ ] Update any bookmarks or links to the GitHub Pages documentation site
