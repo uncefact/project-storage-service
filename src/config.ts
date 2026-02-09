@@ -35,6 +35,7 @@ export const LOCAL_DIRECTORY = process.env.LOCAL_DIRECTORY || 'uploads';
 export const S3_REGION = process.env.S3_REGION;
 export const S3_ENDPOINT = process.env.S3_ENDPOINT;
 export const S3_FORCE_PATH_STYLE = process.env.S3_FORCE_PATH_STYLE === 'true';
+export const S3_PUBLIC_URL = process.env.S3_PUBLIC_URL;
 
 // Runtime getter for API_KEY to ensure it's evaluated at runtime, not build time
 export const getApiKey = () => process.env.API_KEY;

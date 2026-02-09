@@ -6,7 +6,7 @@ import {
     S3ClientConfig,
 } from '@aws-sdk/client-s3';
 import { IStorageService } from '.';
-import { S3_REGION, S3_ENDPOINT, S3_FORCE_PATH_STYLE } from '../../config';
+import { S3_REGION, S3_ENDPOINT, S3_FORCE_PATH_STYLE, S3_PUBLIC_URL } from '../../config';
 
 /**
  * Creates the S3 client configuration.
@@ -34,8 +34,21 @@ const createS3ClientConfig = (): S3ClientConfig => {
 
 /**
  * Generates the public URI for an uploaded object.
+ * This only affects the URI returned in API responses — not where files are uploaded to.
+ * When S3_PUBLIC_URL is set, it is used as the base URL instead of S3_ENDPOINT.
  */
 const generateUri = (bucket: string, key: string): string => {
+    if (S3_PUBLIC_URL) {
+        let url: URL;
+        try {
+            url = new URL(S3_PUBLIC_URL);
+        } catch {
+            throw new Error(`Invalid S3_PUBLIC_URL format: "${S3_PUBLIC_URL}" is not a valid URL`);
+        }
+        // CDN/custom domain — bucket routing handled externally
+        return `${url.origin}/${key}`;
+    }
+
     if (S3_ENDPOINT) {
         let url: URL;
         try {
