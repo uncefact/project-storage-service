@@ -1,6 +1,23 @@
 import { Storage } from '@google-cloud/storage';
 import { GCPStorageService } from './gcp';
 
+const createGeneratePublicUri =
+    (publicUrl: string | undefined) =>
+    (key: string): string | null => {
+        if (!publicUrl) return null;
+        let url: URL;
+        try {
+            url = new URL(publicUrl);
+        } catch {
+            throw new Error(`Invalid PUBLIC_URL format: "${publicUrl}" is not a valid URL`);
+        }
+        return `${url.origin}/${key}`;
+    };
+
+jest.mock('../../config', () => ({
+    generatePublicUri: () => null,
+}));
+
 jest.mock('@google-cloud/storage', () => {
     const mockFileExists = jest.fn().mockResolvedValue([true]);
     const mockFileSave = jest.fn().mockResolvedValue([]);
@@ -67,5 +84,74 @@ describe('GCPStorageService', () => {
         expect(mockBucket).toHaveBeenCalledWith(bucketName);
         expect(mockFile).toHaveBeenCalledWith(key);
         expect(result).toBe(true);
+    });
+
+    describe('PUBLIC_URL override', () => {
+        beforeEach(() => {
+            jest.resetModules();
+            jest.clearAllMocks();
+        });
+
+        it('should use PUBLIC_URL when set, ignoring bucket in URI', async () => {
+            jest.doMock('../../config', () => ({
+                generatePublicUri: createGeneratePublicUri('https://documents.labs.pyx.io'),
+            }));
+
+            // Re-mock @google-cloud/storage after resetModules
+            const mockFileSave = jest.fn().mockResolvedValue([]);
+            jest.doMock('@google-cloud/storage', () => ({
+                Storage: jest.fn(() => ({
+                    bucket: jest.fn(() => ({
+                        file: jest.fn(() => ({ save: mockFileSave })),
+                    })),
+                })),
+            }));
+
+            const { GCPStorageService } = require('./gcp');
+            const service = new GCPStorageService();
+            const result = await service.uploadFile('test-bucket', 'test-key.json', 'test-body', 'application/json');
+            expect(result).toEqual({ uri: 'https://documents.labs.pyx.io/test-key.json' });
+        });
+
+        it('should use default GCS URI when PUBLIC_URL is not set', async () => {
+            jest.doMock('../../config', () => ({
+                generatePublicUri: createGeneratePublicUri(undefined),
+            }));
+
+            const mockFileSave = jest.fn().mockResolvedValue([]);
+            jest.doMock('@google-cloud/storage', () => ({
+                Storage: jest.fn(() => ({
+                    bucket: jest.fn(() => ({
+                        file: jest.fn(() => ({ save: mockFileSave })),
+                    })),
+                })),
+            }));
+
+            const { GCPStorageService } = require('./gcp');
+            const service = new GCPStorageService();
+            const result = await service.uploadFile('test-bucket', 'test-key.json', 'test-body', 'application/json');
+            expect(result).toEqual({ uri: 'https://test-bucket.storage.googleapis.com/test-key.json' });
+        });
+
+        it('should throw an error if PUBLIC_URL is not a valid URL', async () => {
+            jest.doMock('../../config', () => ({
+                generatePublicUri: createGeneratePublicUri('not-a-valid-url'),
+            }));
+
+            const mockFileSave = jest.fn().mockResolvedValue([]);
+            jest.doMock('@google-cloud/storage', () => ({
+                Storage: jest.fn(() => ({
+                    bucket: jest.fn(() => ({
+                        file: jest.fn(() => ({ save: mockFileSave })),
+                    })),
+                })),
+            }));
+
+            const { GCPStorageService } = require('./gcp');
+            const service = new GCPStorageService();
+            await expect(
+                service.uploadFile('test-bucket', 'test-key', 'test-body', 'application/json'),
+            ).rejects.toThrow('Invalid PUBLIC_URL format');
+        });
     });
 });

@@ -1,5 +1,6 @@
 import { Storage } from '@google-cloud/storage';
 import { IStorageService } from '.';
+import { generatePublicUri } from '../../config';
 
 /**
  * Google Cloud Storage service.
@@ -30,6 +31,9 @@ export class GCPStorageService implements IStorageService {
         };
 
         await file.save(body, options);
+
+        const publicUri = generatePublicUri(key);
+        if (publicUri) return { uri: publicUri };
 
         return { uri: `https://${bucket}.storage.googleapis.com/${key}` };
     }

@@ -102,3 +102,54 @@ AVAILABLE_BUCKETS=documents,files
 | `S3_FORCE_PATH_STYLE`   | No               | Set to `true` for path-style URLs (required for MinIO and Cloudflare R2). |
 | `AWS_ACCESS_KEY_ID`     | Yes              | Access key for authentication.                                            |
 | `AWS_SECRET_ACCESS_KEY` | Yes              | Secret key for authentication.                                            |
+
+## Custom Public URL for Document URIs
+
+By default, each storage provider constructs public document URIs from its own endpoint:
+
+- **AWS S3**: `https://{bucket}.s3.amazonaws.com/{key}` or `https://{bucket}.{endpoint}/{key}`
+- **GCP**: `https://{bucket}.storage.googleapis.com/{key}`
+- **Local**: `http://{domain}:{port}/{key}`
+
+If you place a CDN or custom domain in front of your storage bucket, you can set `PUBLIC_URL` to override **only the URI returned to clients**. Uploads and all other storage operations are unaffected.
+
+:::info How it works
+`PUBLIC_URL` changes **only** the URI returned in API responses. It does not affect where files are uploaded to or how the service communicates with your storage provider. The upload path remains unchanged. The response URI becomes: **`PUBLIC_URL`/key**.
+:::
+
+`PUBLIC_URL` applies to `aws` and `gcp` storage types. It is ignored for `local` storage.
+
+| Variable     | Required | Description                                                                                                 |
+| ------------ | -------- | ----------------------------------------------------------------------------------------------------------- |
+| `PUBLIC_URL` | No       | Base URL for public document URIs. When set, overrides the default URI for the configured storage provider. |
+
+### Example: DigitalOcean Spaces with CDN
+
+```env
+STORAGE_TYPE=aws
+S3_ENDPOINT=https://syd1.digitaloceanspaces.com
+AWS_ACCESS_KEY_ID=your-do-access-key-id
+AWS_SECRET_ACCESS_KEY=your-do-secret-access-key
+AVAILABLE_BUCKETS=documents,files
+PUBLIC_URL=https://documents.example.com
+```
+
+### Example: Google Cloud Storage with Cloud CDN
+
+```env
+STORAGE_TYPE=gcp
+GOOGLE_APPLICATION_CREDENTIALS=/tmp/service-account-file.json
+PUBLIC_URL=https://cdn.example.com
+```
+
+In both configurations:
+
+- Files are uploaded to the configured storage provider as normal
+- The URI returned to clients uses `PUBLIC_URL`: `https://documents.example.com/{key}`
+- Your CDN custom domain should be configured to serve content from the storage bucket
+
+:::note
+When `PUBLIC_URL` is set, the bucket name is **not** included in the generated URI. This assumes your CDN or custom domain already points to a specific bucket. If you use multiple buckets (via `AVAILABLE_BUCKETS`), all generated URIs will share the same `PUBLIC_URL` base.
+
+Only the origin (protocol, hostname, and port) of `PUBLIC_URL` is used. Any path component (e.g. `https://cdn.example.com/subpath`) is ignored.
+:::
