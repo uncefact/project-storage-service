@@ -28,7 +28,7 @@ describe('AWSStorageService', () => {
                 S3_REGION: 'ap-southeast-2',
                 S3_ENDPOINT: undefined,
                 S3_FORCE_PATH_STYLE: false,
-                S3_PUBLIC_URL: undefined,
+                PUBLIC_URL: undefined,
             }));
         });
 
@@ -105,7 +105,7 @@ describe('AWSStorageService', () => {
                 S3_REGION: undefined,
                 S3_ENDPOINT: 'http://localhost:9000',
                 S3_FORCE_PATH_STYLE: true,
-                S3_PUBLIC_URL: undefined,
+                PUBLIC_URL: undefined,
             }));
         });
 
@@ -131,7 +131,7 @@ describe('AWSStorageService', () => {
                 S3_REGION: undefined,
                 S3_ENDPOINT: 'https://syd1.digitaloceanspaces.com',
                 S3_FORCE_PATH_STYLE: false,
-                S3_PUBLIC_URL: undefined,
+                PUBLIC_URL: undefined,
             }));
         });
 
@@ -151,13 +151,13 @@ describe('AWSStorageService', () => {
         });
     });
 
-    describe('S3_PUBLIC_URL override', () => {
-        it('should use S3_PUBLIC_URL when set, ignoring bucket in URI', async () => {
+    describe('PUBLIC_URL override', () => {
+        it('should use PUBLIC_URL when set, ignoring bucket in URI', async () => {
             jest.doMock('../../config', () => ({
                 S3_REGION: undefined,
                 S3_ENDPOINT: 'https://syd1.digitaloceanspaces.com',
                 S3_FORCE_PATH_STYLE: false,
-                S3_PUBLIC_URL: 'https://documents.labs.pyx.io',
+                PUBLIC_URL: 'https://documents.labs.pyx.io',
             }));
             mockSend.mockResolvedValueOnce({});
             const { AWSStorageService } = require('./aws');
@@ -171,12 +171,12 @@ describe('AWSStorageService', () => {
             expect(result).toEqual({ uri: 'https://documents.labs.pyx.io/test-key.json' });
         });
 
-        it('should strip trailing slash from S3_PUBLIC_URL', async () => {
+        it('should strip trailing slash from PUBLIC_URL', async () => {
             jest.doMock('../../config', () => ({
                 S3_REGION: undefined,
                 S3_ENDPOINT: 'https://syd1.digitaloceanspaces.com',
                 S3_FORCE_PATH_STYLE: false,
-                S3_PUBLIC_URL: 'https://documents.labs.pyx.io/',
+                PUBLIC_URL: 'https://documents.labs.pyx.io/',
             }));
             mockSend.mockResolvedValueOnce({});
             const { AWSStorageService } = require('./aws');
@@ -190,12 +190,12 @@ describe('AWSStorageService', () => {
             expect(result).toEqual({ uri: 'https://documents.labs.pyx.io/test-key.json' });
         });
 
-        it('should ignore path portion of S3_PUBLIC_URL (only origin is used)', async () => {
+        it('should ignore path portion of PUBLIC_URL (only origin is used)', async () => {
             jest.doMock('../../config', () => ({
                 S3_REGION: undefined,
                 S3_ENDPOINT: 'https://syd1.digitaloceanspaces.com',
                 S3_FORCE_PATH_STYLE: false,
-                S3_PUBLIC_URL: 'https://cdn.example.com/some/subpath',
+                PUBLIC_URL: 'https://cdn.example.com/some/subpath',
             }));
             mockSend.mockResolvedValueOnce({});
             const { AWSStorageService } = require('./aws');
@@ -210,12 +210,12 @@ describe('AWSStorageService', () => {
             expect(result).toEqual({ uri: 'https://cdn.example.com/test-key' });
         });
 
-        it('should preserve non-standard port in S3_PUBLIC_URL', async () => {
+        it('should preserve non-standard port in PUBLIC_URL', async () => {
             jest.doMock('../../config', () => ({
                 S3_REGION: undefined,
                 S3_ENDPOINT: 'http://localhost:9000',
                 S3_FORCE_PATH_STYLE: true,
-                S3_PUBLIC_URL: 'https://cdn.example.com:8080',
+                PUBLIC_URL: 'https://cdn.example.com:8080',
             }));
             mockSend.mockResolvedValueOnce({});
             const { AWSStorageService } = require('./aws');
@@ -234,7 +234,7 @@ describe('AWSStorageService', () => {
                 S3_REGION: undefined,
                 S3_ENDPOINT: 'http://localhost:9000',
                 S3_FORCE_PATH_STYLE: true,
-                S3_PUBLIC_URL: 'https://cdn.example.com',
+                PUBLIC_URL: 'https://cdn.example.com',
             }));
             mockSend.mockResolvedValueOnce({});
             const { AWSStorageService } = require('./aws');
@@ -253,7 +253,7 @@ describe('AWSStorageService', () => {
                 S3_REGION: 'ap-southeast-2',
                 S3_ENDPOINT: undefined,
                 S3_FORCE_PATH_STYLE: false,
-                S3_PUBLIC_URL: 'https://cdn.example.com',
+                PUBLIC_URL: 'https://cdn.example.com',
             }));
             mockSend.mockResolvedValueOnce({});
             const { AWSStorageService } = require('./aws');
@@ -267,19 +267,19 @@ describe('AWSStorageService', () => {
             expect(result).toEqual({ uri: 'https://cdn.example.com/test-key' });
         });
 
-        it('should throw an error if S3_PUBLIC_URL is not a valid URL', async () => {
+        it('should throw an error if PUBLIC_URL is not a valid URL', async () => {
             jest.doMock('../../config', () => ({
                 S3_REGION: undefined,
                 S3_ENDPOINT: 'https://syd1.digitaloceanspaces.com',
                 S3_FORCE_PATH_STYLE: false,
-                S3_PUBLIC_URL: 'not-a-valid-url',
+                PUBLIC_URL: 'not-a-valid-url',
             }));
             mockSend.mockResolvedValueOnce({});
             const { AWSStorageService } = require('./aws');
             const awsStorageService = new AWSStorageService();
             await expect(
                 awsStorageService.uploadFile('test-bucket', 'test-key', 'test-body', 'application/json'),
-            ).rejects.toThrow('Invalid S3_PUBLIC_URL format');
+            ).rejects.toThrow('Invalid PUBLIC_URL format');
         });
     });
 
@@ -289,7 +289,7 @@ describe('AWSStorageService', () => {
                 S3_REGION: undefined,
                 S3_ENDPOINT: undefined,
                 S3_FORCE_PATH_STYLE: false,
-                S3_PUBLIC_URL: undefined,
+                PUBLIC_URL: undefined,
             }));
 
             expect(() => {
@@ -303,7 +303,7 @@ describe('AWSStorageService', () => {
                 S3_REGION: undefined,
                 S3_ENDPOINT: 'http://localhost:9000',
                 S3_FORCE_PATH_STYLE: true,
-                S3_PUBLIC_URL: undefined,
+                PUBLIC_URL: undefined,
             }));
 
             expect(() => {
@@ -317,7 +317,7 @@ describe('AWSStorageService', () => {
                 S3_REGION: undefined,
                 S3_ENDPOINT: 'not-a-valid-url',
                 S3_FORCE_PATH_STYLE: false,
-                S3_PUBLIC_URL: undefined,
+                PUBLIC_URL: undefined,
             }));
             mockSend.mockResolvedValueOnce({});
             const { AWSStorageService } = require('./aws');

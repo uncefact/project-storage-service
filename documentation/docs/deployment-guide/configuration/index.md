@@ -24,10 +24,11 @@ The service will not start without `API_KEY` set.
 
 ## Storage Configuration
 
-| Variable          | Description                                 | Default   |
-| ----------------- | ------------------------------------------- | --------- |
-| `STORAGE_TYPE`    | Storage provider (`local`, `gcp`, or `aws`) | `local`   |
-| `LOCAL_DIRECTORY` | Directory for local file storage            | `uploads` |
+| Variable          | Description                                                                                  | Default     |
+| ----------------- | -------------------------------------------------------------------------------------------- | ----------- |
+| `STORAGE_TYPE`    | Storage provider (`local`, `gcp`, or `aws`)                                                  | `local`     |
+| `LOCAL_DIRECTORY` | Directory for local file storage                                                             | `uploads`   |
+| `PUBLIC_URL`      | Override base URL for document URIs returned to clients. Applies to `aws` and `gcp` storage. | _(not set)_ |
 
 For cloud storage provider configuration, see [Storage Providers](../storage-providers/).
 

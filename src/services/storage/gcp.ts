@@ -1,5 +1,6 @@
 import { Storage } from '@google-cloud/storage';
 import { IStorageService } from '.';
+import { PUBLIC_URL } from '../../config';
 
 /**
  * Google Cloud Storage service.
@@ -30,6 +31,16 @@ export class GCPStorageService implements IStorageService {
         };
 
         await file.save(body, options);
+
+        if (PUBLIC_URL) {
+            let url: URL;
+            try {
+                url = new URL(PUBLIC_URL);
+            } catch {
+                throw new Error(`Invalid PUBLIC_URL format: "${PUBLIC_URL}" is not a valid URL`);
+            }
+            return { uri: `${url.origin}/${key}` };
+        }
 
         return { uri: `https://${bucket}.storage.googleapis.com/${key}` };
     }

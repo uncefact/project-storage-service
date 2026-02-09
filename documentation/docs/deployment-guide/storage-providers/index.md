@@ -95,52 +95,61 @@ AVAILABLE_BUCKETS=documents,files
 
 ## S3 Configuration Reference
 
-| Variable                | Required         | Description                                                                                              |
-| ----------------------- | ---------------- | -------------------------------------------------------------------------------------------------------- |
-| `S3_REGION`             | Yes (for AWS S3) | AWS region. Not required when using a custom endpoint.                                                   |
-| `S3_ENDPOINT`           | No               | Custom endpoint URL for S3-compatible providers.                                                         |
-| `S3_FORCE_PATH_STYLE`   | No               | Set to `true` for path-style URLs (required for MinIO and Cloudflare R2).                                |
-| `S3_PUBLIC_URL`         | No               | Base URL for public document URIs (see [Custom Public URL](#custom-public-url-for-document-uris) below). |
-| `AWS_ACCESS_KEY_ID`     | Yes              | Access key for authentication.                                                                           |
-| `AWS_SECRET_ACCESS_KEY` | Yes              | Secret key for authentication.                                                                           |
+| Variable                | Required         | Description                                                               |
+| ----------------------- | ---------------- | ------------------------------------------------------------------------- |
+| `S3_REGION`             | Yes (for AWS S3) | AWS region. Not required when using a custom endpoint.                    |
+| `S3_ENDPOINT`           | No               | Custom endpoint URL for S3-compatible providers.                          |
+| `S3_FORCE_PATH_STYLE`   | No               | Set to `true` for path-style URLs (required for MinIO and Cloudflare R2). |
+| `AWS_ACCESS_KEY_ID`     | Yes              | Access key for authentication.                                            |
+| `AWS_SECRET_ACCESS_KEY` | Yes              | Secret key for authentication.                                            |
 
 ## Custom Public URL for Document URIs
 
-By default, the service constructs public document URIs from `S3_ENDPOINT` (or the AWS S3 default). This means the URI returned to clients exposes the raw storage endpoint:
+By default, each storage provider constructs public document URIs from its own endpoint:
 
-```
-https://my-bucket.syd1.digitaloceanspaces.com/123e4567.json
-```
+- **AWS S3**: `https://{bucket}.s3.amazonaws.com/{key}` or `https://{bucket}.{endpoint}/{key}`
+- **GCP**: `https://{bucket}.storage.googleapis.com/{key}`
+- **Local**: `http://{domain}:{port}/{key}`
 
-If you place a CDN or custom domain in front of your storage bucket, you can set `S3_PUBLIC_URL` to override **only the URI returned to clients**. Uploads and all other S3 API operations continue to use `S3_ENDPOINT` as normal.
-
-```
-https://documents.example.com/123e4567.json
-```
+If you place a CDN or custom domain in front of your storage bucket, you can set `PUBLIC_URL` to override **only the URI returned to clients**. Uploads and all other storage operations are unaffected.
 
 :::info How it works
-`S3_PUBLIC_URL` changes **only** the URI returned in API responses. It does not affect where files are uploaded to or how the service communicates with your storage provider. The upload path remains unchanged, whether that uses `S3_ENDPOINT` or the default AWS S3 regional endpoint. The response URI becomes: **`S3_PUBLIC_URL`/key**.
+`PUBLIC_URL` changes **only** the URI returned in API responses. It does not affect where files are uploaded to or how the service communicates with your storage provider. The upload path remains unchanged. The response URI becomes: **`PUBLIC_URL`/key**.
 :::
+
+`PUBLIC_URL` applies to `aws` and `gcp` storage types. It is ignored for `local` storage.
+
+| Variable     | Required | Description                                                                                                 |
+| ------------ | -------- | ----------------------------------------------------------------------------------------------------------- |
+| `PUBLIC_URL` | No       | Base URL for public document URIs. When set, overrides the default URI for the configured storage provider. |
 
 ### Example: DigitalOcean Spaces with CDN
 
 ```env
 STORAGE_TYPE=aws
 S3_ENDPOINT=https://syd1.digitaloceanspaces.com
-S3_PUBLIC_URL=https://documents.example.com
 AWS_ACCESS_KEY_ID=your-do-access-key-id
 AWS_SECRET_ACCESS_KEY=your-do-secret-access-key
 AVAILABLE_BUCKETS=documents,files
+PUBLIC_URL=https://documents.example.com
 ```
 
-In this configuration:
+### Example: Google Cloud Storage with Cloud CDN
 
-- Files are uploaded to DigitalOcean Spaces via `S3_ENDPOINT`
-- The URI returned to clients uses `S3_PUBLIC_URL`: `https://documents.example.com/{key}`
-- Your CDN custom domain (`documents.example.com`) should be configured to serve content from the Spaces bucket
+```env
+STORAGE_TYPE=gcp
+GOOGLE_APPLICATION_CREDENTIALS=/tmp/service-account-file.json
+PUBLIC_URL=https://cdn.example.com
+```
+
+In both configurations:
+
+- Files are uploaded to the configured storage provider as normal
+- The URI returned to clients uses `PUBLIC_URL`: `https://documents.example.com/{key}`
+- Your CDN custom domain should be configured to serve content from the storage bucket
 
 :::note
-When `S3_PUBLIC_URL` is set, the bucket name is **not** included in the generated URI. This assumes your CDN or custom domain already points to a specific bucket. If you use multiple buckets (via `AVAILABLE_BUCKETS`), all generated URIs will share the same `S3_PUBLIC_URL` base.
+When `PUBLIC_URL` is set, the bucket name is **not** included in the generated URI. This assumes your CDN or custom domain already points to a specific bucket. If you use multiple buckets (via `AVAILABLE_BUCKETS`), all generated URIs will share the same `PUBLIC_URL` base.
 
-Only the origin (protocol, hostname, and port) of `S3_PUBLIC_URL` is used. Any path component (e.g. `https://cdn.example.com/subpath`) is ignored.
+Only the origin (protocol, hostname, and port) of `PUBLIC_URL` is used. Any path component (e.g. `https://cdn.example.com/subpath`) is ignored.
 :::
