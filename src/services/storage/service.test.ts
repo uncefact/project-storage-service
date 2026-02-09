@@ -80,5 +80,4 @@ describe('initialiseStorageService', () => {
             }).toThrow('Invalid storage type');
         });
     });
-
 });

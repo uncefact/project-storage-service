@@ -5,109 +5,92 @@ const url = process.env.DOCS_URL || 'http://localhost';
 const baseUrl = process.env.DOCS_BASE_URL || '/';
 
 const config: Config = {
-  title: 'Storage Service',
-  tagline: 'A secure credential storage solution that complies with UNTP standards.',
-  favicon: 'img/favicon.ico',
+    title: 'Storage Service',
+    tagline: 'A simple API for storing public documents and encrypting private data.',
+    favicon: 'img/favicon.ico',
 
-  url,
-  baseUrl,
+    url,
+    baseUrl,
 
-  organizationName: 'uncefact',
-  projectName: 'project-identity-resolver',
+    organizationName: 'uncefact',
+    projectName: 'project-storage-service',
 
-  onBrokenLinks: 'throw',
-  onBrokenMarkdownLinks: 'warn',
+    // TODO: revert to 'throw' after cutting a new versioned docs snapshot
+    onBrokenLinks: 'warn',
+    onBrokenMarkdownLinks: 'warn',
 
-  i18n: {
-    defaultLocale: 'en',
-    locales: ['en'],
-  },
+    i18n: {
+        defaultLocale: 'en',
+        locales: ['en'],
+    },
 
-  markdown: {
-    mermaid: true,
-  },
+    markdown: {
+        mermaid: true,
+    },
 
-  presets: [
-    [
-      'classic',
-      {
-        docs: {
-          sidebarPath: './sidebars.ts',
-          editUrl: 'https://github.com/uncefact/project-identity-resolver/tree/next',
-          routeBasePath: 'docs',
-          includeCurrentVersion: false,
-        },
-        blog: false,
-        theme: {
-          customCss: [
-            require.resolve('./src/css/custom.scss'),
-            require.resolve('./src/css/index.scss'),
-          ],
-        },
-      } 
+    presets: [
+        [
+            'classic',
+            {
+                docs: {
+                    sidebarPath: './sidebars.ts',
+                    editUrl: 'https://github.com/uncefact/project-storage-service/tree/next',
+                    routeBasePath: 'docs',
+                    includeCurrentVersion: false,
+                },
+                blog: false,
+                theme: {
+                    customCss: [require.resolve('./src/css/custom.scss'), require.resolve('./src/css/index.scss')],
+                },
+            },
+        ],
     ],
-  ],
 
-  plugins: ['docusaurus-plugin-sass'],
+    plugins: ['docusaurus-plugin-sass'],
 
-  themes: ['@docusaurus/theme-mermaid'],
+    themes: ['@docusaurus/theme-mermaid'],
 
-  themeConfig: {
-    slackLink:
-    'https://join.slack.com/t/uncefact/shared_invite/zt-1d7hd0js1-sS1Xgk8DawQD9VgRvy1QHQ',
-    repoLink: 'https://github.com/uncefact/project-identity-resolver',
-    colorMode: {
-      disableSwitch: true,
+    themeConfig: {
+        slackLink: 'https://join.slack.com/t/uncefact/shared_invite/zt-1d7hd0js1-sS1Xgk8DawQD9VgRvy1QHQ',
+        repoLink: 'https://github.com/uncefact/project-storage-service',
+        colorMode: {
+            disableSwitch: true,
+        },
+        image: 'img/unece-social-card.png',
+        navbar: {
+            title: 'Storage Service',
+            logo: {
+                alt: 'Storage Service Logo',
+                src: 'img/logo.svg',
+            },
+            items: [
+                {
+                    type: 'docsVersionDropdown',
+                    position: 'left',
+                    dropdownActiveClassDisabled: true,
+                },
+                { to: '/docs/understanding/introduction/', label: 'Overview', position: 'right' },
+                { to: '/docs/developer-guide/api-reference/', label: 'Developer Guide', position: 'right' },
+                { to: '/docs/deployment-guide/installation/', label: 'Deployment Guide', position: 'right' },
+                {
+                    href: 'https://uncefact.slack.com/archives/C03L1LDU1ED',
+                    position: 'right',
+                    html: '<svg class="icon icon-slack"><use xlink:href="#slack"></use></svg><span class="menu-item-name">Slack</span>',
+                    className: 'navbar-slack-link',
+                },
+                {
+                    href: 'https://github.com/uncefact/project-storage-service',
+                    html: '<svg class="icon"><use xlink:href="#github"></use></svg><span class="menu-item-name">Github</span>',
+                    className: 'navbar-github-link',
+                    position: 'right',
+                },
+            ],
+        },
+        prism: {
+            theme: prismThemes.github,
+            darkTheme: prismThemes.dracula,
+        },
     },
-  image: 'img/un-crm-social-card.png',    
-  navbar: {
-      title: 'Storage Service',
-      logo: {
-        alt: 'UNTP Storage Service Logo',
-        src: 'img/logo.svg',
-      },
-      items: [
-        {
-          type: 'docsVersionDropdown',
-          position: 'left',
-          dropdownActiveClassDisabled: true,
-        },
-        {to: '/docs/introduction/', label: 'Introduction', position: 'right'},
-        {
-          to: '/docs/getting-started/',
-          label: 'Getting started',
-          position: 'right',
-        },
-        {
-          to: '/docs/installation/',
-          label: 'Installation',
-          position: 'right',
-        },
-        {to: '/docs/features/', label: 'Features', position: 'right'},
-        {
-          to: 'https://github.com/uncefact/project-identity-resolver',
-          label: 'Contribute',
-          position: 'right',
-        },
-        {
-          href: 'https://uncefact.slack.com/archives/C03L1LDU1ED',
-          position: 'right',
-          html: '<svg class="icon icon-slack"><use xlink:href="#slack"></use></svg><span class="menu-item-name">Slack</span>',
-          className: 'navbar-slack-link',
-        },
-        {
-          href: 'https://github.com/uncefact/project-identity-resolver',
-          html: '<svg class="icon"><use xlink:href="#github"></use></svg><span class="menu-item-name">Github</span>',
-          className: 'navbar-github-link',
-          position: 'right',
-        }
-      ],
-    },
-    prism: {
-      theme: prismThemes.github,
-      darkTheme: prismThemes.dracula,
-    },
-  }
 };
 
 export default config;

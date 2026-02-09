@@ -22,41 +22,34 @@ The service offers the following functionality:
 
 ## Choosing Your Storage Endpoint
 
-This service offers three ways to store data, depending on whether your data is public or private and whether it is structured JSON or a binary file.
+This service offers two ways to store data, depending on whether your data is public or private.
 
-### Public Data → [`/documents`](#store-document)
+### Public Data → [`/public`](#store-public-data)
 
-For data that doesn't require protection. The service stores it as-is and returns:
+For data that doesn't require protection. Accepts both JSON (`application/json`) and binary files (`multipart/form-data`). The service stores your content as-is and returns:
 
 - A **URI** (the location of your stored data)
 - A **hash** (a fingerprint to verify the data hasn't changed)
 
-### Public Binary Files → [`/files`](#store-file)
+Allowed file types and maximum upload size are [configurable](#file-upload-configuration).
 
-For binary files (images, PDFs, etc.) that don't require encryption. The service stores the file as-is via a multipart upload and returns:
+### Private Data → [`/private`](#store-private-data)
 
-- A **URI** (the location of your stored file)
-- A **hash** (a fingerprint to verify the file hasn't changed)
-
-Allowed file types and maximum file size are [configurable](#file-upload-configuration).
-
-### Private Data → [`/credentials`](#store-credential)
-
-For sensitive data that needs protection. The service automatically encrypts your data before storage — you don't need to encrypt it yourself.
+For sensitive data that needs protection. Accepts both JSON (`application/json`) and binary files (`multipart/form-data`). The service automatically encrypts your data before storage — you don't need to encrypt it yourself.
 
 The response includes:
 
 - A **URI** (the location of your stored data)
 - A **hash** (a fingerprint to verify the data hasn't changed)
-- A **key** (your unique decryption key)
+- A **decryptionKey** (your unique decryption key)
 
 **Save this key securely** — it's the only way to decrypt your data later.
 
-→ [Learn more about storage options](https://uncefact.github.io/project-identity-resolver/docs/storage-options)
+→ [Learn more about storage options](https://uncefact.github.io/project-storage-service/docs/understanding/how-it-works)
 
 ## Prerequisites
 
-- [Node.js](https://nodejs.org/) (v18.18.0)
+- [Node.js](https://nodejs.org/) (v22)
 - [Yarn](https://yarnpkg.com/) (>= 1.22.21)
 
 ## Environment Variables
@@ -92,13 +85,8 @@ yarn lint
 # Run unit tests
 yarn test
 
-# Run e2e tests
+# Run e2e tests (requires Docker)
 yarn test:e2e
-
-# Run all tests (unit and e2e)
-yarn test:all
-
-
 ```
 
 ## Configuration
@@ -119,7 +107,7 @@ Configure the storage service using the following environment variables:
 ### Authentication
 
 - `API_KEY`:
-  **Required**. The API key used to authenticate upload requests to `/credentials` and `/documents` endpoints.
+  **Required**. The API key used to authenticate upload requests to `/public` and `/private` endpoints.
   The service will not start without this variable set.
 
 ### Storage Configuration
@@ -133,9 +121,9 @@ Configure the storage service using the following environment variables:
 
 ### File Upload Configuration
 
-- `MAX_BINARY_FILE_SIZE`:
-  Maximum file size in bytes for binary uploads via `/files` (default: `10485760` — 10 MB).
-- `ALLOWED_BINARY_TYPES`:
+- `MAX_UPLOAD_SIZE`:
+  Maximum file size in bytes for binary uploads (default: `10485760` — 10 MB).
+- `ALLOWED_UPLOAD_TYPES`:
   Comma-separated list of permitted MIME types (default: `image/png,image/jpeg,image/webp,application/pdf`).
 
 ### S3-Compatible Storage (AWS, MinIO, DigitalOcean Spaces, Cloudflare R2, etc.)
@@ -255,19 +243,25 @@ The cryptography service uses the following algorithms:
 
 ## Authentication
 
-All upload endpoints (`POST /credentials`, `POST /documents`, and `POST /files`) require API key authentication via the `X-API-Key` header.
+All upload endpoints (`POST /public` and `POST /private`) require API key authentication via the `X-API-Key` header.
 
 Examples:
 
 ```bash
-# Store a JSON credential (encrypted)
-curl -X POST http://localhost:3333/api/1.1.0/credentials \
+# Store public JSON data (no encryption)
+curl -X POST http://localhost:3333/api/3.0.0/public \
 -H "Content-Type: application/json" \
 -H "X-API-Key: your-api-key-here" \
--d '{"bucket": "verifiable-credentials", "data": {"field1": "value1"}}'
+-d '{"bucket": "documents", "data": {"field1": "value1"}}'
 
-# Upload a binary file
-curl -X POST http://localhost:3333/api/1.1.0/files \
+# Store private JSON data (encrypted)
+curl -X POST http://localhost:3333/api/3.0.0/private \
+-H "Content-Type: application/json" \
+-H "X-API-Key: your-api-key-here" \
+-d '{"bucket": "documents", "data": {"field1": "value1"}}'
+
+# Upload a public binary file
+curl -X POST http://localhost:3333/api/3.0.0/public \
 -H "X-API-Key: your-api-key-here" \
 -F "bucket=files" \
 -F "file=@/path/to/image.png"
@@ -277,21 +271,21 @@ If the API key is missing or invalid, the service will return a `401 Unauthorize
 
 ## Docker Images
 
-Pre-built Docker images are available on [GitHub Container Registry](https://github.com/uncefact/project-identity-resolver/pkgs/container/project-identity-resolver).
+Pre-built Docker images are available on [GitHub Container Registry](https://github.com/uncefact/project-storage-service/pkgs/container/project-storage-service).
 
 Images support `linux/amd64` and `linux/arm64` architectures (Intel/AMD and Apple Silicon/ARM).
 
 ### Pulling Images
 
 ```bash
-# Pull a specific version (e.g., 2.1.0)
-docker pull ghcr.io/uncefact/project-identity-resolver:2.1.0
+# Pull a specific version (e.g., 3.0.0)
+docker pull ghcr.io/uncefact/project-storage-service:3.0.0
 
 # Or pull the latest release
-docker pull ghcr.io/uncefact/project-identity-resolver:latest
+docker pull ghcr.io/uncefact/project-storage-service:latest
 
 # Or pull the latest development image from the next branch
-docker pull ghcr.io/uncefact/project-identity-resolver:next
+docker pull ghcr.io/uncefact/project-storage-service:next
 ```
 
 ### Building and Running Locally with Docker
@@ -325,69 +319,11 @@ storage-service:latest
 
 ## Documentation
 
-The project uses Docusaurus for documentation management. Documentation versions are managed through a release script and automated pipeline.
+Full documentation is available at [uncefact.github.io/project-storage-service](https://uncefact.github.io/project-storage-service/).
 
-### Release Script
+The documentation site covers:
 
-The `scripts/release-doc.js` script automates the process of creating new documentation versions:
-
-- Reads the documentation version from `version.json`
-- Creates Docusaurus version using `docVersion` value from `version.json` file
-
-To manually create a new documentation version:
-
-```bash
-# Run the release script
-yarn release:doc
-```
-
-### Documentation Pipeline
-
-The documentation is automatically built and deployed using GitHub Actions through the `build_publish_docs.yml` pipeline. This pipeline:
-
-1. Triggers on:
-
-- Manual workflow dispatch
-- (TODO) Push to main branch once enabled
-
-2. Performs the following steps:
-
-- Checks out the repository
-- Sets up Node.js 18 with Yarn cache
-- Installs documentation dependencies
-- Builds the static documentation site
-- Deploys to GitHub Pages using gh-pages branch
-
-The pipeline uses environment variables for configuration:
-
-- `DOCS_BASE_URL`: Base URL for documentation hosting
-- `DOCS_URL`: Documentation site URL
-
-The built documentation is published to the `gh-pages` branch using the GitHub Actions bot.
-
-### Release Guide
-
-To release a new version, ensure we have the `version.json` file updated with the new version number. Then, create a new release tag with the following steps:
-
-1. Create a new release branch from `next` with the version number as the branch name.
-2. Update the `version.json` file with the new version number.
-3. Generate new documentation version using the release script `yarn release:doc`.
-4. Check API documentation and update if necessary.
-5. Commit the changes and push the branch.
-6. Create a pull request from the release branch to `main`.
-7. Merge the pull request.
-8. Create a new release tag with the version number.
-9. Push the tag to the repository.
-
-(\*) With the `version.json` file, it contains the version number in the following format:
-
-```json
-{
-    "version": "MAJOR.MINOR.PATCH",
-    "apiVersion": "MAJOR.MINOR.PATCH",
-    "docVersion": "MAJOR.MINOR.PATCH",
-    "dependencies": {}
-}
-```
-
-We need to change manually the `version`, `apiVersion`, and `docVersion` fields.
+- **Understanding** — what the service does and how it works
+- **Developer Guide** — API reference with request/response examples
+- **Deployment Guide** — installation, configuration, storage providers, and scaling
+- **Contributing** — development setup, coding standards, and release process

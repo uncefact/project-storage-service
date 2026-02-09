@@ -10,10 +10,10 @@
     }
   ],
   "paths": {
-    "/documents": {
+    "/public": {
       "post": {
         "summary": "Store public data without encryption.",
-        "description": "Store public data that doesn't require encryption. This endpoint stores your data as-is and returns a URI (the location of your stored data) and a hash (a fingerprint to verify the data hasn't changed).",
+        "description": "Store public data that does not require encryption. This endpoint accepts both JSON documents (application/json) and binary files (multipart/form-data). Data is stored as-is without any encryption applied. Returns a URI (the location of your stored data) and a hash (a fingerprint to verify the data has not been altered).",
         "requestBody": {
           "content": {
             "application/json": {
@@ -28,53 +28,7 @@
                   "$ref": "#/components/examples/ExampleRequest2"
                 }
               }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Document stored successfully. Returns the storage location and integrity hash.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "uri": {
-                      "type": "string",
-                      "description": "The location where your data is stored.",
-                      "example": "http://localhost:3333/api/1.1.0/verifiable-credentials/123e4567-e89b-12d3-a456-426614174000.json"
-                    },
-                    "hash": {
-                      "type": "string",
-                      "description": "A fingerprint to verify the data hasn't changed.",
-                      "example": "computed-hash"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "401": {
-            "$ref": "#/components/responses/401"
-          },
-          "409": {
-            "$ref": "#/components/responses/409"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      }
-    },
-    "/files": {
-      "post": {
-        "summary": "Store public binary files without encryption.",
-        "description": "Store public binary files (images, PDFs, etc.) without encryption. Like `/documents`, this endpoint stores your file as-is — it is not encrypted and is publicly accessible to anyone who obtains the URI. Accepts multipart/form-data with the file and metadata. Returns a URI (the location of your stored file) and a hash (a fingerprint to verify the file hasn't changed).\n\nFor private data that requires encryption, use the `/credentials` endpoint instead.\n\nAllowed file types are configured server-side. Default allowed types: PNG, JPEG, WebP, PDF.",
-        "requestBody": {
-          "content": {
+            },
             "multipart/form-data": {
               "schema": {
                 "$ref": "#/components/schemas/StoreFileRequest"
@@ -84,7 +38,7 @@
         },
         "responses": {
           "201": {
-            "description": "File stored successfully. Returns the storage location and integrity hash.",
+            "description": "Data stored successfully. Returns the storage location and integrity hash.",
             "content": {
               "application/json": {
                 "schema": {
@@ -92,12 +46,12 @@
                   "properties": {
                     "uri": {
                       "type": "string",
-                      "description": "The location where your file is stored.",
-                      "example": "http://localhost:3333/api/1.1.0/files/123e4567-e89b-12d3-a456-426614174000.png"
+                      "description": "The location where your data is stored.",
+                      "example": "http://localhost:3333/api/3.0.0/documents/123e4567-e89b-12d3-a456-426614174000.json"
                     },
                     "hash": {
                       "type": "string",
-                      "description": "A fingerprint to verify the file hasn't changed.",
+                      "description": "A fingerprint to verify the data has not been altered.",
                       "example": "computed-hash"
                     }
                   }
@@ -136,10 +90,10 @@
         }
       }
     },
-    "/credentials": {
+    "/private": {
       "post": {
         "summary": "Store private data with automatic encryption.",
-        "description": "Store private data with automatic encryption. This endpoint encrypts your data before storage — you don't need to encrypt it yourself. The response includes a URI (the location of your stored data), a hash (a fingerprint to verify the data hasn't changed), and a key (your unique decryption key).\n\n**Important**: Save the key securely. Without it, your data cannot be decrypted — **not even by us**.",
+        "description": "Store private data with automatic encryption. This endpoint accepts both JSON documents (application/json) and binary files (multipart/form-data). Data is automatically encrypted before storage — you do not need to encrypt it yourself. Binary files are base64-encoded before encryption. The encrypted envelope includes a `contentType` field so consumers can determine the original format.\n\nThe response includes a URI (the location of your stored data), a hash (a fingerprint to verify the data has not been altered), and a decryptionKey (your unique decryption key).\n\n**Important**: Save the decryption key securely. Without it, your data cannot be decrypted — **not even by us**.",
         "requestBody": {
           "content": {
             "application/json": {
@@ -154,12 +108,17 @@
                   "$ref": "#/components/examples/ExampleRequest2"
                 }
               }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/StoreFileRequest"
+              }
             }
           }
         },
         "responses": {
           "201": {
-            "description": "Document encrypted and stored successfully. Returns the storage location, integrity hash, and decryption key.",
+            "description": "Data encrypted and stored successfully. Returns the storage location, integrity hash, and decryption key.",
             "content": {
               "application/json": {
                 "schema": {
@@ -168,14 +127,14 @@
                     "uri": {
                       "type": "string",
                       "description": "The location where your encrypted data is stored.",
-                      "example": "http://localhost:3333/api/1.1.0/verifiable-credentials/123e4567-e89b-12d3-a456-426614174000.json"
+                      "example": "http://localhost:3333/api/3.0.0/documents/123e4567-e89b-12d3-a456-426614174000.json"
                     },
                     "hash": {
                       "type": "string",
-                      "description": "A fingerprint to verify the data hasn't changed.",
+                      "description": "A fingerprint to verify the data has not been altered.",
                       "example": "computed-hash"
                     },
-                    "key": {
+                    "decryptionKey": {
                       "type": "string",
                       "description": "Your unique decryption key. **Important**: Save this securely. It is required to decrypt your data and **cannot be recovered if lost**.",
                       "example": "encryption-key"
@@ -194,6 +153,22 @@
           "409": {
             "$ref": "#/components/responses/409"
           },
+          "413": {
+            "description": "Payload Too Large. The uploaded file exceeds the maximum allowed size.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "File exceeds the maximum allowed size."
+                    }
+                  }
+                }
+              }
+            }
+          },
           "500": {
             "$ref": "#/components/responses/500"
           }
@@ -208,7 +183,7 @@
         "properties": {
           "bucket": {
             "type": "string",
-            "example": "verifiable-credentials"
+            "example": "documents"
           },
           "data": {
             "type": "object",
@@ -227,7 +202,7 @@
             "type": "string",
             "format": "uuid",
             "example": "123e4567-e89b-12d3-a456-426614174000",
-            "description": "Optional"
+            "description": "Optional UUID for the document. If not provided, one will be generated."
           }
         },
         "required": [
@@ -265,7 +240,7 @@
       "ExampleRequest1": {
         "summary": "Verifiable Credential",
         "value": {
-          "bucket": "verifiable-credentials",
+          "bucket": "documents",
           "id": "123e4567-e89b-12d3-a456-426614174000",
           "data": {
             "@context": [
@@ -300,7 +275,7 @@
       "ExampleRequest2": {
         "summary": "Enveloped Verifiable Credential",
         "value": {
-          "bucket": "verifiable-credentials",
+          "bucket": "documents",
           "id": "123e4567-e89b-12d3-a456-426614174001",
           "data": {
             "@context": [
@@ -347,7 +322,7 @@
         }
       },
       "409": {
-        "description": "The document already exists.",
+        "description": "A document with the provided ID already exists in the specified bucket.",
         "content": {
           "application/json": {
             "schema": {
@@ -363,7 +338,7 @@
         }
       },
       "500": {
-        "description": "An error occurred while storing the document.",
+        "description": "An unexpected error occurred while storing the document.",
         "content": {
           "application/json": {
             "schema": {

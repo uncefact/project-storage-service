@@ -1,11 +1,11 @@
 import cors from 'cors';
-import express from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import swaggerUi from 'swagger-ui-express';
 import bodyParser from 'body-parser';
 import { router } from './routes';
 import swaggerDocument from './swagger/swagger.json';
 import { updateSwagger } from './swagger/helpers';
-import { API_VERSION, DOMAIN, EXTERNAL_PORT, PROTOCOL } from './config';
+import { API_VERSION, DOMAIN, EXTERNAL_PORT, MAX_UPLOAD_SIZE, PROTOCOL } from './config';
 import { buildBaseUrl } from './utils';
 
 export const app = express();
@@ -28,13 +28,19 @@ app.use(
 
 app.use(cors());
 
-// Update limit to 50mb to allow for large data uploads
-app.use(bodyParser.json({ limit: '50mb' }));
-app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
-app.use(express.json());
+app.use(bodyParser.json({ limit: MAX_UPLOAD_SIZE }));
+app.use(bodyParser.urlencoded({ limit: MAX_UPLOAD_SIZE, extended: true }));
 
 app.get('/health-check', (req, res) => {
     res.send('OK');
 });
 
 app.use(`/api/${API_VERSION}`, router);
+
+// Global error handler for unhandled errors
+app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
+    console.error('[GlobalErrorHandler] Unhandled error:', err);
+    res.status(500).json({
+        message: 'An unexpected error occurred.',
+    });
+});

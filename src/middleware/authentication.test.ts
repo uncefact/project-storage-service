@@ -103,4 +103,3 @@ describe('Authentication Middleware', () => {
         });
     });
 });
-

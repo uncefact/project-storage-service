@@ -3,8 +3,8 @@ import multer from 'multer';
 import { ApiError, BadRequestError, PayloadTooLargeError } from '../errors';
 
 jest.mock('../config', () => ({
-    ALLOWED_BINARY_TYPES: ['image/png', 'image/jpeg', 'application/pdf'],
-    MAX_BINARY_FILE_SIZE: 10485760,
+    ALLOWED_UPLOAD_TYPES: ['image/png', 'image/jpeg', 'application/pdf'],
+    MAX_UPLOAD_SIZE: 10485760,
 }));
 
 // Capture the fileFilter passed to multer when the upload module initialises.
@@ -29,7 +29,7 @@ jest.mock('multer', () => {
 });
 
 // This import triggers the multer mock above, capturing the fileFilter.
-import { handleUploadError } from './upload';
+import { conditionalUpload, handleUploadError, upload } from './upload';
 
 describe('Upload Middleware', () => {
     let mockRequest: Partial<Request>;
@@ -78,6 +78,32 @@ describe('Upload Middleware', () => {
             const error = cb.mock.calls[0][0] as BadRequestError;
             expect(error.message).toContain('application/zip');
             expect(error.message).toContain('not allowed');
+        });
+    });
+
+    describe('conditionalUpload', () => {
+        it('should call next() immediately when the request is not multipart/form-data', () => {
+            mockRequest.is = jest.fn().mockReturnValue(false);
+
+            conditionalUpload(mockRequest as Request, mockResponse as Response, mockNext);
+
+            expect(mockRequest.is).toHaveBeenCalledWith('multipart/form-data');
+            expect(mockNext).toHaveBeenCalled();
+        });
+
+        it('should invoke multer upload.single when the request is multipart/form-data', () => {
+            const mockMulterMiddleware = jest.fn();
+            const singleSpy = jest.spyOn(upload, 'single').mockReturnValue(mockMulterMiddleware as any);
+            mockRequest.is = jest.fn().mockReturnValue('multipart/form-data');
+
+            conditionalUpload(mockRequest as Request, mockResponse as Response, mockNext);
+
+            expect(mockRequest.is).toHaveBeenCalledWith('multipart/form-data');
+            expect(singleSpy).toHaveBeenCalledWith('file');
+            expect(mockMulterMiddleware).toHaveBeenCalledWith(mockRequest, mockResponse, mockNext);
+            expect(mockNext).not.toHaveBeenCalled();
+
+            singleSpy.mockRestore();
         });
     });
 

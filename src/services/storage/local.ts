@@ -19,7 +19,7 @@ export class LocalStorageService implements IStorageService {
      * @param contentType The content type of the file.
      * @returns A promise that resolves to the public URL of the uploaded file.
      */
-    async uploadFile(bucket: string, key: string, body: string | Buffer, contentType: string) {
+    async uploadFile(bucket: string, key: string, body: string | Buffer, _contentType: string) {
         const filePath = path.join(__dirname, LOCAL_DIRECTORY, bucket, key);
 
         const directory = path.dirname(filePath);

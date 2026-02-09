@@ -23,7 +23,7 @@ export const DOMAIN = process.env.DOMAIN || 'localhost';
 export const PORT = process.env.PORT || 3333;
 export const EXTERNAL_PORT = process.env.EXTERNAL_PORT || PORT;
 
-export const DEFAULT_BUCKET = process.env.DEFAULT_BUCKET || 'verifiable-credentials';
+export const DEFAULT_BUCKET = process.env.DEFAULT_BUCKET || 'documents';
 export const AVAILABLE_BUCKETS = process.env.AVAILABLE_BUCKETS
     ? process.env.AVAILABLE_BUCKETS.split(',')
     : [DEFAULT_BUCKET, 'files'];
@@ -41,9 +41,13 @@ export const getApiKey = () => process.env.API_KEY;
 export const AUTH_HEADER_NAME = 'x-api-key';
 
 // File upload configuration
-export const ALLOWED_BINARY_TYPES = (process.env.ALLOWED_BINARY_TYPES ||
-    'image/png,image/jpeg,image/webp,application/pdf').split(',');
-export const MAX_BINARY_FILE_SIZE = parseInt(process.env.MAX_BINARY_FILE_SIZE || '10485760', 10);
+export const ALLOWED_UPLOAD_TYPES = (
+    process.env.ALLOWED_UPLOAD_TYPES || 'image/png,image/jpeg,image/webp,application/pdf'
+)
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean);
+export const MAX_UPLOAD_SIZE = parseInt(process.env.MAX_UPLOAD_SIZE || '10485760', 10);
 
 export const __filename = fileURLToPath(import.meta.url);
 export const __dirname = dirname(__filename);

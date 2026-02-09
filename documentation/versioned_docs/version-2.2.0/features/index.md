@@ -3,10 +3,6 @@ sidebar_position: 4
 title: Features
 ---
 
-import Disclaimer from './../\_disclaimer.mdx';
-
-<Disclaimer />
-
 ## API Endpoints
 
 :::tip Choosing the Right Endpoint
@@ -134,11 +130,11 @@ The service will respond similarly to the data below:
 
 #### Request Payload
 
-| Field    | Description                                                                    | Required |
-| -------- | ------------------------------------------------------------------------------ | -------- |
-| `file`   | The binary file to upload.                                                     | Yes      |
-| `bucket` | Name of the bucket where the file will be stored.                              | Yes      |
-| `id`     | Optional UUID for the file. If not provided, one will be generated.            | No       |
+| Field    | Description                                                         | Required |
+| -------- | ------------------------------------------------------------------- | -------- |
+| `file`   | The binary file to upload.                                          | Yes      |
+| `bucket` | Name of the bucket where the file will be stored.                   | Yes      |
+| `id`     | Optional UUID for the file. If not provided, one will be generated. | No       |
 
 #### Response Data
 

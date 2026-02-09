@@ -14,14 +14,17 @@ jobs:
             - name: Install Node.js
               uses: actions/setup-node@v3
               with:
-                  node-version: '18'
+                  node-version: '22'
                   cache: 'yarn'
 
             - name: Install dependencies
               run: yarn install
 
+            - name: Check formatting
+              run: yarn format:check
+
             - name: Check linting
-              run: yarn lint
+              run: yarn lint:check
 
             - name: Run unit tests
               run: yarn test:ci
@@ -40,8 +43,6 @@ jobs:
 
             - name: Run e2e tests
               run: yarn test:e2e:ci
-              env:
-                  API_KEY: test-api-key-ci
 
     build_docs:
         runs-on: ubuntu-latest
@@ -52,7 +53,7 @@ jobs:
             - name: Setup Node.js
               uses: actions/setup-node@v3
               with:
-                  node-version: 21
+                  node-version: '22'
                   cache: yarn
 
             - name: Install and build documentation

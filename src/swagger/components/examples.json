@@ -4,7 +4,7 @@
             "ExampleRequest1": {
                 "summary": "Verifiable Credential",
                 "value": {
-                    "bucket": "verifiable-credentials",
+                    "bucket": "documents",
                     "id": "123e4567-e89b-12d3-a456-426614174000",
                     "data": {
                         "@context": [
@@ -36,7 +36,7 @@
             "ExampleRequest2": {
                 "summary": "Enveloped Verifiable Credential",
                 "value": {
-                    "bucket": "verifiable-credentials",
+                    "bucket": "documents",
                     "id": "123e4567-e89b-12d3-a456-426614174001",
                     "data": {
                         "@context": [

@@ -1,2 +1,7 @@
 dist
 coverage
+node_modules
+documentation/.docusaurus
+documentation/node_modules
+src/swagger/swagger.json
+CHANGELOG.md

@@ -7,15 +7,15 @@ hide_table_of_contents: true
 
 The use of this web site constitutes agreement with the following terms and conditions:
 
-(a) The United Nations maintains this web site (the “Site”) as a courtesy to those who may choose to access the Site (“Users”). The information presented herein is for informative purposes only. The United Nations grants permission to Users to visit the Site and to download and copy the information, documents and materials (collectively, “Materials”) from the Site for the User’s personal, non-commercial use, without any right to resell or redistribute them or to compile or create derivative works therefrom, subject to the terms and conditions outlined below, and also subject to more specific restrictions that may apply to specific Material within this Site. 
+(a) The United Nations maintains this web site (the “Site”) as a courtesy to those who may choose to access the Site (“Users”). The information presented herein is for informative purposes only. The United Nations grants permission to Users to visit the Site and to download and copy the information, documents and materials (collectively, “Materials”) from the Site for the User’s personal, non-commercial use, without any right to resell or redistribute them or to compile or create derivative works therefrom, subject to the terms and conditions outlined below, and also subject to more specific restrictions that may apply to specific Material within this Site.
 
-(b) The United Nations administers this Site. All Material on this Site from the United Nations appears subject to the present Terms and Conditions. 
+(b) The United Nations administers this Site. All Material on this Site from the United Nations appears subject to the present Terms and Conditions.
 
 (c) Unless expressly stated otherwise, the findings, interpretations and conclusions expressed in the Materials on this Site are those of the various United Nations staff members, consultants and advisers to the United Nations Secretariat who prepared the work and do not necessarily represent the views of the United Nations or its Member States.
 
 ## Disclaimers
 
-Materials provided on this Site are provided “as is”, without warranty of any kind, either express or implied, including, without limitation, warranties of merchantability, fitness for a particular purpose and non-infringement. The United Nations specifically does not make any warranties or representations as to the accuracy or completeness of any such Materials. The United Nations periodically adds, changes, improves or updates the Materials on this Site without notice. Under no circumstances shall the United Nations be liable for any loss, damage, liability or expense incurred or suffered that is claimed to have resulted from the use of this Site, including, without limitation, any fault, error, omission, interruption or delay with respect thereto. The use of this Site is at the User’s sole risk. Under no circumstances, including but not limited to negligence, shall the United Nations or its affiliates be liable for any direct, indirect, incidental, special or consequential damages, even if the United Nations has been advised of the possibility of such damages. 
+Materials provided on this Site are provided “as is”, without warranty of any kind, either express or implied, including, without limitation, warranties of merchantability, fitness for a particular purpose and non-infringement. The United Nations specifically does not make any warranties or representations as to the accuracy or completeness of any such Materials. The United Nations periodically adds, changes, improves or updates the Materials on this Site without notice. Under no circumstances shall the United Nations be liable for any loss, damage, liability or expense incurred or suffered that is claimed to have resulted from the use of this Site, including, without limitation, any fault, error, omission, interruption or delay with respect thereto. The use of this Site is at the User’s sole risk. Under no circumstances, including but not limited to negligence, shall the United Nations or its affiliates be liable for any direct, indirect, incidental, special or consequential damages, even if the United Nations has been advised of the possibility of such damages.
 
 The User specifically acknowledges and agrees that the United Nations is not liable for any conduct of any User.
 
@@ -41,11 +41,11 @@ If this Site contains bulletin boards, chat rooms, access to mailing lists or ot
 
 (g) Advertise or offer to sell any goods or services, or conduct or forward surveys, contests or chain letters, or download any file posted by another user of a Forum that the User knows, or reasonably should know, cannot be legally distributed in such manner.
 
-The User acknowledges that all Forums and discussion groups are public and not private communications. Further, the User acknowledges that chats, postings, conferences, e-mails and other communications by other Users are not endorsed by the United Nations, and that such communications shall not be considered to have been reviewed, screened or approved by the United Nations. The United Nations reserves the right to remove, for any reason and without notice, any content of the Forums received from Users, including, without limitation, e-mail and bulletin board postings. 
+The User acknowledges that all Forums and discussion groups are public and not private communications. Further, the User acknowledges that chats, postings, conferences, e-mails and other communications by other Users are not endorsed by the United Nations, and that such communications shall not be considered to have been reviewed, screened or approved by the United Nations. The United Nations reserves the right to remove, for any reason and without notice, any content of the Forums received from Users, including, without limitation, e-mail and bulletin board postings.
 
-## Preservation of immunities 
+## Preservation of immunities
 
-Nothing herein shall constitute or be considered to be a limitation upon or a waiver of the privileges and immunities of the United Nations, which are specifically reserved. 
+Nothing herein shall constitute or be considered to be a limitation upon or a waiver of the privileges and immunities of the United Nations, which are specifically reserved.
 
 ## General
 

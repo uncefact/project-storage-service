@@ -15,4 +15,3 @@ export interface IAuthenticationService {
 }
 
 export * from './apiKey';
-

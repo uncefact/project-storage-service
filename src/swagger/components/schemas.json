@@ -28,7 +28,7 @@
                 "properties": {
                     "bucket": {
                         "type": "string",
-                        "example": "verifiable-credentials"
+                        "example": "documents"
                     },
                     "data": {
                         "type": "object",
@@ -47,7 +47,7 @@
                         "type": "string",
                         "format": "uuid",
                         "example": "123e4567-e89b-12d3-a456-426614174000",
-                        "description": "Optional"
+                        "description": "Optional UUID for the document. If not provided, one will be generated."
                     }
                 },
                 "required": ["bucket", "data"]

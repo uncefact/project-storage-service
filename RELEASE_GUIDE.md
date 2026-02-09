@@ -34,17 +34,16 @@ Before starting the release process, ensure:
 ## Version Bumping
 
 1. Determine the new version number based on [Semantic Versioning](https://semver.org/):
-
-   - Patch: Bug fixes (e.g., 1.0.1 → 1.0.2)
-   - Minor: New features, backward-compatible (e.g., 1.0.2 → 1.1.0)
-   - Major: Breaking changes (e.g., 1.1.0 → 2.0.0)
+    - Patch: Bug fixes (e.g., 1.0.1 → 1.0.2)
+    - Minor: New features, backward-compatible (e.g., 1.0.2 → 1.1.0)
+    - Major: Breaking changes (e.g., 1.1.0 → 2.0.0)
 
 2. Update the version in:
-   - `package.json` and `version.json` files.
-   - Make sure all dependencies in `package.json` are up-to-date and compatible with the new version.
-   - Make sure all dependencies in `version.json` are up-to-date and compatible with the new version.
-   - Update documentation version if necessary.
-   - Update API version if necessary.
+    - `package.json` and `version.json` files.
+    - Make sure all dependencies in `package.json` are up-to-date and compatible with the new version.
+    - Make sure all dependencies in `version.json` are up-to-date and compatible with the new version.
+    - Update documentation version if necessary.
+    - Update API version if necessary.
 
 ---
 

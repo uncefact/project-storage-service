@@ -3,10 +3,6 @@ sidebar_position: 3
 title: Installation
 ---
 
-import Disclaimer from './../\_disclaimer.mdx';
-
-<Disclaimer />
-
 ## Local Installation
 
 Clone the [repository](https://github.com/uncefact/project-identity-resolver), install dependencies and run:
@@ -136,10 +132,10 @@ AVAILABLE_BUCKETS=verifiable-credentials
 
 ### S3 Configuration Reference
 
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `S3_REGION` | Yes (for AWS S3) | AWS region. Not required when using custom endpoint. |
-| `S3_ENDPOINT` | No | Custom endpoint URL for S3-compatible providers. |
-| `S3_FORCE_PATH_STYLE` | No | Set to `true` for path-style URLs (required for MinIO, R2). |
-| `AWS_ACCESS_KEY_ID` | Yes | Access key for authentication. |
-| `AWS_SECRET_ACCESS_KEY` | Yes | Secret key for authentication. |
+| Variable                | Required         | Description                                                 |
+| ----------------------- | ---------------- | ----------------------------------------------------------- |
+| `S3_REGION`             | Yes (for AWS S3) | AWS region. Not required when using custom endpoint.        |
+| `S3_ENDPOINT`           | No               | Custom endpoint URL for S3-compatible providers.            |
+| `S3_FORCE_PATH_STYLE`   | No               | Set to `true` for path-style URLs (required for MinIO, R2). |
+| `AWS_ACCESS_KEY_ID`     | Yes              | Access key for authentication.                              |
+| `AWS_SECRET_ACCESS_KEY` | Yes              | Secret key for authentication.                              |

@@ -34,7 +34,7 @@
                 }
             },
             "409": {
-                "description": "The document already exists.",
+                "description": "A document with the provided ID already exists in the specified bucket.",
                 "content": {
                     "application/json": {
                         "schema": {
@@ -50,7 +50,7 @@
                 }
             },
             "500": {
-                "description": "An error occurred while storing the document.",
+                "description": "An unexpected error occurred while storing the document.",
                 "content": {
                     "application/json": {
                         "schema": {

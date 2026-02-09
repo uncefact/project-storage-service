@@ -33,4 +33,3 @@ export const authenticateRequest = async (req: Request, res: Response, next: Nex
         });
     }
 };
-

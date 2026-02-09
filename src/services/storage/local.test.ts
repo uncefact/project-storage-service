@@ -55,7 +55,7 @@ describe('LocalStorageService', () => {
         const source = realFs.readFileSync(realPath.resolve(__dirname, './local.ts'), 'utf8');
 
         // Extract the objectExists method body
-        const methodMatch = source.match(/async objectExists[\s\S]*?\n    \}/);
+        const methodMatch = source.match(/async objectExists[\s\S]*?\n {4}\}/);
         expect(methodMatch).toBeTruthy();
         const methodBody = methodMatch![0];
 

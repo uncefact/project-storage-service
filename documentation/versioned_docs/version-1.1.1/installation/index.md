@@ -3,10 +3,6 @@ sidebar_position: 3
 title: Installation
 ---
 
-import Disclaimer from './../\_disclaimer.mdx';
-
-<Disclaimer />
-
 ## Local Installation
 
 Clone the [repository](https://github.com/uncefact/project-identity-resolver), install dependencies and run:
@@ -23,19 +19,24 @@ Pre-built Docker images are available on [GitHub Container Registry](https://git
 Images support `linux/amd64` and `linux/arm64` architectures (Intel/AMD and Apple Silicon/ARM).
 
 # Pull the latest image
+
 docker pull ghcr.io/uncefact/project-identity-resolver:latest
 
 # Alternatively, pull a specific version (e.g., 1.1.0)
+
 # docker pull ghcr.io/uncefact/project-identity-resolver:1.1.0
 
 # Copy and configure your environment file
+
 cp .env.example .env
+
 # Edit .env and set your API_KEY and other configuration
 
 # Run the container using the 'latest' tag
+
 docker run -d --env-file .env -p 3333:3333 \
-  -v $(pwd)/uploads:/app/src/uploads:rw \
-  ghcr.io/uncefact/project-identity-resolver:latest
+ -v $(pwd)/uploads:/app/src/uploads:rw \
+ ghcr.io/uncefact/project-identity-resolver:latest
 
 ## Building Docker Locally
 

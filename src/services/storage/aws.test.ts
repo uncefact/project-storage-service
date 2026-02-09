@@ -36,7 +36,12 @@ describe('AWSStorageService', () => {
             const { AWSStorageService } = require('./aws');
             const awsStorageService = new AWSStorageService();
 
-            const result = await awsStorageService.uploadFile('test-bucket', 'test-key', 'test-body', 'application/json');
+            const result = await awsStorageService.uploadFile(
+                'test-bucket',
+                'test-key',
+                'test-body',
+                'application/json',
+            );
 
             expect(result).toEqual({ uri: 'https://test-bucket.s3.amazonaws.com/test-key' });
             expect(mockSend).toHaveBeenCalledTimes(1);
@@ -48,7 +53,12 @@ describe('AWSStorageService', () => {
             const awsStorageService = new AWSStorageService();
 
             const buffer = Buffer.from('binary content');
-            const result = await awsStorageService.uploadFile('test-bucket', 'test-key.bin', buffer, 'application/octet-stream');
+            const result = await awsStorageService.uploadFile(
+                'test-bucket',
+                'test-key.bin',
+                buffer,
+                'application/octet-stream',
+            );
 
             expect(result).toEqual({ uri: 'https://test-bucket.s3.amazonaws.com/test-key.bin' });
             expect(mockSend).toHaveBeenCalledTimes(1);
@@ -59,7 +69,9 @@ describe('AWSStorageService', () => {
             const { AWSStorageService } = require('./aws');
             const awsStorageService = new AWSStorageService();
 
-            await expect(awsStorageService.uploadFile('test-bucket', 'test-key', 'test-body', 'text/plain')).rejects.toThrow('Upload failed');
+            await expect(
+                awsStorageService.uploadFile('test-bucket', 'test-key', 'test-body', 'text/plain'),
+            ).rejects.toThrow('Upload failed');
             expect(mockSend).toHaveBeenCalledTimes(1);
         });
 
@@ -100,7 +112,12 @@ describe('AWSStorageService', () => {
             const { AWSStorageService } = require('./aws');
             const awsStorageService = new AWSStorageService();
 
-            const result = await awsStorageService.uploadFile('test-bucket', 'test-key', 'test-body', 'application/json');
+            const result = await awsStorageService.uploadFile(
+                'test-bucket',
+                'test-key',
+                'test-body',
+                'application/json',
+            );
 
             expect(result).toEqual({ uri: 'http://localhost:9000/test-bucket/test-key' });
         });
@@ -120,7 +137,12 @@ describe('AWSStorageService', () => {
             const { AWSStorageService } = require('./aws');
             const awsStorageService = new AWSStorageService();
 
-            const result = await awsStorageService.uploadFile('test-bucket', 'test-key', 'test-body', 'application/json');
+            const result = await awsStorageService.uploadFile(
+                'test-bucket',
+                'test-key',
+                'test-body',
+                'application/json',
+            );
 
             expect(result).toEqual({ uri: 'https://test-bucket.syd1.digitaloceanspaces.com/test-key' });
         });
@@ -163,8 +185,9 @@ describe('AWSStorageService', () => {
             const { AWSStorageService } = require('./aws');
             const awsStorageService = new AWSStorageService();
 
-            await expect(awsStorageService.uploadFile('test-bucket', 'test-key', 'test-body', 'application/json'))
-                .rejects.toThrow('Invalid S3_ENDPOINT format');
+            await expect(
+                awsStorageService.uploadFile('test-bucket', 'test-key', 'test-body', 'application/json'),
+            ).rejects.toThrow('Invalid S3_ENDPOINT format');
         });
     });
 });

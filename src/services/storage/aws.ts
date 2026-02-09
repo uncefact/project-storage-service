@@ -1,4 +1,10 @@
-import { S3Client, HeadObjectCommand, PutObjectCommand, PutObjectCommandInput, S3ClientConfig } from '@aws-sdk/client-s3';
+import {
+    S3Client,
+    HeadObjectCommand,
+    PutObjectCommand,
+    PutObjectCommandInput,
+    S3ClientConfig,
+} from '@aws-sdk/client-s3';
 import { IStorageService } from '.';
 import { S3_REGION, S3_ENDPOINT, S3_FORCE_PATH_STYLE } from '../../config';
 
