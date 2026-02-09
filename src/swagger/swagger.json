@@ -47,7 +47,7 @@
                     "uri": {
                       "type": "string",
                       "description": "The location where your data is stored.",
-                      "example": "http://localhost:3333/api/2.0.0/documents/123e4567-e89b-12d3-a456-426614174000.json"
+                      "example": "http://localhost:3333/api/3.0.0/documents/123e4567-e89b-12d3-a456-426614174000.json"
                     },
                     "hash": {
                       "type": "string",
@@ -127,7 +127,7 @@
                     "uri": {
                       "type": "string",
                       "description": "The location where your encrypted data is stored.",
-                      "example": "http://localhost:3333/api/2.0.0/documents/123e4567-e89b-12d3-a456-426614174000.json"
+                      "example": "http://localhost:3333/api/3.0.0/documents/123e4567-e89b-12d3-a456-426614174000.json"
                     },
                     "hash": {
                       "type": "string",

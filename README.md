@@ -45,7 +45,7 @@ The response includes:
 
 **Save this key securely** — it's the only way to decrypt your data later.
 
-→ [Learn more about storage options](https://uncefact.github.io/project-storage-service/docs/storage-options)
+→ [Learn more about storage options](https://uncefact.github.io/project-storage-service/docs/understanding/how-it-works)
 
 ## Prerequisites
 
@@ -249,19 +249,19 @@ Examples:
 
 ```bash
 # Store public JSON data (no encryption)
-curl -X POST http://localhost:3333/api/2.0.0/public \
+curl -X POST http://localhost:3333/api/3.0.0/public \
 -H "Content-Type: application/json" \
 -H "X-API-Key: your-api-key-here" \
 -d '{"bucket": "documents", "data": {"field1": "value1"}}'
 
 # Store private JSON data (encrypted)
-curl -X POST http://localhost:3333/api/2.0.0/private \
+curl -X POST http://localhost:3333/api/3.0.0/private \
 -H "Content-Type: application/json" \
 -H "X-API-Key: your-api-key-here" \
 -d '{"bucket": "documents", "data": {"field1": "value1"}}'
 
 # Upload a public binary file
-curl -X POST http://localhost:3333/api/2.0.0/public \
+curl -X POST http://localhost:3333/api/3.0.0/public \
 -H "X-API-Key: your-api-key-here" \
 -F "bucket=files" \
 -F "file=@/path/to/image.png"
@@ -278,8 +278,8 @@ Images support `linux/amd64` and `linux/arm64` architectures (Intel/AMD and Appl
 ### Pulling Images
 
 ```bash
-# Pull a specific version (e.g., 2.1.0)
-docker pull ghcr.io/uncefact/project-storage-service:2.1.0
+# Pull a specific version (e.g., 3.0.0)
+docker pull ghcr.io/uncefact/project-storage-service:3.0.0
 
 # Or pull the latest release
 docker pull ghcr.io/uncefact/project-storage-service:latest
@@ -319,69 +319,11 @@ storage-service:latest
 
 ## Documentation
 
-The project uses Docusaurus for documentation management. Documentation versions are managed through a release script and automated pipeline.
+Full documentation is available at [uncefact.github.io/project-storage-service](https://uncefact.github.io/project-storage-service/).
 
-### Release Script
+The documentation site covers:
 
-The `scripts/release-doc.js` script automates the process of creating new documentation versions:
-
-- Reads the documentation version from `version.json`
-- Creates Docusaurus version using `docVersion` value from `version.json` file
-
-To manually create a new documentation version:
-
-```bash
-# Run the release script
-yarn release:doc
-```
-
-### Documentation Pipeline
-
-The documentation is automatically built and deployed using GitHub Actions through the `build_publish_docs.yml` pipeline. This pipeline:
-
-1. Triggers on:
-
-- Manual workflow dispatch
-- (TODO) Push to main branch once enabled
-
-2. Performs the following steps:
-
-- Checks out the repository
-- Sets up Node.js 22 with Yarn cache
-- Installs documentation dependencies
-- Builds the static documentation site
-- Deploys to GitHub Pages using gh-pages branch
-
-The pipeline uses environment variables for configuration:
-
-- `DOCS_BASE_URL`: Base URL for documentation hosting
-- `DOCS_URL`: Documentation site URL
-
-The built documentation is published to the `gh-pages` branch using the GitHub Actions bot.
-
-### Release Guide
-
-To release a new version, ensure we have the `version.json` file updated with the new version number. Then, create a new release tag with the following steps:
-
-1. Create a new release branch from `next` with the version number as the branch name.
-2. Update the `version.json` file with the new version number.
-3. Generate new documentation version using the release script `yarn release:doc`.
-4. Check API documentation and update if necessary.
-5. Commit the changes and push the branch.
-6. Create a pull request from the release branch to `main`.
-7. Merge the pull request.
-8. Create a new release tag with the version number.
-9. Push the tag to the repository.
-
-(\*) With the `version.json` file, it contains the version number in the following format:
-
-```json
-{
-    "version": "MAJOR.MINOR.PATCH",
-    "apiVersion": "MAJOR.MINOR.PATCH",
-    "docVersion": "MAJOR.MINOR.PATCH",
-    "dependencies": {}
-}
-```
-
-We need to change manually the `version`, `apiVersion`, and `docVersion` fields.
+- **Understanding** — what the service does and how it works
+- **Developer Guide** — API reference with request/response examples
+- **Deployment Guide** — installation, configuration, storage providers, and scaling
+- **Contributing** — development setup, coding standards, and release process
