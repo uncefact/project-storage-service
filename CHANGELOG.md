@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.0.1](https://github.com/uncefact/project-storage-service/compare/3.0.0...3.0.1) (2026-02-09)
+
+
+### Bug Fixes
+
+* **ci:** Use correct lint script name in release workflow ([3d3da85](https://github.com/uncefact/project-storage-service/commit/3d3da85))
+
 ## [3.0.0](https://github.com/uncefact/project-storage-service/compare/2.2.0...3.0.0) (2026-02-09)
 
 
