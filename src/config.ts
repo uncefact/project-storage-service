@@ -34,6 +34,22 @@ export const LOCAL_DIRECTORY = process.env.LOCAL_DIRECTORY || 'uploads';
 // Public URL override for document URIs (used when STORAGE_TYPE=aws or STORAGE_TYPE=gcp)
 export const PUBLIC_URL = process.env.PUBLIC_URL;
 
+/**
+ * Returns a public URI using PUBLIC_URL if set, otherwise null.
+ * Only the origin (protocol, hostname, port) of PUBLIC_URL is used; path components are ignored.
+ */
+export const generatePublicUri = (key: string): string | null => {
+    if (!PUBLIC_URL) return null;
+
+    let url: URL;
+    try {
+        url = new URL(PUBLIC_URL);
+    } catch {
+        throw new Error(`Invalid PUBLIC_URL format: "${PUBLIC_URL}" is not a valid URL`);
+    }
+    return `${url.origin}/${key}`;
+};
+
 // S3-compatible storage configuration (used when STORAGE_TYPE=aws)
 export const S3_REGION = process.env.S3_REGION;
 export const S3_ENDPOINT = process.env.S3_ENDPOINT;

@@ -2,6 +2,19 @@ import { S3Client, HeadObjectCommand, PutObjectCommand } from '@aws-sdk/client-s
 
 const mockSend = jest.fn();
 
+const createGeneratePublicUri =
+    (publicUrl: string | undefined) =>
+    (key: string): string | null => {
+        if (!publicUrl) return null;
+        let url: URL;
+        try {
+            url = new URL(publicUrl);
+        } catch {
+            throw new Error(`Invalid PUBLIC_URL format: "${publicUrl}" is not a valid URL`);
+        }
+        return `${url.origin}/${key}`;
+    };
+
 jest.mock('@aws-sdk/client-s3', () => {
     return {
         S3Client: jest.fn().mockImplementation(() => ({
@@ -28,7 +41,7 @@ describe('AWSStorageService', () => {
                 S3_REGION: 'ap-southeast-2',
                 S3_ENDPOINT: undefined,
                 S3_FORCE_PATH_STYLE: false,
-                PUBLIC_URL: undefined,
+                generatePublicUri: createGeneratePublicUri(undefined),
             }));
         });
 
@@ -105,7 +118,7 @@ describe('AWSStorageService', () => {
                 S3_REGION: undefined,
                 S3_ENDPOINT: 'http://localhost:9000',
                 S3_FORCE_PATH_STYLE: true,
-                PUBLIC_URL: undefined,
+                generatePublicUri: createGeneratePublicUri(undefined),
             }));
         });
 
@@ -131,7 +144,7 @@ describe('AWSStorageService', () => {
                 S3_REGION: undefined,
                 S3_ENDPOINT: 'https://syd1.digitaloceanspaces.com',
                 S3_FORCE_PATH_STYLE: false,
-                PUBLIC_URL: undefined,
+                generatePublicUri: createGeneratePublicUri(undefined),
             }));
         });
 
@@ -157,7 +170,7 @@ describe('AWSStorageService', () => {
                 S3_REGION: undefined,
                 S3_ENDPOINT: 'https://syd1.digitaloceanspaces.com',
                 S3_FORCE_PATH_STYLE: false,
-                PUBLIC_URL: 'https://documents.labs.pyx.io',
+                generatePublicUri: createGeneratePublicUri('https://documents.labs.pyx.io'),
             }));
             mockSend.mockResolvedValueOnce({});
             const { AWSStorageService } = require('./aws');
@@ -176,7 +189,7 @@ describe('AWSStorageService', () => {
                 S3_REGION: undefined,
                 S3_ENDPOINT: 'https://syd1.digitaloceanspaces.com',
                 S3_FORCE_PATH_STYLE: false,
-                PUBLIC_URL: 'https://documents.labs.pyx.io/',
+                generatePublicUri: createGeneratePublicUri('https://documents.labs.pyx.io/'),
             }));
             mockSend.mockResolvedValueOnce({});
             const { AWSStorageService } = require('./aws');
@@ -195,7 +208,7 @@ describe('AWSStorageService', () => {
                 S3_REGION: undefined,
                 S3_ENDPOINT: 'https://syd1.digitaloceanspaces.com',
                 S3_FORCE_PATH_STYLE: false,
-                PUBLIC_URL: 'https://cdn.example.com/some/subpath',
+                generatePublicUri: createGeneratePublicUri('https://cdn.example.com/some/subpath'),
             }));
             mockSend.mockResolvedValueOnce({});
             const { AWSStorageService } = require('./aws');
@@ -215,7 +228,7 @@ describe('AWSStorageService', () => {
                 S3_REGION: undefined,
                 S3_ENDPOINT: 'http://localhost:9000',
                 S3_FORCE_PATH_STYLE: true,
-                PUBLIC_URL: 'https://cdn.example.com:8080',
+                generatePublicUri: createGeneratePublicUri('https://cdn.example.com:8080'),
             }));
             mockSend.mockResolvedValueOnce({});
             const { AWSStorageService } = require('./aws');
@@ -234,7 +247,7 @@ describe('AWSStorageService', () => {
                 S3_REGION: undefined,
                 S3_ENDPOINT: 'http://localhost:9000',
                 S3_FORCE_PATH_STYLE: true,
-                PUBLIC_URL: 'https://cdn.example.com',
+                generatePublicUri: createGeneratePublicUri('https://cdn.example.com'),
             }));
             mockSend.mockResolvedValueOnce({});
             const { AWSStorageService } = require('./aws');
@@ -253,7 +266,7 @@ describe('AWSStorageService', () => {
                 S3_REGION: 'ap-southeast-2',
                 S3_ENDPOINT: undefined,
                 S3_FORCE_PATH_STYLE: false,
-                PUBLIC_URL: 'https://cdn.example.com',
+                generatePublicUri: createGeneratePublicUri('https://cdn.example.com'),
             }));
             mockSend.mockResolvedValueOnce({});
             const { AWSStorageService } = require('./aws');
@@ -272,7 +285,7 @@ describe('AWSStorageService', () => {
                 S3_REGION: undefined,
                 S3_ENDPOINT: 'https://syd1.digitaloceanspaces.com',
                 S3_FORCE_PATH_STYLE: false,
-                PUBLIC_URL: 'not-a-valid-url',
+                generatePublicUri: createGeneratePublicUri('not-a-valid-url'),
             }));
             mockSend.mockResolvedValueOnce({});
             const { AWSStorageService } = require('./aws');
@@ -289,7 +302,7 @@ describe('AWSStorageService', () => {
                 S3_REGION: undefined,
                 S3_ENDPOINT: undefined,
                 S3_FORCE_PATH_STYLE: false,
-                PUBLIC_URL: undefined,
+                generatePublicUri: createGeneratePublicUri(undefined),
             }));
 
             expect(() => {
@@ -303,7 +316,7 @@ describe('AWSStorageService', () => {
                 S3_REGION: undefined,
                 S3_ENDPOINT: 'http://localhost:9000',
                 S3_FORCE_PATH_STYLE: true,
-                PUBLIC_URL: undefined,
+                generatePublicUri: createGeneratePublicUri(undefined),
             }));
 
             expect(() => {
@@ -317,7 +330,7 @@ describe('AWSStorageService', () => {
                 S3_REGION: undefined,
                 S3_ENDPOINT: 'not-a-valid-url',
                 S3_FORCE_PATH_STYLE: false,
-                PUBLIC_URL: undefined,
+                generatePublicUri: createGeneratePublicUri(undefined),
             }));
             mockSend.mockResolvedValueOnce({});
             const { AWSStorageService } = require('./aws');
