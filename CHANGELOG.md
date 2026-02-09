@@ -1,5 +1,35 @@
 # Changelog
 
+## [3.0.0](https://github.com/uncefact/project-storage-service/compare/2.2.0...3.0.0) (2026-02-09)
+
+
+### ⚠ BREAKING CHANGES
+
+* **routes:** consolidate API endpoints into /public and /private ([#83](https://github.com/uncefact/project-storage-service/issues/83))
+
+### Features
+
+* **crypto:** Delegate cryptography to @uncefact/untp-ri-services ([4150779](https://github.com/uncefact/project-storage-service/commit/41507790d253397e865d351d428e26a41c1498cb))
+* **routes:** Consolidate API endpoints into /public and /private ([#83](https://github.com/uncefact/project-storage-service/issues/83)) ([16aedba](https://github.com/uncefact/project-storage-service/commit/16aedba24b6bca92224ff67b33413dbe142bd5a5))
+
+
+### Bug Fixes
+
+* **ci:** Downgrade lint-staged to v15 for node 18 compatibility ([b7f05bd](https://github.com/uncefact/project-storage-service/commit/b7f05bdaeddd432925b2aa6ef0d9eaededf94598))
+* **docs:** Improve 409 and 500 swagger response descriptions ([23f031f](https://github.com/uncefact/project-storage-service/commit/23f031fac2e09b80075cfec0dcc8ae13b4df227e))
+
+
+### Tests
+
+* **e2e:** Replace mocked E2E tests with real S3-compatible storage ([#84](https://github.com/uncefact/project-storage-service/issues/84)) ([342695a](https://github.com/uncefact/project-storage-service/commit/342695ae785ade26fed295df584121e50a807ea2))
+
+
+### Documentation
+
+* Add migration guide for 2.x to 3.0.0 upgrade ([2a51065](https://github.com/uncefact/project-storage-service/commit/2a510656ea3ca7e645b03540cddf60df865ab917))
+* Overhaul documentation with public and private data framing ([#88](https://github.com/uncefact/project-storage-service/issues/88)) ([35e10cb](https://github.com/uncefact/project-storage-service/commit/35e10cbdcc97759312c8581deb158bd9f10fba0f))
+* Replace navbar logo with UNTP branding and remove disclaimer banners ([1306f63](https://github.com/uncefact/project-storage-service/commit/1306f6350c4ba1196ef2cd9a2ad4cc4f484ae352))
+
 ## [2.2.0](https://github.com/uncefact/project-identity-resolver/compare/2.1.0...2.2.0) (2026-02-07)
 
 
