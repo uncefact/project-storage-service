@@ -10,7 +10,7 @@
                             "properties": {
                                 "message": {
                                     "type": "string",
-                                    "example": "Bucket is required. Please provide a bucket name."
+                                    "example": "Data must be a JSON object. Please provide a valid JSON object."
                                 }
                             }
                         }

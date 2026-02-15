@@ -34,10 +34,10 @@ For cloud storage provider configuration, see [Storage Providers](../storage-pro
 
 ## Bucket Configuration
 
-| Variable            | Description                                     | Default           |
-| ------------------- | ----------------------------------------------- | ----------------- |
-| `DEFAULT_BUCKET`    | Default storage bucket name                     | `documents`       |
-| `AVAILABLE_BUCKETS` | Comma-separated list of allowed storage buckets | `documents,files` |
+| Variable            | Description                                                                                                                                                                                       | Default           |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------- |
+| `DEFAULT_BUCKET`    | Fallback bucket used when a request does not include a `bucket` field. If unset, requests without a bucket return a 400 error. Automatically added to `AVAILABLE_BUCKETS` if not already present. | _(not set)_       |
+| `AVAILABLE_BUCKETS` | Comma-separated list of allowed storage buckets                                                                                                                                                   | `documents,files` |
 
 ## Upload Configuration
 

@@ -23,10 +23,11 @@ export const DOMAIN = process.env.DOMAIN || 'localhost';
 export const PORT = process.env.PORT || 3333;
 export const EXTERNAL_PORT = process.env.EXTERNAL_PORT || PORT;
 
-export const DEFAULT_BUCKET = process.env.DEFAULT_BUCKET || 'documents';
-export const AVAILABLE_BUCKETS = process.env.AVAILABLE_BUCKETS
-    ? process.env.AVAILABLE_BUCKETS.split(',')
-    : [DEFAULT_BUCKET, 'files'];
+import { getBucketConfiguration } from './bucket-config';
+
+const bucketConfig = getBucketConfiguration(process.env);
+export const DEFAULT_BUCKET = bucketConfig.DEFAULT_BUCKET;
+export const AVAILABLE_BUCKETS = bucketConfig.AVAILABLE_BUCKETS;
 
 export const STORAGE_TYPE = process.env.STORAGE_TYPE || 'local'; // local | gcp | aws
 export const LOCAL_DIRECTORY = process.env.LOCAL_DIRECTORY || 'uploads';

@@ -3,7 +3,7 @@
         "schemas": {
             "StoreFileRequest": {
                 "type": "object",
-                "required": ["file", "bucket"],
+                "required": ["file"],
                 "properties": {
                     "file": {
                         "type": "string",
@@ -12,7 +12,7 @@
                     },
                     "bucket": {
                         "type": "string",
-                        "description": "Name of the bucket where the file will be stored.",
+                        "description": "Name of the bucket where the file will be stored. Falls back to the DEFAULT_BUCKET environment variable when omitted.",
                         "example": "files"
                     },
                     "id": {
@@ -28,6 +28,7 @@
                 "properties": {
                     "bucket": {
                         "type": "string",
+                        "description": "Name of the bucket where the document will be stored. Falls back to the DEFAULT_BUCKET environment variable when omitted.",
                         "example": "documents"
                     },
                     "data": {
@@ -50,7 +51,7 @@
                         "description": "Optional UUID for the document. If not provided, one will be generated."
                     }
                 },
-                "required": ["bucket", "data"]
+                "required": ["data"]
             }
         }
     }

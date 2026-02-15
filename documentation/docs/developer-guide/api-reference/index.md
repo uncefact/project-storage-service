@@ -66,19 +66,19 @@ Example response:
 
 ### Request Payload (JSON)
 
-| Field    | Description                                                             | Required |
-| -------- | ----------------------------------------------------------------------- | -------- |
-| `bucket` | Name of the bucket where the data will be stored.                       | Yes      |
-| `data`   | The actual data to be stored, must be in JSON format.                   | Yes      |
-| `id`     | Optional UUID for the document. If not provided, one will be generated. | No       |
+| Field    | Description                                                                                                           | Required |
+| -------- | --------------------------------------------------------------------------------------------------------------------- | -------- |
+| `bucket` | Name of the bucket where the data will be stored. Falls back to the `DEFAULT_BUCKET` environment variable if omitted. | No       |
+| `data`   | The actual data to be stored, must be in JSON format.                                                                 | Yes      |
+| `id`     | Optional UUID for the document. If not provided, one will be generated.                                               | No       |
 
 ### Request Payload (Binary)
 
-| Field    | Description                                                         | Required |
-| -------- | ------------------------------------------------------------------- | -------- |
-| `file`   | The binary file to upload.                                          | Yes      |
-| `bucket` | Name of the bucket where the file will be stored.                   | Yes      |
-| `id`     | Optional UUID for the file. If not provided, one will be generated. | No       |
+| Field    | Description                                                                                                           | Required |
+| -------- | --------------------------------------------------------------------------------------------------------------------- | -------- |
+| `file`   | The binary file to upload.                                                                                            | Yes      |
+| `bucket` | Name of the bucket where the file will be stored. Falls back to the `DEFAULT_BUCKET` environment variable if omitted. | No       |
+| `id`     | Optional UUID for the file. If not provided, one will be generated.                                                   | No       |
 
 ### Response Data
 
@@ -142,19 +142,19 @@ Example response:
 
 ### Request Payload (JSON)
 
-| Field    | Description                                                             | Required |
-| -------- | ----------------------------------------------------------------------- | -------- |
-| `bucket` | Name of the bucket where the data will be stored.                       | Yes      |
-| `data`   | The actual data to be stored, must be in JSON format.                   | Yes      |
-| `id`     | Optional UUID for the document. If not provided, one will be generated. | No       |
+| Field    | Description                                                                                                           | Required |
+| -------- | --------------------------------------------------------------------------------------------------------------------- | -------- |
+| `bucket` | Name of the bucket where the data will be stored. Falls back to the `DEFAULT_BUCKET` environment variable if omitted. | No       |
+| `data`   | The actual data to be stored, must be in JSON format.                                                                 | Yes      |
+| `id`     | Optional UUID for the document. If not provided, one will be generated.                                               | No       |
 
 ### Request Payload (Binary)
 
-| Field    | Description                                                         | Required |
-| -------- | ------------------------------------------------------------------- | -------- |
-| `file`   | The binary file to upload.                                          | Yes      |
-| `bucket` | Name of the bucket where the file will be stored.                   | Yes      |
-| `id`     | Optional UUID for the file. If not provided, one will be generated. | No       |
+| Field    | Description                                                                                                           | Required |
+| -------- | --------------------------------------------------------------------------------------------------------------------- | -------- |
+| `file`   | The binary file to upload.                                                                                            | Yes      |
+| `bucket` | Name of the bucket where the file will be stored. Falls back to the `DEFAULT_BUCKET` environment variable if omitted. | No       |
+| `id`     | Optional UUID for the file. If not provided, one will be generated.                                                   | No       |
 
 ### Response Data
 
