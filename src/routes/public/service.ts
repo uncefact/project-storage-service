@@ -3,7 +3,7 @@ import { v4 } from 'uuid';
 import { extension } from 'mime-types';
 import { IStorageService, ICryptographyService } from '../../services';
 import { ApiError, ApplicationError, BadRequestError, ConflictError } from '../../errors';
-import { AVAILABLE_BUCKETS, ALLOWED_UPLOAD_TYPES } from '../../config';
+import { AVAILABLE_BUCKETS, ALLOWED_UPLOAD_TYPES, DEFAULT_BUCKET } from '../../config';
 import { isValidUUID } from '../../utils';
 import { IStoreParams, IStoreFileParams } from '../../types';
 
@@ -29,11 +29,15 @@ export class PublicService {
         { bucket, id, data }: IStoreParams,
     ) {
         try {
-            if (!bucket) {
-                throw new BadRequestError('Bucket is required. Please provide a bucket name.');
+            const resolvedBucket = bucket || DEFAULT_BUCKET;
+
+            if (!resolvedBucket) {
+                throw new BadRequestError(
+                    'Bucket is required. Please provide a bucket name, or set the DEFAULT_BUCKET environment variable.',
+                );
             }
 
-            if (!AVAILABLE_BUCKETS.includes(bucket)) {
+            if (!AVAILABLE_BUCKETS.includes(resolvedBucket)) {
                 throw new BadRequestError(
                     `Invalid bucket. Must be one of the following buckets: ${AVAILABLE_BUCKETS.join(', ')}`,
                 );
@@ -51,7 +55,7 @@ export class PublicService {
 
             const objectName = documentId + '.json';
 
-            const objectExists = await storageService.objectExists(bucket, objectName);
+            const objectExists = await storageService.objectExists(resolvedBucket, objectName);
 
             if (objectExists) {
                 throw new ConflictError('A document with the provided ID already exists in the specified bucket.');
@@ -61,7 +65,12 @@ export class PublicService {
 
             const hash = cryptoService.computeHash(stringifiedData);
 
-            const { uri } = await storageService.uploadFile(bucket, objectName, stringifiedData, 'application/json');
+            const { uri } = await storageService.uploadFile(
+                resolvedBucket,
+                objectName,
+                stringifiedData,
+                'application/json',
+            );
 
             return {
                 uri,
@@ -100,11 +109,15 @@ export class PublicService {
         { bucket, id, file, mimeType }: IStoreFileParams,
     ) {
         try {
-            if (!bucket) {
-                throw new BadRequestError('Bucket is required. Please provide a bucket name.');
+            const resolvedBucket = bucket || DEFAULT_BUCKET;
+
+            if (!resolvedBucket) {
+                throw new BadRequestError(
+                    'Bucket is required. Please provide a bucket name, or set the DEFAULT_BUCKET environment variable.',
+                );
             }
 
-            if (!AVAILABLE_BUCKETS.includes(bucket)) {
+            if (!AVAILABLE_BUCKETS.includes(resolvedBucket)) {
                 throw new BadRequestError(
                     `Invalid bucket. Must be one of the following buckets: ${AVAILABLE_BUCKETS.join(', ')}`,
                 );
@@ -134,7 +147,7 @@ export class PublicService {
 
             const objectName = `${fileId}.${ext}`;
 
-            const objectExists = await storageService.objectExists(bucket, objectName);
+            const objectExists = await storageService.objectExists(resolvedBucket, objectName);
 
             if (objectExists) {
                 throw new ConflictError('A file with the provided ID already exists in the specified bucket.');
@@ -142,7 +155,7 @@ export class PublicService {
 
             const hash = cryptoService.computeHash(file);
 
-            const { uri } = await storageService.uploadFile(bucket, objectName, file, mimeType);
+            const { uri } = await storageService.uploadFile(resolvedBucket, objectName, file, mimeType);
 
             return {
                 uri,
