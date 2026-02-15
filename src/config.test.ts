@@ -1,4 +1,5 @@
 import { getBucketConfiguration } from './bucket-config';
+import { createPublicUriGenerator } from './public-url';
 
 describe('config', () => {
     const originalEnv = process.env;
@@ -54,6 +55,44 @@ describe('config', () => {
             const config = getBucketConfiguration(process.env);
 
             expect(config.DEFAULT_BUCKET).toBeUndefined();
+        });
+    });
+
+    describe('generatePublicUri', () => {
+        it('should return null when PUBLIC_URL is not set', () => {
+            const generatePublicUri = createPublicUriGenerator(undefined);
+
+            expect(generatePublicUri('my-bucket/file.pdf')).toBeNull();
+        });
+
+        it('should return {origin}/{key} for a valid PUBLIC_URL', () => {
+            const generatePublicUri = createPublicUriGenerator('https://cdn.example.com');
+
+            expect(generatePublicUri('my-bucket/file.pdf')).toBe('https://cdn.example.com/my-bucket/file.pdf');
+        });
+
+        it('should strip path components and use only the origin', () => {
+            const generatePublicUri = createPublicUriGenerator('https://cdn.example.com/some/path');
+
+            expect(generatePublicUri('my-bucket/file.pdf')).toBe('https://cdn.example.com/my-bucket/file.pdf');
+        });
+
+        it('should preserve non-standard ports in the origin', () => {
+            const generatePublicUri = createPublicUriGenerator('https://cdn.example.com:8080');
+
+            expect(generatePublicUri('my-bucket/file.pdf')).toBe('https://cdn.example.com:8080/my-bucket/file.pdf');
+        });
+
+        it('should strip trailing slash from origin', () => {
+            const generatePublicUri = createPublicUriGenerator('https://cdn.example.com/');
+
+            expect(generatePublicUri('my-bucket/file.pdf')).toBe('https://cdn.example.com/my-bucket/file.pdf');
+        });
+
+        it('should throw at creation time if PUBLIC_URL is an invalid URL', () => {
+            expect(() => createPublicUriGenerator('not-a-url')).toThrow(
+                'Invalid PUBLIC_URL format: "not-a-url" is not a valid URL',
+            );
         });
     });
 });

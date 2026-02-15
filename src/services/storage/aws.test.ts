@@ -101,7 +101,11 @@ describe('AWSStorageService', () => {
         });
 
         it('should return false if the object does not exist', async () => {
-            mockSend.mockRejectedValueOnce(new Error('Not Found'));
+            const notFoundError = Object.assign(new Error('Not Found'), {
+                name: 'NotFound',
+                $metadata: { httpStatusCode: 404 },
+            });
+            mockSend.mockRejectedValueOnce(notFoundError);
             const { AWSStorageService } = require('./aws');
             const awsStorageService = new AWSStorageService();
 
@@ -109,6 +113,18 @@ describe('AWSStorageService', () => {
 
             expect(result).toBe(false);
             expect(mockSend).toHaveBeenCalledTimes(1);
+        });
+
+        it('should re-throw non-404 errors from objectExists', async () => {
+            const permissionError = Object.assign(new Error('Access Denied'), {
+                name: 'AccessDenied',
+                $metadata: { httpStatusCode: 403 },
+            });
+            mockSend.mockRejectedValueOnce(permissionError);
+            const { AWSStorageService } = require('./aws');
+            const awsStorageService = new AWSStorageService();
+
+            await expect(awsStorageService.objectExists('test-bucket', 'test-key')).rejects.toThrow('Access Denied');
         });
     });
 

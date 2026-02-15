@@ -35,6 +35,12 @@ export class PrivateService {
         try {
             const resolvedBucket = bucket || DEFAULT_BUCKET;
 
+            if (!bucket && resolvedBucket) {
+                console.info(
+                    `[PrivateService.encryptAndStoreDocument] No bucket specified; using DEFAULT_BUCKET="${resolvedBucket}"`,
+                );
+            }
+
             if (!resolvedBucket) {
                 throw new BadRequestError(
                     'Bucket is required. Please provide a bucket name, or set the DEFAULT_BUCKET environment variable.',
@@ -134,6 +140,12 @@ export class PrivateService {
     ) {
         try {
             const resolvedBucket = bucket || DEFAULT_BUCKET;
+
+            if (!bucket && resolvedBucket) {
+                console.info(
+                    `[PrivateService.encryptAndStoreFile] No bucket specified; using DEFAULT_BUCKET="${resolvedBucket}"`,
+                );
+            }
 
             if (!resolvedBucket) {
                 throw new BadRequestError(

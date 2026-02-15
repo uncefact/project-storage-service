@@ -86,6 +86,52 @@ describe('GCPStorageService', () => {
         expect(result).toBe(true);
     });
 
+    describe('objectExists edge cases', () => {
+        beforeEach(() => {
+            jest.resetModules();
+            jest.clearAllMocks();
+        });
+
+        it('should propagate errors from file.exists()', async () => {
+            jest.doMock('../../config', () => ({
+                generatePublicUri: () => null,
+            }));
+            const mockExists = jest
+                .fn()
+                .mockRejectedValueOnce(Object.assign(new Error('Permission denied'), { code: 403 }));
+            jest.doMock('@google-cloud/storage', () => ({
+                Storage: jest.fn(() => ({
+                    bucket: jest.fn(() => ({
+                        file: jest.fn(() => ({ exists: mockExists })),
+                    })),
+                })),
+            }));
+
+            const { GCPStorageService } = require('./gcp');
+            const svc = new GCPStorageService();
+            await expect(svc.objectExists('custom-bucket', 'test-file.json')).rejects.toThrow('Permission denied');
+        });
+
+        it('should return false if the object does not exist', async () => {
+            jest.doMock('../../config', () => ({
+                generatePublicUri: () => null,
+            }));
+            const mockExists = jest.fn().mockResolvedValueOnce([false]);
+            jest.doMock('@google-cloud/storage', () => ({
+                Storage: jest.fn(() => ({
+                    bucket: jest.fn(() => ({
+                        file: jest.fn(() => ({ exists: mockExists })),
+                    })),
+                })),
+            }));
+
+            const { GCPStorageService } = require('./gcp');
+            const svc = new GCPStorageService();
+            const result = await svc.objectExists('custom-bucket', 'test-file.json');
+            expect(result).toBe(false);
+        });
+    });
+
     describe('PUBLIC_URL override', () => {
         beforeEach(() => {
             jest.resetModules();

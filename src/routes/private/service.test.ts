@@ -82,7 +82,7 @@ describe('PrivateService', () => {
         it('should throw BadRequestError when bucket is missing', async () => {
             const params = {
                 data: { key: 'value' },
-            } as any;
+            };
 
             await expect(
                 service.encryptAndStoreDocument(storageService as any, cryptographyService as any, params),
@@ -246,7 +246,7 @@ describe('PrivateService', () => {
             try {
                 const params = {
                     data: { key: 'value' },
-                } as any;
+                };
 
                 const result = await service.encryptAndStoreDocument(
                     storageService as any,
@@ -464,7 +464,7 @@ describe('PrivateService', () => {
             const params = {
                 file: fileBuffer,
                 mimeType: 'image/png',
-            } as any;
+            };
 
             await expect(
                 service.encryptAndStoreFile(storageService as any, cryptographyService as any, params),
@@ -613,7 +613,7 @@ describe('PrivateService', () => {
         });
 
         it('should throw BadRequestError when bucket is an empty string', async () => {
-            const params = { bucket: '', file: fileBuffer, mimeType: 'image/png' } as any;
+            const params = { bucket: '', file: fileBuffer, mimeType: 'image/png' };
 
             await expect(
                 service.encryptAndStoreFile(storageService as any, cryptographyService as any, params),
@@ -631,7 +631,7 @@ describe('PrivateService', () => {
                 const params = {
                     file: fileBuffer,
                     mimeType: 'image/png',
-                } as any;
+                };
 
                 const result = await service.encryptAndStoreFile(
                     storageService as any,

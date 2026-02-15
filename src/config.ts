@@ -6,6 +6,8 @@ dotenv.config();
 import fs from 'fs';
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
+import { getBucketConfiguration } from './bucket-config';
+import { createPublicUriGenerator } from './public-url';
 const VERSION_FILE = 'version.json';
 
 // The API_VERSION is set manually, it should be updated when having change impact on the API.
@@ -23,8 +25,6 @@ export const DOMAIN = process.env.DOMAIN || 'localhost';
 export const PORT = process.env.PORT || 3333;
 export const EXTERNAL_PORT = process.env.EXTERNAL_PORT || PORT;
 
-import { getBucketConfiguration } from './bucket-config';
-
 const bucketConfig = getBucketConfiguration(process.env);
 export const DEFAULT_BUCKET = bucketConfig.DEFAULT_BUCKET;
 export const AVAILABLE_BUCKETS = bucketConfig.AVAILABLE_BUCKETS;
@@ -32,24 +32,9 @@ export const AVAILABLE_BUCKETS = bucketConfig.AVAILABLE_BUCKETS;
 export const STORAGE_TYPE = process.env.STORAGE_TYPE || 'local'; // local | gcp | aws
 export const LOCAL_DIRECTORY = process.env.LOCAL_DIRECTORY || 'uploads';
 
-// Public URL override for document URIs (used when STORAGE_TYPE=aws or STORAGE_TYPE=gcp)
+// Public URL override for document URIs (consumed by aws and gcp storage providers; ignored by local storage)
 export const PUBLIC_URL = process.env.PUBLIC_URL;
-
-/**
- * Returns a public URI using PUBLIC_URL if set, otherwise null.
- * Only the origin (protocol, hostname, port) of PUBLIC_URL is used; path components are ignored.
- */
-export const generatePublicUri = (key: string): string | null => {
-    if (!PUBLIC_URL) return null;
-
-    let url: URL;
-    try {
-        url = new URL(PUBLIC_URL);
-    } catch {
-        throw new Error(`Invalid PUBLIC_URL format: "${PUBLIC_URL}" is not a valid URL`);
-    }
-    return `${url.origin}/${key}`;
-};
+export const generatePublicUri = createPublicUriGenerator(PUBLIC_URL);
 
 // S3-compatible storage configuration (used when STORAGE_TYPE=aws)
 export const S3_REGION = process.env.S3_REGION;
