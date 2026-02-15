@@ -86,13 +86,13 @@ describe('GCPStorageService', () => {
         expect(result).toBe(true);
     });
 
-    describe('objectExists error handling', () => {
+    describe('objectExists edge cases', () => {
         beforeEach(() => {
             jest.resetModules();
             jest.clearAllMocks();
         });
 
-        it('should re-throw non-404 errors from objectExists', async () => {
+        it('should propagate errors from file.exists()', async () => {
             jest.doMock('../../config', () => ({
                 generatePublicUri: () => null,
             }));

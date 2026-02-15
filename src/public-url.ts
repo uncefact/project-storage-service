@@ -7,17 +7,16 @@
  * @throws {Error} If publicUrl is set but is not a valid URL.
  */
 export function createPublicUriGenerator(publicUrl: string | undefined): (key: string) => string | null {
-    if (publicUrl) {
-        try {
-            new URL(publicUrl);
-        } catch {
-            throw new Error(`Invalid PUBLIC_URL format: "${publicUrl}" is not a valid URL`);
-        }
+    if (!publicUrl) {
+        return () => null;
     }
 
-    return (key: string): string | null => {
-        if (!publicUrl) return null;
-        const url = new URL(publicUrl);
-        return `${url.origin}/${key}`;
-    };
+    let origin: string;
+    try {
+        origin = new URL(publicUrl).origin;
+    } catch {
+        throw new Error(`Invalid PUBLIC_URL format: "${publicUrl}" is not a valid URL`);
+    }
+
+    return (key: string) => `${origin}/${key}`;
 }

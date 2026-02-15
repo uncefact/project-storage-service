@@ -11,17 +11,16 @@ export function getBucketConfiguration(env: NodeJS.ProcessEnv): BucketConfigurat
         ? env.AVAILABLE_BUCKETS.split(',').filter(Boolean)
         : ['documents', 'files'];
 
-    if (DEFAULT_BUCKET && !configuredBuckets.includes(DEFAULT_BUCKET)) {
+    const shouldAutoAddDefaultBucket = DEFAULT_BUCKET && !configuredBuckets.includes(DEFAULT_BUCKET);
+
+    if (shouldAutoAddDefaultBucket) {
         console.warn(
             `[config] DEFAULT_BUCKET="${DEFAULT_BUCKET}" is not in AVAILABLE_BUCKETS (${configuredBuckets.join(', ')}). ` +
                 'It will be auto-added, but consider including it in AVAILABLE_BUCKETS explicitly.',
         );
     }
 
-    const AVAILABLE_BUCKETS =
-        DEFAULT_BUCKET && !configuredBuckets.includes(DEFAULT_BUCKET)
-            ? [...configuredBuckets, DEFAULT_BUCKET]
-            : configuredBuckets;
+    const AVAILABLE_BUCKETS = shouldAutoAddDefaultBucket ? [...configuredBuckets, DEFAULT_BUCKET] : configuredBuckets;
 
     return { DEFAULT_BUCKET, AVAILABLE_BUCKETS };
 }

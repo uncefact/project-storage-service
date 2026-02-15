@@ -47,15 +47,7 @@ export class GCPStorageService implements IStorageService {
     async objectExists(bucket: string, key: string): Promise<boolean> {
         const bucketInstance = this.storage.bucket(bucket);
         const file = bucketInstance.file(key);
-
-        try {
-            const [exists] = await file.exists();
-            return exists;
-        } catch (error: any) {
-            if (error.code === 404) {
-                return false;
-            }
-            throw error;
-        }
+        const [exists] = await file.exists();
+        return exists;
     }
 }
