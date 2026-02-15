@@ -17,11 +17,11 @@ export class PrivateService {
      * @param storageService - The storage service used for uploading the encrypted document.
      * @param cryptographyService - The cryptography service used for hashing, key generation, and encryption.
      * @param params - An object containing the following properties:
-     * @param params.bucket - The name of the bucket where the document will be stored.
+     * @param params.bucket - The name of the bucket where the document will be stored. Falls back to DEFAULT_BUCKET if omitted.
      * @param params.id - (Optional) The identifier for the document. If not provided, a UUID will be generated.
      * @param params.data - The data to be encrypted and stored. Must be a plain object.
      * @returns An object containing the URI of the uploaded file, the hash of the data, and the decryption key.
-     * @throws {BadRequestError} If the bucket is not provided or is invalid.
+     * @throws {BadRequestError} If no bucket is resolved (neither provided nor configured via DEFAULT_BUCKET), or if the bucket is invalid.
      * @throws {BadRequestError} If the data is not a plain object.
      * @throws {BadRequestError} If the provided ID is not a valid UUID.
      * @throws {ConflictError} If a document with the same ID already exists in the bucket.
@@ -115,12 +115,12 @@ export class PrivateService {
      * @param storageService - The storage service used for uploading the encrypted file.
      * @param cryptographyService - The cryptography service used for hashing, key generation, and encryption.
      * @param params - An object containing the following properties:
-     * @param params.bucket - The name of the bucket where the file will be stored.
+     * @param params.bucket - The name of the bucket where the file will be stored. Falls back to DEFAULT_BUCKET if omitted.
      * @param params.id - (Optional) The identifier for the file. If not provided, a UUID will be generated.
      * @param params.file - The binary file content as a Buffer.
      * @param params.mimeType - The MIME type of the file.
      * @returns An object containing the URI of the uploaded file, the hash of the original file, and the decryption key.
-     * @throws {BadRequestError} If the bucket is not provided or is invalid.
+     * @throws {BadRequestError} If no bucket is resolved (neither provided nor configured via DEFAULT_BUCKET), or if the bucket is invalid.
      * @throws {BadRequestError} If the file is not provided.
      * @throws {BadRequestError} If the MIME type is missing or not in the allowed types.
      * @throws {BadRequestError} If the provided ID is not a valid UUID.
