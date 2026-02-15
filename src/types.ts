@@ -1,5 +1,5 @@
 export interface IStoreBaseParams {
-    bucket: string;
+    bucket?: string;
     id?: string;
 }
 

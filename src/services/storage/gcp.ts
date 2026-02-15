@@ -51,8 +51,11 @@ export class GCPStorageService implements IStorageService {
         try {
             const [exists] = await file.exists();
             return exists;
-        } catch (error) {
-            return false;
+        } catch (error: any) {
+            if (error.code === 404) {
+                return false;
+            }
+            throw error;
         }
     }
 }

@@ -356,14 +356,14 @@ describe('PublicService', () => {
             await expect(
                 service.storeFile(mockStorageService, mockCryptoService, {
                     ...validParams,
-                    bucket: undefined as any,
+                    bucket: undefined,
                 }),
             ).rejects.toThrow(BadRequestError);
 
             await expect(
                 service.storeFile(mockStorageService, mockCryptoService, {
                     ...validParams,
-                    bucket: undefined as any,
+                    bucket: undefined,
                 }),
             ).rejects.toThrow(
                 'Bucket is required. Please provide a bucket name, or set the DEFAULT_BUCKET environment variable.',
@@ -520,13 +520,13 @@ describe('PublicService', () => {
             await expect(
                 service.storeFile(mockStorageService, mockCryptoService, {
                     ...validParams,
-                    bucket: '' as any,
+                    bucket: '',
                 }),
             ).rejects.toThrow(BadRequestError);
             await expect(
                 service.storeFile(mockStorageService, mockCryptoService, {
                     ...validParams,
-                    bucket: '' as any,
+                    bucket: '',
                 }),
             ).rejects.toThrow(
                 'Bucket is required. Please provide a bucket name, or set the DEFAULT_BUCKET environment variable.',
@@ -540,7 +540,7 @@ describe('PublicService', () => {
             try {
                 const result = await service.storeFile(mockStorageService, mockCryptoService, {
                     ...validParams,
-                    bucket: undefined as any,
+                    bucket: undefined,
                 });
 
                 expect(mockStorageService.uploadFile).toHaveBeenCalledWith(
@@ -562,7 +562,7 @@ describe('PublicService', () => {
             try {
                 const result = await service.storeFile(mockStorageService, mockCryptoService, {
                     ...validParams,
-                    bucket: '' as any,
+                    bucket: '',
                 });
 
                 expect(mockStorageService.uploadFile).toHaveBeenCalledWith(

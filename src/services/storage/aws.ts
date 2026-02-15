@@ -111,8 +111,11 @@ export class AWSStorageService implements IStorageService {
             const command = new HeadObjectCommand(params);
             await this.storage.send(command);
             return true;
-        } catch (error) {
-            return false;
+        } catch (error: any) {
+            if (error.name === 'NotFound' || error.$metadata?.httpStatusCode === 404) {
+                return false;
+            }
+            throw error;
         }
     }
 }
