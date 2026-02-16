@@ -183,6 +183,7 @@
         "properties": {
           "bucket": {
             "type": "string",
+            "description": "Name of the bucket where the document will be stored. Falls back to the DEFAULT_BUCKET environment variable when omitted.",
             "example": "documents"
           },
           "data": {
@@ -206,15 +207,13 @@
           }
         },
         "required": [
-          "bucket",
           "data"
         ]
       },
       "StoreFileRequest": {
         "type": "object",
         "required": [
-          "file",
-          "bucket"
+          "file"
         ],
         "properties": {
           "file": {
@@ -224,7 +223,7 @@
           },
           "bucket": {
             "type": "string",
-            "description": "Name of the bucket where the file will be stored.",
+            "description": "Name of the bucket where the file will be stored. Falls back to the DEFAULT_BUCKET environment variable when omitted.",
             "example": "files"
           },
           "id": {
@@ -298,7 +297,7 @@
               "properties": {
                 "message": {
                   "type": "string",
-                  "example": "Bucket is required. Please provide a bucket name."
+                  "example": "Data must be a JSON object. Please provide a valid JSON object."
                 }
               }
             }

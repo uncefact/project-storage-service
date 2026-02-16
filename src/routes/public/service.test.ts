@@ -6,6 +6,7 @@ import { BadRequestError, ConflictError, ApplicationError } from '../../errors';
 jest.mock('../../config', () => ({
     AVAILABLE_BUCKETS: ['my-bucket'],
     ALLOWED_UPLOAD_TYPES: ['image/png', 'image/jpeg', 'application/pdf'],
+    DEFAULT_BUCKET: undefined,
 }));
 
 jest.mock('uuid', () => ({
@@ -72,7 +73,9 @@ describe('PublicService', () => {
                     ...validParams,
                     bucket: undefined,
                 } as any),
-            ).rejects.toThrow('Bucket is required');
+            ).rejects.toThrow(
+                'Bucket is required. Please provide a bucket name, or set the DEFAULT_BUCKET environment variable.',
+            );
         });
 
         it('should throw BadRequestError when bucket is invalid', async () => {
@@ -201,7 +204,75 @@ describe('PublicService', () => {
                     ...validParams,
                     bucket: '',
                 }),
-            ).rejects.toThrow('Bucket is required');
+            ).rejects.toThrow(
+                'Bucket is required. Please provide a bucket name, or set the DEFAULT_BUCKET environment variable.',
+            );
+        });
+
+        it('should use DEFAULT_BUCKET when bucket is not provided', async () => {
+            const configModule = require('../../config');
+            configModule.DEFAULT_BUCKET = 'my-bucket';
+
+            try {
+                const result = await service.storeDocument(mockStorageService, mockCryptoService, {
+                    ...validParams,
+                    bucket: undefined,
+                } as any);
+
+                expect(mockStorageService.uploadFile).toHaveBeenCalledWith(
+                    'my-bucket',
+                    expect.any(String),
+                    expect.any(String),
+                    'application/json',
+                );
+                expect(result).toEqual({ uri: expect.any(String), hash: expect.any(String) });
+            } finally {
+                configModule.DEFAULT_BUCKET = undefined;
+            }
+        });
+
+        it('should use DEFAULT_BUCKET when bucket is an empty string', async () => {
+            const configModule = require('../../config');
+            configModule.DEFAULT_BUCKET = 'my-bucket';
+
+            try {
+                const result = await service.storeDocument(mockStorageService, mockCryptoService, {
+                    ...validParams,
+                    bucket: '',
+                });
+
+                expect(mockStorageService.uploadFile).toHaveBeenCalledWith(
+                    'my-bucket',
+                    expect.any(String),
+                    expect.any(String),
+                    'application/json',
+                );
+                expect(result).toEqual({ uri: expect.any(String), hash: expect.any(String) });
+            } finally {
+                configModule.DEFAULT_BUCKET = undefined;
+            }
+        });
+
+        it('should prefer explicit bucket over DEFAULT_BUCKET', async () => {
+            const configModule = require('../../config');
+            configModule.DEFAULT_BUCKET = 'other-bucket';
+
+            try {
+                const result = await service.storeDocument(mockStorageService, mockCryptoService, {
+                    ...validParams,
+                    bucket: 'my-bucket',
+                });
+
+                expect(mockStorageService.uploadFile).toHaveBeenCalledWith(
+                    'my-bucket',
+                    expect.any(String),
+                    expect.any(String),
+                    'application/json',
+                );
+                expect(result).toEqual({ uri: expect.any(String), hash: expect.any(String) });
+            } finally {
+                configModule.DEFAULT_BUCKET = undefined;
+            }
         });
 
         it('should generate a UUID when id is an empty string', async () => {
@@ -285,16 +356,18 @@ describe('PublicService', () => {
             await expect(
                 service.storeFile(mockStorageService, mockCryptoService, {
                     ...validParams,
-                    bucket: undefined as any,
+                    bucket: undefined,
                 }),
             ).rejects.toThrow(BadRequestError);
 
             await expect(
                 service.storeFile(mockStorageService, mockCryptoService, {
                     ...validParams,
-                    bucket: undefined as any,
+                    bucket: undefined,
                 }),
-            ).rejects.toThrow('Bucket is required');
+            ).rejects.toThrow(
+                'Bucket is required. Please provide a bucket name, or set the DEFAULT_BUCKET environment variable.',
+            );
         });
 
         it('should throw BadRequestError when bucket is invalid', async () => {
@@ -447,15 +520,83 @@ describe('PublicService', () => {
             await expect(
                 service.storeFile(mockStorageService, mockCryptoService, {
                     ...validParams,
-                    bucket: '' as any,
+                    bucket: '',
                 }),
             ).rejects.toThrow(BadRequestError);
             await expect(
                 service.storeFile(mockStorageService, mockCryptoService, {
                     ...validParams,
-                    bucket: '' as any,
+                    bucket: '',
                 }),
-            ).rejects.toThrow('Bucket is required');
+            ).rejects.toThrow(
+                'Bucket is required. Please provide a bucket name, or set the DEFAULT_BUCKET environment variable.',
+            );
+        });
+
+        it('should use DEFAULT_BUCKET when bucket is not provided', async () => {
+            const configModule = require('../../config');
+            configModule.DEFAULT_BUCKET = 'my-bucket';
+
+            try {
+                const result = await service.storeFile(mockStorageService, mockCryptoService, {
+                    ...validParams,
+                    bucket: undefined,
+                });
+
+                expect(mockStorageService.uploadFile).toHaveBeenCalledWith(
+                    'my-bucket',
+                    expect.any(String),
+                    expect.any(Buffer),
+                    'image/png',
+                );
+                expect(result).toEqual({ uri: expect.any(String), hash: expect.any(String) });
+            } finally {
+                configModule.DEFAULT_BUCKET = undefined;
+            }
+        });
+
+        it('should use DEFAULT_BUCKET when bucket is an empty string', async () => {
+            const configModule = require('../../config');
+            configModule.DEFAULT_BUCKET = 'my-bucket';
+
+            try {
+                const result = await service.storeFile(mockStorageService, mockCryptoService, {
+                    ...validParams,
+                    bucket: '',
+                });
+
+                expect(mockStorageService.uploadFile).toHaveBeenCalledWith(
+                    'my-bucket',
+                    expect.any(String),
+                    expect.any(Buffer),
+                    'image/png',
+                );
+                expect(result).toEqual({ uri: expect.any(String), hash: expect.any(String) });
+            } finally {
+                configModule.DEFAULT_BUCKET = undefined;
+            }
+        });
+
+        it('should prefer explicit bucket over DEFAULT_BUCKET', async () => {
+            const configModule = require('../../config');
+            configModule.DEFAULT_BUCKET = 'other-bucket';
+
+            try {
+                const result = await service.storeFile(mockStorageService, mockCryptoService, {
+                    ...validParams,
+                    bucket: 'my-bucket',
+                });
+
+                expect(mockStorageService.uploadFile).toHaveBeenCalledWith(
+                    'my-bucket',
+                    expect.any(String),
+                    expect.any(Buffer),
+                    'image/png',
+                );
+                expect(result).toEqual({ uri: expect.any(String), hash: expect.any(String) });
+            } finally {
+                configModule.DEFAULT_BUCKET = undefined;
+            }
         });
 
         it('should generate a UUID when id is an empty string', async () => {

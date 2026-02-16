@@ -2,6 +2,19 @@ import { S3Client, HeadObjectCommand, PutObjectCommand } from '@aws-sdk/client-s
 
 const mockSend = jest.fn();
 
+const createGeneratePublicUri =
+    (publicUrl: string | undefined) =>
+    (key: string): string | null => {
+        if (!publicUrl) return null;
+        let url: URL;
+        try {
+            url = new URL(publicUrl);
+        } catch {
+            throw new Error(`Invalid PUBLIC_URL format: "${publicUrl}" is not a valid URL`);
+        }
+        return `${url.origin}/${key}`;
+    };
+
 jest.mock('@aws-sdk/client-s3', () => {
     return {
         S3Client: jest.fn().mockImplementation(() => ({
@@ -28,6 +41,7 @@ describe('AWSStorageService', () => {
                 S3_REGION: 'ap-southeast-2',
                 S3_ENDPOINT: undefined,
                 S3_FORCE_PATH_STYLE: false,
+                generatePublicUri: createGeneratePublicUri(undefined),
             }));
         });
 
@@ -87,7 +101,11 @@ describe('AWSStorageService', () => {
         });
 
         it('should return false if the object does not exist', async () => {
-            mockSend.mockRejectedValueOnce(new Error('Not Found'));
+            const notFoundError = Object.assign(new Error('Not Found'), {
+                name: 'NotFound',
+                $metadata: { httpStatusCode: 404 },
+            });
+            mockSend.mockRejectedValueOnce(notFoundError);
             const { AWSStorageService } = require('./aws');
             const awsStorageService = new AWSStorageService();
 
@@ -95,6 +113,18 @@ describe('AWSStorageService', () => {
 
             expect(result).toBe(false);
             expect(mockSend).toHaveBeenCalledTimes(1);
+        });
+
+        it('should re-throw non-404 errors from objectExists', async () => {
+            const permissionError = Object.assign(new Error('Access Denied'), {
+                name: 'AccessDenied',
+                $metadata: { httpStatusCode: 403 },
+            });
+            mockSend.mockRejectedValueOnce(permissionError);
+            const { AWSStorageService } = require('./aws');
+            const awsStorageService = new AWSStorageService();
+
+            await expect(awsStorageService.objectExists('test-bucket', 'test-key')).rejects.toThrow('Access Denied');
         });
     });
 
@@ -104,6 +134,7 @@ describe('AWSStorageService', () => {
                 S3_REGION: undefined,
                 S3_ENDPOINT: 'http://localhost:9000',
                 S3_FORCE_PATH_STYLE: true,
+                generatePublicUri: createGeneratePublicUri(undefined),
             }));
         });
 
@@ -129,6 +160,7 @@ describe('AWSStorageService', () => {
                 S3_REGION: undefined,
                 S3_ENDPOINT: 'https://syd1.digitaloceanspaces.com',
                 S3_FORCE_PATH_STYLE: false,
+                generatePublicUri: createGeneratePublicUri(undefined),
             }));
         });
 
@@ -148,12 +180,145 @@ describe('AWSStorageService', () => {
         });
     });
 
+    describe('PUBLIC_URL override', () => {
+        it('should use PUBLIC_URL when set, ignoring bucket in URI', async () => {
+            jest.doMock('../../config', () => ({
+                S3_REGION: undefined,
+                S3_ENDPOINT: 'https://syd1.digitaloceanspaces.com',
+                S3_FORCE_PATH_STYLE: false,
+                generatePublicUri: createGeneratePublicUri('https://documents.labs.pyx.io'),
+            }));
+            mockSend.mockResolvedValueOnce({});
+            const { AWSStorageService } = require('./aws');
+            const awsStorageService = new AWSStorageService();
+            const result = await awsStorageService.uploadFile(
+                'test-bucket',
+                'test-key.json',
+                'test-body',
+                'application/json',
+            );
+            expect(result).toEqual({ uri: 'https://documents.labs.pyx.io/test-key.json' });
+        });
+
+        it('should strip trailing slash from PUBLIC_URL', async () => {
+            jest.doMock('../../config', () => ({
+                S3_REGION: undefined,
+                S3_ENDPOINT: 'https://syd1.digitaloceanspaces.com',
+                S3_FORCE_PATH_STYLE: false,
+                generatePublicUri: createGeneratePublicUri('https://documents.labs.pyx.io/'),
+            }));
+            mockSend.mockResolvedValueOnce({});
+            const { AWSStorageService } = require('./aws');
+            const awsStorageService = new AWSStorageService();
+            const result = await awsStorageService.uploadFile(
+                'test-bucket',
+                'test-key.json',
+                'test-body',
+                'application/json',
+            );
+            expect(result).toEqual({ uri: 'https://documents.labs.pyx.io/test-key.json' });
+        });
+
+        it('should ignore path portion of PUBLIC_URL (only origin is used)', async () => {
+            jest.doMock('../../config', () => ({
+                S3_REGION: undefined,
+                S3_ENDPOINT: 'https://syd1.digitaloceanspaces.com',
+                S3_FORCE_PATH_STYLE: false,
+                generatePublicUri: createGeneratePublicUri('https://cdn.example.com/some/subpath'),
+            }));
+            mockSend.mockResolvedValueOnce({});
+            const { AWSStorageService } = require('./aws');
+            const awsStorageService = new AWSStorageService();
+            const result = await awsStorageService.uploadFile(
+                'test-bucket',
+                'test-key',
+                'test-body',
+                'application/json',
+            );
+            // Only the origin is used; path components are intentionally discarded
+            expect(result).toEqual({ uri: 'https://cdn.example.com/test-key' });
+        });
+
+        it('should preserve non-standard port in PUBLIC_URL', async () => {
+            jest.doMock('../../config', () => ({
+                S3_REGION: undefined,
+                S3_ENDPOINT: 'http://localhost:9000',
+                S3_FORCE_PATH_STYLE: true,
+                generatePublicUri: createGeneratePublicUri('https://cdn.example.com:8080'),
+            }));
+            mockSend.mockResolvedValueOnce({});
+            const { AWSStorageService } = require('./aws');
+            const awsStorageService = new AWSStorageService();
+            const result = await awsStorageService.uploadFile(
+                'test-bucket',
+                'test-key',
+                'test-body',
+                'application/json',
+            );
+            expect(result).toEqual({ uri: 'https://cdn.example.com:8080/test-key' });
+        });
+
+        it('should take precedence over S3_ENDPOINT and S3_FORCE_PATH_STYLE', async () => {
+            jest.doMock('../../config', () => ({
+                S3_REGION: undefined,
+                S3_ENDPOINT: 'http://localhost:9000',
+                S3_FORCE_PATH_STYLE: true,
+                generatePublicUri: createGeneratePublicUri('https://cdn.example.com'),
+            }));
+            mockSend.mockResolvedValueOnce({});
+            const { AWSStorageService } = require('./aws');
+            const awsStorageService = new AWSStorageService();
+            const result = await awsStorageService.uploadFile(
+                'test-bucket',
+                'test-key',
+                'test-body',
+                'application/json',
+            );
+            expect(result).toEqual({ uri: 'https://cdn.example.com/test-key' });
+        });
+
+        it('should take precedence over AWS S3 default URI generation', async () => {
+            jest.doMock('../../config', () => ({
+                S3_REGION: 'ap-southeast-2',
+                S3_ENDPOINT: undefined,
+                S3_FORCE_PATH_STYLE: false,
+                generatePublicUri: createGeneratePublicUri('https://cdn.example.com'),
+            }));
+            mockSend.mockResolvedValueOnce({});
+            const { AWSStorageService } = require('./aws');
+            const awsStorageService = new AWSStorageService();
+            const result = await awsStorageService.uploadFile(
+                'test-bucket',
+                'test-key',
+                'test-body',
+                'application/json',
+            );
+            expect(result).toEqual({ uri: 'https://cdn.example.com/test-key' });
+        });
+
+        it('should throw an error if PUBLIC_URL is not a valid URL', async () => {
+            jest.doMock('../../config', () => ({
+                S3_REGION: undefined,
+                S3_ENDPOINT: 'https://syd1.digitaloceanspaces.com',
+                S3_FORCE_PATH_STYLE: false,
+                generatePublicUri: createGeneratePublicUri('not-a-valid-url'),
+            }));
+            mockSend.mockResolvedValueOnce({});
+            const { AWSStorageService } = require('./aws');
+            const awsStorageService = new AWSStorageService();
+            await expect(
+                awsStorageService.uploadFile('test-bucket', 'test-key', 'test-body', 'application/json'),
+            ).rejects.toThrow('Invalid PUBLIC_URL format');
+        });
+    });
+
     describe('Configuration validation', () => {
         it('should throw an error if S3_REGION is not set for AWS S3', async () => {
             jest.doMock('../../config', () => ({
                 S3_REGION: undefined,
                 S3_ENDPOINT: undefined,
                 S3_FORCE_PATH_STYLE: false,
+                generatePublicUri: createGeneratePublicUri(undefined),
             }));
 
             expect(() => {
@@ -167,6 +332,7 @@ describe('AWSStorageService', () => {
                 S3_REGION: undefined,
                 S3_ENDPOINT: 'http://localhost:9000',
                 S3_FORCE_PATH_STYLE: true,
+                generatePublicUri: createGeneratePublicUri(undefined),
             }));
 
             expect(() => {
@@ -180,6 +346,7 @@ describe('AWSStorageService', () => {
                 S3_REGION: undefined,
                 S3_ENDPOINT: 'not-a-valid-url',
                 S3_FORCE_PATH_STYLE: false,
+                generatePublicUri: createGeneratePublicUri(undefined),
             }));
             mockSend.mockResolvedValueOnce({});
             const { AWSStorageService } = require('./aws');

@@ -1,7 +1,7 @@
 import { isPlainObject } from 'lodash';
 import { v4 } from 'uuid';
 import { IStorageService, ICryptographyService } from '../../services';
-import { AVAILABLE_BUCKETS, ALLOWED_UPLOAD_TYPES } from '../../config';
+import { AVAILABLE_BUCKETS, ALLOWED_UPLOAD_TYPES, DEFAULT_BUCKET } from '../../config';
 import { IStoreParams, IStoreFileParams } from '../../types';
 import { isValidUUID } from '../../utils';
 import { ApiError, ApplicationError, BadRequestError, ConflictError } from '../../errors';
@@ -17,11 +17,11 @@ export class PrivateService {
      * @param storageService - The storage service used for uploading the encrypted document.
      * @param cryptographyService - The cryptography service used for hashing, key generation, and encryption.
      * @param params - An object containing the following properties:
-     * @param params.bucket - The name of the bucket where the document will be stored.
+     * @param params.bucket - The name of the bucket where the document will be stored. Falls back to DEFAULT_BUCKET if omitted.
      * @param params.id - (Optional) The identifier for the document. If not provided, a UUID will be generated.
      * @param params.data - The data to be encrypted and stored. Must be a plain object.
      * @returns An object containing the URI of the uploaded file, the hash of the data, and the decryption key.
-     * @throws {BadRequestError} If the bucket is not provided or is invalid.
+     * @throws {BadRequestError} If no bucket is resolved (neither provided nor configured via DEFAULT_BUCKET), or if the bucket is invalid.
      * @throws {BadRequestError} If the data is not a plain object.
      * @throws {BadRequestError} If the provided ID is not a valid UUID.
      * @throws {ConflictError} If a document with the same ID already exists in the bucket.
@@ -33,11 +33,21 @@ export class PrivateService {
         { bucket, id, data }: IStoreParams,
     ) {
         try {
-            if (!bucket) {
-                throw new BadRequestError('Bucket is required. Please provide a bucket name.');
+            const resolvedBucket = bucket || DEFAULT_BUCKET;
+
+            if (!bucket && resolvedBucket) {
+                console.info(
+                    `[PrivateService.encryptAndStoreDocument] No bucket specified; using DEFAULT_BUCKET="${resolvedBucket}"`,
+                );
             }
 
-            if (!AVAILABLE_BUCKETS.includes(bucket)) {
+            if (!resolvedBucket) {
+                throw new BadRequestError(
+                    'Bucket is required. Please provide a bucket name, or set the DEFAULT_BUCKET environment variable.',
+                );
+            }
+
+            if (!AVAILABLE_BUCKETS.includes(resolvedBucket)) {
                 throw new BadRequestError(
                     `Invalid bucket. Must be one of the following buckets: ${AVAILABLE_BUCKETS.join(', ')}`,
                 );
@@ -55,7 +65,7 @@ export class PrivateService {
 
             const objectName = documentId + '.json';
 
-            const objectExists = await storageService.objectExists(bucket, objectName);
+            const objectExists = await storageService.objectExists(resolvedBucket, objectName);
 
             if (objectExists) {
                 throw new ConflictError('A document with the provided ID already exists in the specified bucket.');
@@ -73,7 +83,12 @@ export class PrivateService {
 
             const encryptedDocument = JSON.stringify(envelope);
 
-            const { uri } = await storageService.uploadFile(bucket, objectName, encryptedDocument, 'application/json');
+            const { uri } = await storageService.uploadFile(
+                resolvedBucket,
+                objectName,
+                encryptedDocument,
+                'application/json',
+            );
 
             return {
                 uri,
@@ -106,12 +121,12 @@ export class PrivateService {
      * @param storageService - The storage service used for uploading the encrypted file.
      * @param cryptographyService - The cryptography service used for hashing, key generation, and encryption.
      * @param params - An object containing the following properties:
-     * @param params.bucket - The name of the bucket where the file will be stored.
+     * @param params.bucket - The name of the bucket where the file will be stored. Falls back to DEFAULT_BUCKET if omitted.
      * @param params.id - (Optional) The identifier for the file. If not provided, a UUID will be generated.
      * @param params.file - The binary file content as a Buffer.
      * @param params.mimeType - The MIME type of the file.
      * @returns An object containing the URI of the uploaded file, the hash of the original file, and the decryption key.
-     * @throws {BadRequestError} If the bucket is not provided or is invalid.
+     * @throws {BadRequestError} If no bucket is resolved (neither provided nor configured via DEFAULT_BUCKET), or if the bucket is invalid.
      * @throws {BadRequestError} If the file is not provided.
      * @throws {BadRequestError} If the MIME type is missing or not in the allowed types.
      * @throws {BadRequestError} If the provided ID is not a valid UUID.
@@ -124,11 +139,21 @@ export class PrivateService {
         { bucket, id, file, mimeType }: IStoreFileParams,
     ) {
         try {
-            if (!bucket) {
-                throw new BadRequestError('Bucket is required. Please provide a bucket name.');
+            const resolvedBucket = bucket || DEFAULT_BUCKET;
+
+            if (!bucket && resolvedBucket) {
+                console.info(
+                    `[PrivateService.encryptAndStoreFile] No bucket specified; using DEFAULT_BUCKET="${resolvedBucket}"`,
+                );
             }
 
-            if (!AVAILABLE_BUCKETS.includes(bucket)) {
+            if (!resolvedBucket) {
+                throw new BadRequestError(
+                    'Bucket is required. Please provide a bucket name, or set the DEFAULT_BUCKET environment variable.',
+                );
+            }
+
+            if (!AVAILABLE_BUCKETS.includes(resolvedBucket)) {
                 throw new BadRequestError(
                     `Invalid bucket. Must be one of the following buckets: ${AVAILABLE_BUCKETS.join(', ')}`,
                 );
@@ -152,7 +177,7 @@ export class PrivateService {
 
             const objectName = fileId + '.json';
 
-            const objectExists = await storageService.objectExists(bucket, objectName);
+            const objectExists = await storageService.objectExists(resolvedBucket, objectName);
 
             if (objectExists) {
                 throw new ConflictError('A file with the provided ID already exists in the specified bucket.');
@@ -170,7 +195,12 @@ export class PrivateService {
 
             const encryptedDocument = JSON.stringify(envelope);
 
-            const { uri } = await storageService.uploadFile(bucket, objectName, encryptedDocument, 'application/json');
+            const { uri } = await storageService.uploadFile(
+                resolvedBucket,
+                objectName,
+                encryptedDocument,
+                'application/json',
+            );
 
             return {
                 uri,

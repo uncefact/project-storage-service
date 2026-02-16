@@ -1,5 +1,19 @@
 # Changelog
 
+## [3.1.0](https://github.com/uncefact/project-storage-service/compare/3.0.0...3.1.0) (2026-02-15)
+
+
+### Features
+
+* **storage:** Add PUBLIC_URL override for document URIs ([#94](https://github.com/uncefact/project-storage-service/issues/94)) ([111ab88](https://github.com/uncefact/project-storage-service/commit/111ab889f8b0a9c529682d098c5d44a85eba23fb))
+* **storage:** Fall back to DEFAULT_BUCKET when bucket is omitted from requests ([#95](https://github.com/uncefact/project-storage-service/issues/95)) ([81f332d](https://github.com/uncefact/project-storage-service/commit/81f332ddfbd332ab9388f6833ce529a250575fd5))
+
+
+### Bug Fixes
+
+* **ci:** Use correct lint script name in release workflow ([180f8c6](https://github.com/uncefact/project-storage-service/commit/180f8c62d6c63da869adcff0ba6a46e85b9bf0de))
+* **storage:** Improve error handling, type safety, and observability ([#97](https://github.com/uncefact/project-storage-service/issues/97)) ([71ae3aa](https://github.com/uncefact/project-storage-service/commit/71ae3aa))
+
 ## [3.0.1](https://github.com/uncefact/project-storage-service/compare/3.0.0...3.0.1) (2026-02-09)
 
 

@@ -6,6 +6,8 @@ dotenv.config();
 import fs from 'fs';
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
+import { getBucketConfiguration } from './bucket-config';
+import { createPublicUriGenerator } from './public-url';
 const VERSION_FILE = 'version.json';
 
 // The API_VERSION is set manually, it should be updated when having change impact on the API.
@@ -23,13 +25,16 @@ export const DOMAIN = process.env.DOMAIN || 'localhost';
 export const PORT = process.env.PORT || 3333;
 export const EXTERNAL_PORT = process.env.EXTERNAL_PORT || PORT;
 
-export const DEFAULT_BUCKET = process.env.DEFAULT_BUCKET || 'documents';
-export const AVAILABLE_BUCKETS = process.env.AVAILABLE_BUCKETS
-    ? process.env.AVAILABLE_BUCKETS.split(',')
-    : [DEFAULT_BUCKET, 'files'];
+const bucketConfig = getBucketConfiguration(process.env);
+export const DEFAULT_BUCKET = bucketConfig.DEFAULT_BUCKET;
+export const AVAILABLE_BUCKETS = bucketConfig.AVAILABLE_BUCKETS;
 
 export const STORAGE_TYPE = process.env.STORAGE_TYPE || 'local'; // local | gcp | aws
 export const LOCAL_DIRECTORY = process.env.LOCAL_DIRECTORY || 'uploads';
+
+// Public URL override for document URIs (consumed by aws and gcp storage providers; ignored by local storage)
+export const PUBLIC_URL = process.env.PUBLIC_URL;
+export const generatePublicUri = createPublicUriGenerator(PUBLIC_URL);
 
 // S3-compatible storage configuration (used when STORAGE_TYPE=aws)
 export const S3_REGION = process.env.S3_REGION;

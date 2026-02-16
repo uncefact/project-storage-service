@@ -4,6 +4,7 @@ import { BadRequestError, ConflictError, ApplicationError } from '../../errors';
 jest.mock('../../config', () => ({
     AVAILABLE_BUCKETS: ['bucketName'],
     ALLOWED_UPLOAD_TYPES: ['image/png', 'image/jpeg', 'application/pdf'],
+    DEFAULT_BUCKET: undefined,
 }));
 
 const storageService = {
@@ -81,7 +82,7 @@ describe('PrivateService', () => {
         it('should throw BadRequestError when bucket is missing', async () => {
             const params = {
                 data: { key: 'value' },
-            } as any;
+            };
 
             await expect(
                 service.encryptAndStoreDocument(storageService as any, cryptographyService as any, params),
@@ -238,6 +239,97 @@ describe('PrivateService', () => {
             ).rejects.toThrow(/Bucket is required/);
         });
 
+        it('should use DEFAULT_BUCKET when bucket is not provided', async () => {
+            const configModule = require('../../config');
+            configModule.DEFAULT_BUCKET = 'bucketName';
+
+            try {
+                const params = {
+                    data: { key: 'value' },
+                };
+
+                const result = await service.encryptAndStoreDocument(
+                    storageService as any,
+                    cryptographyService as any,
+                    params,
+                );
+
+                expect(storageService.uploadFile).toHaveBeenCalledWith(
+                    'bucketName',
+                    expect.any(String),
+                    expect.any(String),
+                    'application/json',
+                );
+                expect(result).toEqual(
+                    expect.objectContaining({
+                        uri: expect.any(String),
+                        hash: expect.any(String),
+                        decryptionKey: expect.any(String),
+                    }),
+                );
+            } finally {
+                configModule.DEFAULT_BUCKET = undefined;
+            }
+        });
+
+        it('should use DEFAULT_BUCKET when bucket is an empty string', async () => {
+            const configModule = require('../../config');
+            configModule.DEFAULT_BUCKET = 'bucketName';
+
+            try {
+                const params = {
+                    bucket: '',
+                    data: { key: 'value' },
+                };
+
+                const result = await service.encryptAndStoreDocument(
+                    storageService as any,
+                    cryptographyService as any,
+                    params,
+                );
+
+                expect(storageService.uploadFile).toHaveBeenCalledWith(
+                    'bucketName',
+                    expect.any(String),
+                    expect.any(String),
+                    'application/json',
+                );
+                expect(result).toEqual(
+                    expect.objectContaining({
+                        uri: expect.any(String),
+                        hash: expect.any(String),
+                        decryptionKey: expect.any(String),
+                    }),
+                );
+            } finally {
+                configModule.DEFAULT_BUCKET = undefined;
+            }
+        });
+
+        it('should prefer explicit bucket over DEFAULT_BUCKET', async () => {
+            const configModule = require('../../config');
+            configModule.DEFAULT_BUCKET = 'some-other-default';
+
+            try {
+                const params = {
+                    bucket: 'bucketName',
+                    data: { key: 'value' },
+                };
+
+                await service.encryptAndStoreDocument(storageService as any, cryptographyService as any, params);
+
+                // Verify the explicit bucket was used, not the default
+                expect(storageService.uploadFile).toHaveBeenCalledWith(
+                    'bucketName',
+                    expect.any(String),
+                    expect.any(String),
+                    'application/json',
+                );
+            } finally {
+                configModule.DEFAULT_BUCKET = undefined;
+            }
+        });
+
         it('should generate a UUID when id is an empty string', async () => {
             const params = { bucket: 'bucketName', id: '', data: { key: 'value' } };
 
@@ -372,7 +464,7 @@ describe('PrivateService', () => {
             const params = {
                 file: fileBuffer,
                 mimeType: 'image/png',
-            } as any;
+            };
 
             await expect(
                 service.encryptAndStoreFile(storageService as any, cryptographyService as any, params),
@@ -521,7 +613,7 @@ describe('PrivateService', () => {
         });
 
         it('should throw BadRequestError when bucket is an empty string', async () => {
-            const params = { bucket: '', file: fileBuffer, mimeType: 'image/png' } as any;
+            const params = { bucket: '', file: fileBuffer, mimeType: 'image/png' };
 
             await expect(
                 service.encryptAndStoreFile(storageService as any, cryptographyService as any, params),
@@ -529,6 +621,100 @@ describe('PrivateService', () => {
             await expect(
                 service.encryptAndStoreFile(storageService as any, cryptographyService as any, params),
             ).rejects.toThrow(/Bucket is required/);
+        });
+
+        it('should use DEFAULT_BUCKET when bucket is not provided', async () => {
+            const configModule = require('../../config');
+            configModule.DEFAULT_BUCKET = 'bucketName';
+
+            try {
+                const params = {
+                    file: fileBuffer,
+                    mimeType: 'image/png',
+                };
+
+                const result = await service.encryptAndStoreFile(
+                    storageService as any,
+                    cryptographyService as any,
+                    params,
+                );
+
+                expect(storageService.uploadFile).toHaveBeenCalledWith(
+                    'bucketName',
+                    expect.any(String),
+                    expect.any(String),
+                    'application/json',
+                );
+                expect(result).toEqual(
+                    expect.objectContaining({
+                        uri: expect.any(String),
+                        hash: expect.any(String),
+                        decryptionKey: expect.any(String),
+                    }),
+                );
+            } finally {
+                configModule.DEFAULT_BUCKET = undefined;
+            }
+        });
+
+        it('should use DEFAULT_BUCKET when bucket is an empty string', async () => {
+            const configModule = require('../../config');
+            configModule.DEFAULT_BUCKET = 'bucketName';
+
+            try {
+                const params = {
+                    bucket: '',
+                    file: fileBuffer,
+                    mimeType: 'image/png',
+                };
+
+                const result = await service.encryptAndStoreFile(
+                    storageService as any,
+                    cryptographyService as any,
+                    params,
+                );
+
+                expect(storageService.uploadFile).toHaveBeenCalledWith(
+                    'bucketName',
+                    expect.any(String),
+                    expect.any(String),
+                    'application/json',
+                );
+                expect(result).toEqual(
+                    expect.objectContaining({
+                        uri: expect.any(String),
+                        hash: expect.any(String),
+                        decryptionKey: expect.any(String),
+                    }),
+                );
+            } finally {
+                configModule.DEFAULT_BUCKET = undefined;
+            }
+        });
+
+        it('should prefer explicit bucket over DEFAULT_BUCKET', async () => {
+            const configModule = require('../../config');
+            configModule.DEFAULT_BUCKET = 'some-other-default';
+
+            try {
+                const params = {
+                    bucket: 'bucketName',
+                    file: fileBuffer,
+                    mimeType: 'image/png',
+                };
+
+                await service.encryptAndStoreFile(storageService as any, cryptographyService as any, params);
+
+                // Verify the explicit bucket was used, not the default
+                expect(storageService.uploadFile).toHaveBeenCalledWith(
+                    'bucketName',
+                    expect.any(String),
+                    expect.any(String),
+                    'application/json',
+                );
+            } finally {
+                configModule.DEFAULT_BUCKET = undefined;
+            }
         });
 
         it('should generate a UUID when id is an empty string', async () => {
