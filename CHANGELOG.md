@@ -14,6 +14,13 @@
 * **ci:** Use correct lint script name in release workflow ([180f8c6](https://github.com/uncefact/project-storage-service/commit/180f8c62d6c63da869adcff0ba6a46e85b9bf0de))
 * **storage:** Improve error handling, type safety, and observability ([#97](https://github.com/uncefact/project-storage-service/issues/97)) ([71ae3aa](https://github.com/uncefact/project-storage-service/commit/71ae3aa))
 
+## [3.0.1](https://github.com/uncefact/project-storage-service/compare/3.0.0...3.0.1) (2026-02-09)
+
+
+### Bug Fixes
+
+* **ci:** Use correct lint script name in release workflow ([3d3da85](https://github.com/uncefact/project-storage-service/commit/3d3da85))
+
 ## [3.0.0](https://github.com/uncefact/project-storage-service/compare/2.2.0...3.0.0) (2026-02-09)
 
 
