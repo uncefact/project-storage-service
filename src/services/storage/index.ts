@@ -20,4 +20,20 @@ export interface IStorageService {
      * @returns A promise that resolves to a boolean indicating whether the object exists.
      */
     objectExists(bucket: string, key: string): Promise<boolean>;
+
+    /**
+     * Lists object keys in a bucket that match a given prefix.
+     * @param bucket The bucket or container name to search.
+     * @param prefix The prefix to filter keys by.
+     * @returns A promise that resolves to an array of matching object keys.
+     */
+    listObjectsByPrefix(bucket: string, prefix: string): Promise<string[]>;
+
+    /**
+     * Deletes a file from the storage service.
+     * @param bucket The bucket or container name containing the file.
+     * @param key The key or path of the file to delete.
+     * @returns A promise that resolves when the file has been deleted.
+     */
+    deleteFile(bucket: string, key: string): Promise<void>;
 }
