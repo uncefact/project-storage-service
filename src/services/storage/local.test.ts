@@ -14,7 +14,16 @@ jest.mock('../../config', () => {
     };
 });
 
-jest.mock('fs');
+jest.mock('fs', () => {
+    const actual = jest.createMockFromModule<typeof import('fs')>('fs');
+    return {
+        ...actual,
+        promises: {
+            readdir: jest.fn(),
+            unlink: jest.fn(),
+        },
+    };
+});
 jest.mock('path');
 
 describe('LocalStorageService', () => {
@@ -63,5 +72,63 @@ describe('LocalStorageService', () => {
         expect(methodBody).not.toContain("key + '.json'");
         expect(methodBody).not.toContain('key + ".json"');
         expect(methodBody).not.toContain('`${key}.json`');
+    });
+
+    describe('listObjectsByPrefix', () => {
+        it('should return matching filenames filtered by prefix', async () => {
+            const fs = require('fs');
+            fs.promises = {
+                ...fs.promises,
+                readdir: jest.fn().mockResolvedValue(['abc-123.json', 'abc-123.png', 'def-456.json']),
+            };
+
+            const result = await storageService.listObjectsByPrefix('test-bucket', 'abc-123');
+            expect(result).toEqual(['abc-123.json', 'abc-123.png']);
+        });
+
+        it('should return an empty array when no files match', async () => {
+            const fs = require('fs');
+            fs.promises = {
+                ...fs.promises,
+                readdir: jest.fn().mockResolvedValue(['def-456.json']),
+            };
+
+            const result = await storageService.listObjectsByPrefix('test-bucket', 'abc-123');
+            expect(result).toEqual([]);
+        });
+
+        it('should return an empty array when directory does not exist', async () => {
+            const fs = require('fs');
+            fs.promises = {
+                ...fs.promises,
+                readdir: jest.fn().mockRejectedValue(Object.assign(new Error('ENOENT'), { code: 'ENOENT' })),
+            };
+
+            const result = await storageService.listObjectsByPrefix('test-bucket', 'abc-123');
+            expect(result).toEqual([]);
+        });
+    });
+
+    describe('deleteFile', () => {
+        it('should delete the file at the correct path', async () => {
+            const fs = require('fs');
+            fs.promises = {
+                ...fs.promises,
+                unlink: jest.fn().mockResolvedValue(undefined),
+            };
+
+            await storageService.deleteFile('test-bucket', 'abc-123.json');
+            expect(fs.promises.unlink).toHaveBeenCalled();
+        });
+
+        it('should propagate errors from fs.unlink', async () => {
+            const fs = require('fs');
+            fs.promises = {
+                ...fs.promises,
+                unlink: jest.fn().mockRejectedValue(new Error('EACCES')),
+            };
+
+            await expect(storageService.deleteFile('test-bucket', 'abc-123.json')).rejects.toThrow('EACCES');
+        });
     });
 });

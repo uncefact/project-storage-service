@@ -49,6 +49,22 @@
                     }
                 }
             },
+            "404": {
+                "description": "The requested resource was not found.",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "message": {
+                                    "type": "string",
+                                    "example": "Resource with id 123e4567-e89b-12d3-a456-426614174000 not found in bucket documents."
+                                }
+                            }
+                        }
+                    }
+                }
+            },
             "500": {
                 "description": "An unexpected error occurred while storing the document.",
                 "content": {

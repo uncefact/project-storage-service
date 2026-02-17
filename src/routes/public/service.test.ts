@@ -26,6 +26,8 @@ describe('PublicService', () => {
         mockStorageService = {
             uploadFile: jest.fn().mockResolvedValue({ uri: 'https://storage.example.com/my-bucket/test-id.json' }),
             objectExists: jest.fn().mockResolvedValue(false),
+            listObjectsByPrefix: jest.fn().mockResolvedValue([]),
+            deleteFile: jest.fn().mockResolvedValue(undefined),
         };
 
         mockCryptoService = {

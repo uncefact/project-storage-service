@@ -164,6 +164,52 @@
                     }
                 }
             }
+        },
+        "/{bucket}/{id}": {
+            "delete": {
+                "summary": "Delete a stored resource.",
+                "description": "Delete a previously stored resource (public or encrypted) by bucket and ID. Uses prefix matching to locate the resource regardless of file extension.",
+                "parameters": [
+                    {
+                        "name": "bucket",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "The bucket containing the resource.",
+                        "example": "documents"
+                    },
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "description": "The UUID of the resource to delete.",
+                        "example": "123e4567-e89b-12d3-a456-426614174000"
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Resource deleted successfully. No content returned."
+                    },
+                    "400": {
+                        "$ref": "./components/responses.json#/components/responses/400"
+                    },
+                    "401": {
+                        "$ref": "./components/responses.json#/components/responses/401"
+                    },
+                    "404": {
+                        "$ref": "./components/responses.json#/components/responses/404"
+                    },
+                    "500": {
+                        "$ref": "./components/responses.json#/components/responses/500"
+                    }
+                }
+            }
         }
     }
 }

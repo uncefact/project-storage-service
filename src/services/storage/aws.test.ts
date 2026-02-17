@@ -22,6 +22,8 @@ jest.mock('@aws-sdk/client-s3', () => {
         })),
         HeadObjectCommand: jest.fn(),
         PutObjectCommand: jest.fn(),
+        ListObjectsV2Command: jest.fn(),
+        DeleteObjectCommand: jest.fn(),
     };
 });
 
@@ -125,6 +127,47 @@ describe('AWSStorageService', () => {
             const awsStorageService = new AWSStorageService();
 
             await expect(awsStorageService.objectExists('test-bucket', 'test-key')).rejects.toThrow('Access Denied');
+        });
+
+        it('should list objects by prefix', async () => {
+            mockSend.mockResolvedValueOnce({
+                Contents: [{ Key: 'abc-123.json' }, { Key: 'abc-123.png' }],
+            });
+            const { AWSStorageService } = require('./aws');
+            const awsStorageService = new AWSStorageService();
+
+            const result = await awsStorageService.listObjectsByPrefix('test-bucket', 'abc-123');
+
+            expect(result).toEqual(['abc-123.json', 'abc-123.png']);
+            expect(mockSend).toHaveBeenCalledTimes(1);
+        });
+
+        it('should return an empty array when no objects match prefix', async () => {
+            mockSend.mockResolvedValueOnce({ Contents: undefined });
+            const { AWSStorageService } = require('./aws');
+            const awsStorageService = new AWSStorageService();
+
+            const result = await awsStorageService.listObjectsByPrefix('test-bucket', 'nonexistent');
+
+            expect(result).toEqual([]);
+        });
+
+        it('should delete an object successfully', async () => {
+            mockSend.mockResolvedValueOnce({});
+            const { AWSStorageService } = require('./aws');
+            const awsStorageService = new AWSStorageService();
+
+            await awsStorageService.deleteFile('test-bucket', 'abc-123.json');
+
+            expect(mockSend).toHaveBeenCalledTimes(1);
+        });
+
+        it('should propagate errors from deleteFile', async () => {
+            mockSend.mockRejectedValueOnce(new Error('Access Denied'));
+            const { AWSStorageService } = require('./aws');
+            const awsStorageService = new AWSStorageService();
+
+            await expect(awsStorageService.deleteFile('test-bucket', 'abc-123.json')).rejects.toThrow('Access Denied');
         });
     });
 
