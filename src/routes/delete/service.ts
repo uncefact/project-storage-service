@@ -22,7 +22,7 @@ export class DeleteService {
                 throw new NotFoundError(`Resource with id ${id} not found in bucket ${bucket}.`);
             }
 
-            await storageService.deleteFile(bucket, matchingKeys[0]);
+            await Promise.all(matchingKeys.map((key) => storageService.deleteFile(bucket, key)));
         } catch (err: any) {
             console.error('[DeleteService.deleteDocument] An error occurred while deleting the resource.', err);
 

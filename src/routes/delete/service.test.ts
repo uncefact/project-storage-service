@@ -62,18 +62,15 @@ describe('DeleteService', () => {
         await expect(service.deleteDocument(mockStorageService, validBucket, validId)).rejects.toThrow('not found');
     });
 
-    it('should delete the first matched object when multiple exist', async () => {
-        mockStorageService.listObjectsByPrefix.mockResolvedValue([
-            '123e4567-e89b-12d3-a456-426614174000.json',
-            '123e4567-e89b-12d3-a456-426614174000.png',
-        ]);
+    it('should delete all matched objects when multiple exist', async () => {
+        const keys = ['123e4567-e89b-12d3-a456-426614174000.json', '123e4567-e89b-12d3-a456-426614174000.png'];
+        mockStorageService.listObjectsByPrefix.mockResolvedValue(keys);
 
         await service.deleteDocument(mockStorageService, validBucket, validId);
 
-        expect(mockStorageService.deleteFile).toHaveBeenCalledWith(
-            validBucket,
-            '123e4567-e89b-12d3-a456-426614174000.json',
-        );
+        expect(mockStorageService.deleteFile).toHaveBeenCalledTimes(2);
+        expect(mockStorageService.deleteFile).toHaveBeenCalledWith(validBucket, keys[0]);
+        expect(mockStorageService.deleteFile).toHaveBeenCalledWith(validBucket, keys[1]);
     });
 
     it('should throw ApplicationError when listObjectsByPrefix fails', async () => {
