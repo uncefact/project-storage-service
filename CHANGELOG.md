@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.2.0](https://github.com/uncefact/project-storage-service/compare/3.1.0...3.2.0) (2026-03-04)
+
+
+### Features
+
+* **api:** Add DELETE endpoint for removing stored resources ([#100](https://github.com/uncefact/project-storage-service/issues/100)) ([5877b08](https://github.com/uncefact/project-storage-service/commit/5877b08276d70362d010e88a09120f977a8a467d))
+
 ## [3.1.0](https://github.com/uncefact/project-storage-service/compare/3.0.0...3.1.0) (2026-02-15)
 
 
