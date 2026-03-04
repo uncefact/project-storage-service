@@ -10,6 +10,8 @@ jest.mock('../../config', () => ({
 const storageService = {
     uploadFile: jest.fn().mockResolvedValue({ uri: 'mock-uri' }),
     objectExists: jest.fn().mockResolvedValue(false),
+    listObjectsByPrefix: jest.fn().mockResolvedValue([]),
+    deleteFile: jest.fn().mockResolvedValue(undefined),
 };
 
 const cryptographyService = {
