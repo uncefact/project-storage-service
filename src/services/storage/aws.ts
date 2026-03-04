@@ -4,6 +4,8 @@ import {
     PutObjectCommand,
     PutObjectCommandInput,
     S3ClientConfig,
+    ListObjectsV2Command,
+    DeleteObjectCommand,
 } from '@aws-sdk/client-s3';
 import { IStorageService } from '.';
 import { S3_REGION, S3_ENDPOINT, S3_FORCE_PATH_STYLE, generatePublicUri } from '../../config';
@@ -115,6 +117,47 @@ export class AWSStorageService implements IStorageService {
             if (error.name === 'NotFound' || error.$metadata?.httpStatusCode === 404) {
                 return false;
             }
+            throw error;
+        }
+    }
+
+    /**
+     * Lists all object keys in S3 or S3-compatible storage that match a given prefix.
+     * @param bucket The bucket name to list objects from.
+     * @param prefix The prefix to filter objects by.
+     * @returns A promise that resolves to an array of matching object keys.
+     */
+    async listObjectsByPrefix(bucket: string, prefix: string): Promise<string[]> {
+        const command = new ListObjectsV2Command({
+            Bucket: bucket,
+            Prefix: prefix,
+        });
+
+        try {
+            const response = await this.storage.send(command);
+            return (response.Contents || []).map((obj) => obj.Key!).filter(Boolean);
+        } catch (error) {
+            console.error(`Error listing objects with prefix ${prefix}: ${error}`);
+            throw error;
+        }
+    }
+
+    /**
+     * Deletes a file from S3 or S3-compatible storage.
+     * @param bucket The bucket name to delete the file from.
+     * @param key The key or path of the file in the bucket.
+     */
+    async deleteFile(bucket: string, key: string): Promise<void> {
+        const command = new DeleteObjectCommand({
+            Bucket: bucket,
+            Key: key,
+        });
+
+        try {
+            await this.storage.send(command);
+            console.log(`File deleted successfully from ${bucket}/${key}`);
+        } catch (error) {
+            console.error(`Error deleting file: ${error}`);
             throw error;
         }
     }

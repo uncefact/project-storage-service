@@ -1,7 +1,7 @@
 # Storage Service
 
 The storage service directory contains an Express REST API
-that provides endpoints to encrypt and store documents.
+that provides endpoints to store, encrypt, and delete documents.
 
 ## Overview
 
@@ -44,6 +44,12 @@ The response includes:
 - A **decryptionKey** (your unique decryption key)
 
 **Save this key securely** — it's the only way to decrypt your data later.
+
+### Deleting Data → `DELETE /:bucket/:id`
+
+Remove any previously stored resource — public or encrypted — by specifying its bucket and ID. The service uses prefix matching to locate the resource regardless of file extension.
+
+The response is `204 No Content` with no body.
 
 → [Learn more about storage options](https://uncefact.github.io/project-storage-service/docs/understanding/how-it-works)
 
@@ -107,7 +113,7 @@ Configure the storage service using the following environment variables:
 ### Authentication
 
 - `API_KEY`:
-  **Required**. The API key used to authenticate upload requests to `/public` and `/private` endpoints.
+  **Required**. The API key used to authenticate requests to `/public`, `/private`, and `DELETE /:bucket/:id` endpoints.
   The service will not start without this variable set.
 
 ### Storage Configuration
@@ -243,7 +249,7 @@ The cryptography service uses the following algorithms:
 
 ## Authentication
 
-All upload endpoints (`POST /public` and `POST /private`) require API key authentication via the `X-API-Key` header.
+All endpoints require API key authentication via the `X-API-Key` header.
 
 Examples:
 
@@ -265,6 +271,10 @@ curl -X POST http://localhost:3333/api/3.0.0/public \
 -H "X-API-Key: your-api-key-here" \
 -F "bucket=files" \
 -F "file=@/path/to/image.png"
+
+# Delete a stored resource
+curl -X DELETE http://localhost:3333/api/3.0.0/documents/123e4567-e89b-12d3-a456-426614174000 \
+-H "X-API-Key: your-api-key-here"
 ```
 
 If the API key is missing or invalid, the service will return a `401 Unauthorized` response.

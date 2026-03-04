@@ -50,4 +50,28 @@ export class GCPStorageService implements IStorageService {
         const [exists] = await file.exists();
         return exists;
     }
+
+    /**
+     * Lists objects in a Google Cloud Storage bucket filtered by a prefix.
+     * @param bucket The bucket name to list objects from.
+     * @param prefix The prefix to filter objects by.
+     * @returns A promise that resolves to an array of object names matching the prefix.
+     */
+    async listObjectsByPrefix(bucket: string, prefix: string): Promise<string[]> {
+        const bucketInstance = this.storage.bucket(bucket);
+        const [files] = await bucketInstance.getFiles({ prefix });
+        return files.map((file) => file.name);
+    }
+
+    /**
+     * Deletes a file from Google Cloud Storage.
+     * @param bucket The bucket name containing the file.
+     * @param key The key or path of the file to delete.
+     * @returns A promise that resolves when the file is deleted.
+     */
+    async deleteFile(bucket: string, key: string): Promise<void> {
+        const bucketInstance = this.storage.bucket(bucket);
+        const file = bucketInstance.file(key);
+        await file.delete();
+    }
 }

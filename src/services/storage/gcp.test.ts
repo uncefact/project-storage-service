@@ -200,4 +200,51 @@ describe('GCPStorageService', () => {
             ).rejects.toThrow('Invalid PUBLIC_URL format');
         });
     });
+
+    describe('listObjectsByPrefix', () => {
+        it('should return matching file names filtered by prefix', async () => {
+            const mockGetFiles = jest.fn().mockResolvedValue([[{ name: 'abc-123.json' }, { name: 'abc-123.png' }]]);
+            const mockStorageInstance = (Storage as unknown as jest.Mock).mock.results[0].value;
+            mockStorageInstance.bucket = jest.fn(() => ({ getFiles: mockGetFiles, file: jest.fn() }));
+
+            const result = await service.listObjectsByPrefix('custom-bucket', 'abc-123');
+
+            expect(mockGetFiles).toHaveBeenCalledWith({ prefix: 'abc-123' });
+            expect(result).toEqual(['abc-123.json', 'abc-123.png']);
+        });
+
+        it('should return an empty array when no files match', async () => {
+            const mockGetFiles = jest.fn().mockResolvedValue([[]]);
+            const mockStorageInstance = (Storage as unknown as jest.Mock).mock.results[0].value;
+            mockStorageInstance.bucket = jest.fn(() => ({ getFiles: mockGetFiles, file: jest.fn() }));
+
+            const result = await service.listObjectsByPrefix('custom-bucket', 'nonexistent');
+
+            expect(result).toEqual([]);
+        });
+    });
+
+    describe('deleteFile', () => {
+        it('should delete the specified file', async () => {
+            const mockDelete = jest.fn().mockResolvedValue([]);
+            const mockStorageInstance = (Storage as unknown as jest.Mock).mock.results[0].value;
+            mockStorageInstance.bucket = jest.fn(() => ({
+                file: jest.fn(() => ({ delete: mockDelete })),
+            }));
+
+            await service.deleteFile('custom-bucket', 'abc-123.json');
+
+            expect(mockDelete).toHaveBeenCalled();
+        });
+
+        it('should propagate errors from file.delete()', async () => {
+            const mockDelete = jest.fn().mockRejectedValue(new Error('Permission denied'));
+            const mockStorageInstance = (Storage as unknown as jest.Mock).mock.results[0].value;
+            mockStorageInstance.bucket = jest.fn(() => ({
+                file: jest.fn(() => ({ delete: mockDelete })),
+            }));
+
+            await expect(service.deleteFile('custom-bucket', 'abc-123.json')).rejects.toThrow('Permission denied');
+        });
+    });
 });
