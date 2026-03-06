@@ -61,6 +61,7 @@ jobs:
             - name: Build and Push Release
               uses: docker/build-push-action@v5
               with:
+                  context: .
                   push: ${{ env.PUSH_CONDITION }}
                   platforms: linux/amd64,linux/arm64
                   tags: ${{ steps.meta.outputs.tags }}

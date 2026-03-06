@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.2.1](https://github.com/uncefact/project-storage-service/compare/3.2.0...3.2.1) (2026-03-06)
+
+
+### Bug Fixes
+
+* **ci:** Add explicit docker build context to packaging workflows ([09bbd6c](https://github.com/uncefact/project-storage-service/commit/09bbd6c2a5eb30d9d27a66f7ca1729d508c0aa29))
+
 ## [3.2.0](https://github.com/uncefact/project-storage-service/compare/3.1.0...3.2.0) (2026-03-04)
 
 
