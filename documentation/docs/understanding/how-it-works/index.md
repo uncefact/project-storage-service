@@ -33,12 +33,12 @@ Use public storage for data or files you are happy to share openly. Content is s
 
 1. You send your data or file to the service
 2. The service stores it exactly as you sent it
-3. You receive back a **URI** (the location of your content) and a **hash** (a fingerprint to verify it has not changed)
+3. You receive back a **URI** (the location of your content), a **hash** (a fingerprint to verify it has not changed), and a **digestMultibase** (the same digest as a multibase-encoded multihash string)
 
 ```mermaid
 flowchart LR
     A[Your Data / File] --> B[Store]
-    B --> C[URI + Hash]
+    B --> C[URI + Hash + digestMultibase]
 ```
 
 ## How Private Storage Works
@@ -50,13 +50,13 @@ Use private storage for any sensitive or confidential information that should be
 1. You send your data or file to the service
 2. The service encrypts your content automatically
 3. The encrypted content is stored
-4. You receive back a **URI**, a **hash**, and a **decryption key**
+4. You receive back a **URI**, a **hash**, a **digestMultibase**, and a **decryption key**
 
 ```mermaid
 flowchart LR
     A[Your Data / File] --> B[Encrypt]
     B --> C[Store]
-    C --> D[URI + Hash + Decryption Key]
+    C --> D[URI + Hash + digestMultibase + Decryption Key]
 ```
 
 :::warning Save Your Key
