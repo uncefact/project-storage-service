@@ -16,8 +16,12 @@ export class CryptographyService implements ICryptographyService {
     }
 
     toDigestMultibase(hexHash: string): string {
+        const hashBytes = Buffer.from(hexHash, 'hex');
+        if (hashBytes.length !== 32) {
+            throw new Error(`Invalid SHA-256 hash length: expected 32 bytes, got ${hashBytes.length}`);
+        }
         // SHA-256 multihash header: varint code 0x12 (sha2-256), varint length 0x20 (32 bytes)
-        const multihash = Buffer.concat([Buffer.from([0x12, 0x20]), Buffer.from(hexHash, 'hex')]);
+        const multihash = Buffer.concat([Buffer.from([0x12, 0x20]), hashBytes]);
         return base58btc.encode(multihash);
     }
 
