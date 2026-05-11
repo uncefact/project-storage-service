@@ -37,6 +37,14 @@ export interface ICryptographyService {
     computeHash(input: string | Buffer, algorithm?: HashAlgorithm): string;
 
     /**
+     * Encodes a hex SHA-256 digest as a multibase-encoded multihash string.
+     * Uses base58btc encoding (prefix `z`) and SHA-256 multihash header (0x12, 0x20).
+     * @param hexHash The SHA-256 digest as a hexadecimal string.
+     * @returns The multibase-encoded multihash string (e.g. `zQm...`).
+     */
+    toDigestMultibase(hexHash: string): string;
+
+    /**
      * Generates a cryptographic key.
      * This key is intended for use with the encryptString method.
      * @param algorithm The encryption algorithm to generate a key for (default: AES-256-GCM).

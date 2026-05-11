@@ -45,6 +45,7 @@ describe('PublicController', () => {
             const storeDocumentSpy = jest.spyOn(PublicService.prototype, 'storeDocument').mockResolvedValue({
                 uri: 'mock-uri',
                 hash: 'mocked-hash',
+                digestMultibase: 'mocked-digest-multibase',
             });
 
             const mockReq = getMockReq({
@@ -61,6 +62,7 @@ describe('PublicController', () => {
             expect(mockRes.json).toHaveBeenCalledWith({
                 uri: 'mock-uri',
                 hash: 'mocked-hash',
+                digestMultibase: 'mocked-digest-multibase',
             });
             expect(storeDocumentSpy).toHaveBeenCalledWith(
                 expect.anything(), // storageService
@@ -73,6 +75,7 @@ describe('PublicController', () => {
             const storeFileSpy = jest.spyOn(PublicService.prototype, 'storeFile').mockResolvedValue({
                 uri: 'mock-file-uri',
                 hash: 'mocked-file-hash',
+                digestMultibase: 'mocked-file-digest-multibase',
             });
 
             const tempFilePath = path.join(os.tmpdir(), 'upload-12345');
@@ -94,6 +97,7 @@ describe('PublicController', () => {
             expect(mockRes.json).toHaveBeenCalledWith({
                 uri: 'mock-file-uri',
                 hash: 'mocked-file-hash',
+                digestMultibase: 'mocked-file-digest-multibase',
             });
             expect(storeFileSpy).toHaveBeenCalledWith(
                 expect.anything(), // storageService
@@ -171,6 +175,7 @@ describe('PublicController', () => {
             jest.spyOn(PublicService.prototype, 'storeFile').mockResolvedValue({
                 uri: 'mock-file-uri',
                 hash: 'mocked-file-hash',
+                digestMultibase: 'mocked-file-digest-multibase',
             });
 
             const tempFilePath = path.join(os.tmpdir(), 'upload-cleanup-test');
@@ -192,6 +197,7 @@ describe('PublicController', () => {
             jest.spyOn(PublicService.prototype, 'storeDocument').mockResolvedValue({
                 uri: 'mock-uri',
                 hash: 'mocked-hash',
+                digestMultibase: 'mocked-digest-multibase',
             });
 
             const mockReq = getMockReq({
@@ -235,6 +241,7 @@ describe('PublicController', () => {
             jest.spyOn(PublicService.prototype, 'storeFile').mockResolvedValue({
                 uri: 'mock-uri',
                 hash: 'mocked-hash',
+                digestMultibase: 'mocked-digest-multibase',
             });
 
             const tempPath = path.join(os.tmpdir(), 'upload-unlink-error');

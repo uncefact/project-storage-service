@@ -70,6 +70,7 @@ export class PublicService {
             const stringifiedData = JSON.stringify(data);
 
             const hash = cryptoService.computeHash(stringifiedData);
+            const digestMultibase = cryptoService.toDigestMultibase(hash);
 
             const { uri } = await storageService.uploadFile(
                 resolvedBucket,
@@ -81,6 +82,7 @@ export class PublicService {
             return {
                 uri,
                 hash,
+                digestMultibase,
             };
         } catch (err: any) {
             console.error('[PublicService.storeDocument] An error occurred while storing the document.', err);
@@ -164,12 +166,14 @@ export class PublicService {
             }
 
             const hash = cryptoService.computeHash(file);
+            const digestMultibase = cryptoService.toDigestMultibase(hash);
 
             const { uri } = await storageService.uploadFile(resolvedBucket, objectName, file, mimeType);
 
             return {
                 uri,
                 hash,
+                digestMultibase,
             };
         } catch (err: any) {
             console.error('[PublicService.storeFile] An error occurred while storing the file.', err);
