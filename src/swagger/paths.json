@@ -41,8 +41,8 @@
                                         },
                                         "digestMultibase": {
                                             "type": "string",
-                                            "description": "The same digest encoded as a multibase-encoded multihash string",
-                                            "example": "zQmavKgFrzm6wyfb3d92fWeBdPsPqt9S2RgcKSyMx2cAnWZ"
+                                            "description": "The same digest encoded as a multibase-encoded multihash string (base58btc, prefix z)",
+                                            "example": "zQmcnsmRVVuPbmPwesYza9zXSbn5GJMQU4x9RnFDAZdcKCD"
                                         },
                                         "hash": {
                                             "type": "string",
