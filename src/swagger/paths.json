@@ -3,7 +3,7 @@
         "/public": {
             "post": {
                 "summary": "Store public data without encryption.",
-                "description": "Store public data that does not require encryption. This endpoint accepts both JSON documents (application/json) and binary files (multipart/form-data). Data is stored as-is without any encryption applied. Returns a URI (the location of your stored data), a digestMultibase (the same digest as a multibase-encoded multihash string), and a hash (a fingerprint to verify the data has not been altered).",
+                "description": "Store public data that does not require encryption. This endpoint accepts both JSON documents (application/json) and binary files (multipart/form-data). Data is stored as-is without any encryption applied. Returns a URI (the location of your stored data), a hash (a fingerprint to verify the data has not been altered), and a digestMultibase (the same digest as a multibase-encoded multihash string using base58btc, prefix z).",
                 "requestBody": {
                     "content": {
                         "application/json": {
