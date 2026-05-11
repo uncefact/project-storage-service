@@ -98,7 +98,7 @@ Example response:
 - **Authentication**: Required (`X-API-Key` header)
 - **Content Types**: `application/json` or `multipart/form-data`
 
-Automatically encrypts and stores data or files. Returns a URI, a hash, and a decryption key. The decryption key is returned only once -- store it securely.
+Automatically encrypts and stores data or files. Returns a URI, a hash, a digestMultibase, and a decryption key. The decryption key is returned only once -- store it securely.
 
 ### JSON Upload
 
