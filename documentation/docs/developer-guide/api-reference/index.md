@@ -42,7 +42,8 @@ Example response:
 ```json
 {
     "uri": "http://localhost:3333/api/3.0.0/documents/2ad789c7-e513-4523-a826-ab59e1c423cd.json",
-    "hash": "d6bb7b579925baa4fe1cec41152b6577003e6a9fde6850321e36ad4ac9b3f30a"
+    "hash": "d6bb7b579925baa4fe1cec41152b6577003e6a9fde6850321e36ad4ac9b3f30a",
+    "digestMultibase": "zQmcnsmRVVuPbmPwesYza9zXSbn5GJMQU4x9RnFDAZdcKCD"
 }
 ```
 
@@ -60,7 +61,8 @@ Example response:
 ```json
 {
     "uri": "http://localhost:3333/api/3.0.0/files/123e4567-e89b-12d3-a456-426614174000.png",
-    "hash": "d6bb7b579925baa4fe1cec41152b6577003e6a9fde6850321e36ad4ac9b3f30a"
+    "hash": "d6bb7b579925baa4fe1cec41152b6577003e6a9fde6850321e36ad4ac9b3f30a",
+    "digestMultibase": "zQmcnsmRVVuPbmPwesYza9zXSbn5GJMQU4x9RnFDAZdcKCD"
 }
 ```
 
@@ -82,10 +84,11 @@ Example response:
 
 ### Response Data
 
-| Field  | Description                                                        |
-| ------ | ------------------------------------------------------------------ |
-| `uri`  | The link to the stored data.                                       |
-| `hash` | A hash of the data, used to verify your data has not been changed. |
+| Field             | Description                                                                              |
+| ----------------- | ---------------------------------------------------------------------------------------- |
+| `uri`             | The link to the stored data.                                                             |
+| `hash`            | A hash of the data, used to verify your data has not been changed.                       |
+| `digestMultibase` | The same digest encoded as a multibase-encoded multihash string (base58btc, prefix `z`). |
 
 ---
 
@@ -117,6 +120,7 @@ Example response:
 {
     "uri": "http://localhost:3333/api/3.0.0/documents/e8b32169-582c-421a-a03f-5d1a7ac62d51.json",
     "hash": "d6bb7b579925baa4fe1cec41152b6577003e6a9fde6850321e36ad4ac9b3f30a",
+    "digestMultibase": "zQmcnsmRVVuPbmPwesYza9zXSbn5GJMQU4x9RnFDAZdcKCD",
     "decryptionKey": "f3bee3dc18343aaab66d28fd70a03015d2ddbd5fd3b9ad38fff332c09014598d"
 }
 ```
@@ -136,6 +140,7 @@ Example response:
 {
     "uri": "http://localhost:3333/api/3.0.0/files/123e4567-e89b-12d3-a456-426614174000.json",
     "hash": "d6bb7b579925baa4fe1cec41152b6577003e6a9fde6850321e36ad4ac9b3f30a",
+    "digestMultibase": "zQmcnsmRVVuPbmPwesYza9zXSbn5GJMQU4x9RnFDAZdcKCD",
     "decryptionKey": "a1bc2de3f4567890abcdef1234567890abcdef1234567890abcdef1234567890"
 }
 ```
@@ -158,11 +163,12 @@ Example response:
 
 ### Response Data
 
-| Field           | Description                                                        |
-| --------------- | ------------------------------------------------------------------ |
-| `uri`           | The link to the stored data.                                       |
-| `hash`          | A hash of the data, used to verify your data has not been changed. |
-| `decryptionKey` | The key required to decrypt the stored data.                       |
+| Field             | Description                                                                              |
+| ----------------- | ---------------------------------------------------------------------------------------- |
+| `uri`             | The link to the stored data.                                                             |
+| `hash`            | A hash of the data, used to verify your data has not been changed.                       |
+| `digestMultibase` | The same digest encoded as a multibase-encoded multihash string (base58btc, prefix `z`). |
+| `decryptionKey`   | The key required to decrypt the stored data.                                             |
 
 ---
 

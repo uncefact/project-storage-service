@@ -29,6 +29,7 @@
         "lodash": "^4.17.21",
         "mime-types": "^3.0.2",
         "multer": "^2.0.2",
+        "multiformats": "^9.9.0",
         "swagger-ui-express": "^5.0.1",
         "uuid": "^10.0.0"
     },

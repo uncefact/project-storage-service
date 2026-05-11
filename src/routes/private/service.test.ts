@@ -16,6 +16,7 @@ const storageService = {
 
 const cryptographyService = {
     computeHash: jest.fn().mockReturnValue('mocked-hash'),
+    toDigestMultibase: jest.fn().mockReturnValue('mocked-digest-multibase'),
     generateEncryptionKey: jest.fn().mockResolvedValue('test-encryption-key'),
     encryptString: jest.fn().mockReturnValue({
         cipherText: 'encrypted',
@@ -34,6 +35,7 @@ describe('PrivateService', () => {
         storageService.uploadFile.mockResolvedValue({ uri: 'mock-uri' });
         storageService.objectExists.mockResolvedValue(false);
         cryptographyService.computeHash.mockReturnValue('mocked-hash');
+        cryptographyService.toDigestMultibase.mockReturnValue('mocked-digest-multibase');
         cryptographyService.generateEncryptionKey.mockResolvedValue('test-encryption-key');
         cryptographyService.encryptString.mockReturnValue({
             cipherText: 'encrypted',
@@ -77,6 +79,7 @@ describe('PrivateService', () => {
             expect(result).toEqual({
                 uri: 'mock-uri',
                 hash: 'mocked-hash',
+                digestMultibase: 'mocked-digest-multibase',
                 decryptionKey: 'test-encryption-key',
             });
         });
@@ -458,6 +461,7 @@ describe('PrivateService', () => {
             expect(result).toEqual({
                 uri: 'mock-uri',
                 hash: 'mocked-hash',
+                digestMultibase: 'mocked-digest-multibase',
                 decryptionKey: 'test-encryption-key',
             });
         });

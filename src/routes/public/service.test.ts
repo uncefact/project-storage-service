@@ -32,6 +32,7 @@ describe('PublicService', () => {
 
         mockCryptoService = {
             computeHash: jest.fn().mockReturnValue('mocked-hash'),
+            toDigestMultibase: jest.fn().mockReturnValue('mocked-digest-multibase'),
         } as unknown as jest.Mocked<ICryptographyService>;
     });
 
@@ -59,6 +60,7 @@ describe('PublicService', () => {
             expect(result).toEqual({
                 uri: 'https://storage.example.com/my-bucket/test-id.json',
                 hash: 'mocked-hash',
+                digestMultibase: 'mocked-digest-multibase',
             });
         });
 
@@ -191,6 +193,7 @@ describe('PublicService', () => {
             expect(result).toEqual({
                 uri: expect.any(String),
                 hash: expect.any(String),
+                digestMultibase: expect.any(String),
             });
         });
 
@@ -227,7 +230,11 @@ describe('PublicService', () => {
                     expect.any(String),
                     'application/json',
                 );
-                expect(result).toEqual({ uri: expect.any(String), hash: expect.any(String) });
+                expect(result).toEqual({
+                    uri: expect.any(String),
+                    hash: expect.any(String),
+                    digestMultibase: expect.any(String),
+                });
             } finally {
                 configModule.DEFAULT_BUCKET = undefined;
             }
@@ -249,7 +256,11 @@ describe('PublicService', () => {
                     expect.any(String),
                     'application/json',
                 );
-                expect(result).toEqual({ uri: expect.any(String), hash: expect.any(String) });
+                expect(result).toEqual({
+                    uri: expect.any(String),
+                    hash: expect.any(String),
+                    digestMultibase: expect.any(String),
+                });
             } finally {
                 configModule.DEFAULT_BUCKET = undefined;
             }
@@ -271,7 +282,11 @@ describe('PublicService', () => {
                     expect.any(String),
                     'application/json',
                 );
-                expect(result).toEqual({ uri: expect.any(String), hash: expect.any(String) });
+                expect(result).toEqual({
+                    uri: expect.any(String),
+                    hash: expect.any(String),
+                    digestMultibase: expect.any(String),
+                });
             } finally {
                 configModule.DEFAULT_BUCKET = undefined;
             }
@@ -351,6 +366,7 @@ describe('PublicService', () => {
             expect(result).toEqual({
                 uri: 'https://storage.example.com/my-bucket/test-id.json',
                 hash: 'mocked-hash',
+                digestMultibase: 'mocked-digest-multibase',
             });
         });
 
@@ -551,7 +567,11 @@ describe('PublicService', () => {
                     expect.any(Buffer),
                     'image/png',
                 );
-                expect(result).toEqual({ uri: expect.any(String), hash: expect.any(String) });
+                expect(result).toEqual({
+                    uri: expect.any(String),
+                    hash: expect.any(String),
+                    digestMultibase: expect.any(String),
+                });
             } finally {
                 configModule.DEFAULT_BUCKET = undefined;
             }
@@ -573,7 +593,11 @@ describe('PublicService', () => {
                     expect.any(Buffer),
                     'image/png',
                 );
-                expect(result).toEqual({ uri: expect.any(String), hash: expect.any(String) });
+                expect(result).toEqual({
+                    uri: expect.any(String),
+                    hash: expect.any(String),
+                    digestMultibase: expect.any(String),
+                });
             } finally {
                 configModule.DEFAULT_BUCKET = undefined;
             }
@@ -595,7 +619,11 @@ describe('PublicService', () => {
                     expect.any(Buffer),
                     'image/png',
                 );
-                expect(result).toEqual({ uri: expect.any(String), hash: expect.any(String) });
+                expect(result).toEqual({
+                    uri: expect.any(String),
+                    hash: expect.any(String),
+                    digestMultibase: expect.any(String),
+                });
             } finally {
                 configModule.DEFAULT_BUCKET = undefined;
             }
@@ -620,6 +648,7 @@ describe('PublicService', () => {
             expect(result).toEqual({
                 uri: expect.any(String),
                 hash: expect.any(String),
+                digestMultibase: expect.any(String),
             });
         });
 
@@ -673,6 +702,7 @@ describe('PublicService', () => {
             expect(result).toEqual({
                 uri: expect.any(String),
                 hash: expect.any(String),
+                digestMultibase: expect.any(String),
             });
         });
 

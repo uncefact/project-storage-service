@@ -74,6 +74,7 @@ export class PrivateService {
             const stringifiedData = JSON.stringify(data);
 
             const hash = cryptographyService.computeHash(stringifiedData);
+            const digestMultibase = cryptographyService.toDigestMultibase(hash);
 
             const key = await cryptographyService.generateEncryptionKey();
 
@@ -93,6 +94,7 @@ export class PrivateService {
             return {
                 uri,
                 hash,
+                digestMultibase,
                 decryptionKey: key,
             };
         } catch (err: any) {
@@ -184,6 +186,7 @@ export class PrivateService {
             }
 
             const hash = cryptographyService.computeHash(file);
+            const digestMultibase = cryptographyService.toDigestMultibase(hash);
 
             const base64Data = file.toString('base64');
 
@@ -205,6 +208,7 @@ export class PrivateService {
             return {
                 uri,
                 hash,
+                digestMultibase,
                 decryptionKey: key,
             };
         } catch (err: any) {

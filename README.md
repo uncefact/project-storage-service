@@ -17,6 +17,7 @@ The service offers the following functionality:
 - **Data Retrieval**:
   Upon successful storage, the service returns:
     - The hash of the original document.
+    - A multibase-encoded multihash (`digestMultibase`) of the document.
     - A decryption key for the encrypted document (if applicable).
     - The URI of the stored encrypted document.
 
@@ -30,6 +31,7 @@ For data that doesn't require protection. Accepts both JSON (`application/json`)
 
 - A **URI** (the location of your stored data)
 - A **hash** (a fingerprint to verify the data hasn't changed)
+- A **digestMultibase** (the same digest as a multibase-encoded multihash string)
 
 Allowed file types and maximum upload size are [configurable](#file-upload-configuration).
 
@@ -41,6 +43,7 @@ The response includes:
 
 - A **URI** (the location of your stored data)
 - A **hash** (a fingerprint to verify the data hasn't changed)
+- A **digestMultibase** (the same digest as a multibase-encoded multihash string)
 - A **decryptionKey** (your unique decryption key)
 
 **Save this key securely** — it's the only way to decrypt your data later.
