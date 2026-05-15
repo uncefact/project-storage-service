@@ -9,6 +9,7 @@ function buildMockLogger(): jest.Mocked<LoggerService> {
         info: jest.fn(),
         warn: jest.fn(),
         error: jest.fn(),
+        fatal: jest.fn(),
     };
     logger.child = jest.fn(() => logger);
     return logger;

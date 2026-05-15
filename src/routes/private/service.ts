@@ -99,7 +99,7 @@ export class PrivateService {
             };
         } catch (err: any) {
             logger.error(
-                { err: err instanceof Error ? err.message : err },
+                { err },
                 '[PrivateService.encryptAndStoreDocument] An error occurred while encrypting and storing the document',
             );
 
@@ -212,7 +212,7 @@ export class PrivateService {
             };
         } catch (err: any) {
             logger.error(
-                { err: err instanceof Error ? err.message : err },
+                { err },
                 '[PrivateService.encryptAndStoreFile] An error occurred while encrypting and storing the file',
             );
 

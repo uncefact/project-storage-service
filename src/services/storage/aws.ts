@@ -98,10 +98,7 @@ export class AWSStorageService implements IStorageService {
             logger.info({ bucket, key }, '[AWSStorageService.uploadFile] File uploaded successfully');
             return { uri: generateUri(bucket, key) };
         } catch (error) {
-            logger.error(
-                { bucket, key, err: error instanceof Error ? error.message : error },
-                '[AWSStorageService.uploadFile] Error uploading file',
-            );
+            logger.error({ bucket, key, err: error }, '[AWSStorageService.uploadFile] Error uploading file');
             throw error;
         }
     }
@@ -144,7 +141,7 @@ export class AWSStorageService implements IStorageService {
             return (response.Contents || []).map((obj) => obj.Key!).filter(Boolean);
         } catch (error) {
             logger.error(
-                { bucket, prefix, err: error instanceof Error ? error.message : error },
+                { bucket, prefix, err: error },
                 '[AWSStorageService.listObjectsByPrefix] Error listing objects',
             );
             throw error;
@@ -166,10 +163,7 @@ export class AWSStorageService implements IStorageService {
             await this.storage.send(command);
             logger.info({ bucket, key }, '[AWSStorageService.deleteFile] File deleted successfully');
         } catch (error) {
-            logger.error(
-                { bucket, key, err: error instanceof Error ? error.message : error },
-                '[AWSStorageService.deleteFile] Error deleting file',
-            );
+            logger.error({ bucket, key, err: error }, '[AWSStorageService.deleteFile] Error deleting file');
             throw error;
         }
     }

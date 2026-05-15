@@ -44,10 +44,7 @@ export class ApiKeyAuthenticationService implements IAuthenticationService {
                 return invalidKeyResponse;
             }
         } catch (err: unknown) {
-            logger.error(
-                { err: err instanceof Error ? err.message : err },
-                '[ApiKeyAuthenticationService] Error comparing API keys',
-            );
+            logger.error({ err }, '[ApiKeyAuthenticationService] Error comparing API keys');
 
             return invalidKeyResponse;
         }

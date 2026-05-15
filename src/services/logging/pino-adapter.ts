@@ -26,6 +26,13 @@ export class PinoLoggerAdapter implements LoggerService {
         const config = (configOrLogger as LoggerConfig | undefined) ?? {};
         this.logger = pino({
             level: config.level ?? process.env.LOG_LEVEL ?? 'info',
+            // Register Pino's standard error serializer under both common keys.
+            // Callers can pass `logger.error({ err: someError }, '...')` (or `error`)
+            // and Pino captures `message`, `stack`, `code`, `cause` as nested fields.
+            serializers: {
+                err: pino.stdSerializers.err,
+                error: pino.stdSerializers.err,
+            },
             mixin() {
                 if (!requestContextProvider) return {};
                 try {
@@ -79,6 +86,14 @@ export class PinoLoggerAdapter implements LoggerService {
             this.logger.error(msgOrObj);
         } else {
             this.logger.error(msgOrObj, msg);
+        }
+    }
+
+    fatal(msgOrObj: string | LogContext, msg?: string): void {
+        if (typeof msgOrObj === 'string') {
+            this.logger.fatal(msgOrObj);
+        } else {
+            this.logger.fatal(msgOrObj, msg);
         }
     }
 

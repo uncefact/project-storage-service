@@ -7,6 +7,7 @@ const mockLogger: any = {
     info: jest.fn(),
     warn: jest.fn(),
     error: jest.fn(),
+    fatal: jest.fn(),
 };
 mockLogger.child = jest.fn(() => mockLogger);
 
@@ -279,7 +280,7 @@ describe('Private Controller', () => {
 
             expect(fs.promises.unlink).toHaveBeenCalledWith(path.resolve(tempPath));
             expect(mockLogger.error).toHaveBeenCalledWith(
-                expect.objectContaining({ tempPath: expect.any(String), err: expect.any(String) }),
+                expect.objectContaining({ tempPath: expect.any(String), err: expect.any(Error) }),
                 expect.stringContaining('Failed to clean up temp file'),
             );
         });

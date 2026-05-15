@@ -23,10 +23,7 @@ export const authenticateRequest = async (req: Request, res: Response, next: Nex
 
         next();
     } catch (err: any) {
-        logger.info(
-            { err: err instanceof Error ? err.message : err },
-            '[AuthenticationMiddleware] Authentication failed',
-        );
+        logger.info({ err }, '[AuthenticationMiddleware] Authentication failed');
 
         if (err instanceof UnauthorizedError) {
             return res.status(err.statusCode).json({ message: err.message });

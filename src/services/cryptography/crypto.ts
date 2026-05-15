@@ -35,7 +35,7 @@ async function loadMultibaseDigest(): Promise<MultibaseDigestModule> {
         const pending = importEsm<MultibaseDigestModule>('@uncefact/untp-utils/multibase-digest');
         pending.catch((err) => {
             logger.error(
-                { err: err instanceof Error ? err.message : err },
+                { err },
                 '[CryptographyService] Failed to dynamically import "@uncefact/untp-utils/multibase-digest"; the module cache will be cleared so the next call retries.',
             );
             if (digestMultibaseModulePromise === pending) {
@@ -70,7 +70,7 @@ export class CryptographyService implements ICryptographyService {
             return digest.toString();
         } catch (err) {
             logger.error(
-                { algorithm, base, bytes: bytes.byteLength, err: err instanceof Error ? err.message : err },
+                { algorithm, base, bytes: bytes.byteLength, err },
                 '[CryptographyService.computeDigestMultibase] MultibaseDigest.fromData failed',
             );
             throw err;

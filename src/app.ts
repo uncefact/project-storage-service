@@ -45,10 +45,7 @@ app.use(`/api/${API_VERSION}`, router);
 
 // Global error handler for unhandled errors
 app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
-    logger.error(
-        { err: err instanceof Error ? { message: err.message, stack: err.stack } : err },
-        '[GlobalErrorHandler] Unhandled error',
-    );
+    logger.error({ err }, '[GlobalErrorHandler] Unhandled error');
     res.status(500).json({
         message: 'An unexpected error occurred.',
     });

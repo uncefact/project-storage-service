@@ -85,10 +85,7 @@ export class PublicService {
                 digestMultibase,
             };
         } catch (err: any) {
-            logger.error(
-                { err: err instanceof Error ? err.message : err },
-                '[PublicService.storeDocument] An error occurred while storing the document',
-            );
+            logger.error({ err }, '[PublicService.storeDocument] An error occurred while storing the document');
 
             if (err instanceof ApiError) {
                 throw err;
@@ -180,10 +177,7 @@ export class PublicService {
                 digestMultibase,
             };
         } catch (err: any) {
-            logger.error(
-                { err: err instanceof Error ? err.message : err },
-                '[PublicService.storeFile] An error occurred while storing the file',
-            );
+            logger.error({ err }, '[PublicService.storeFile] An error occurred while storing the file');
 
             if (err instanceof ApiError) {
                 throw err;

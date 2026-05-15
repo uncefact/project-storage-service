@@ -25,10 +25,7 @@ export class DeleteService {
 
             await Promise.all(matchingKeys.map((key) => storageService.deleteFile(bucket, key)));
         } catch (err: any) {
-            logger.error(
-                { err: err instanceof Error ? err.message : err },
-                '[DeleteService.deleteDocument] An error occurred while deleting the resource',
-            );
+            logger.error({ err }, '[DeleteService.deleteDocument] An error occurred while deleting the resource');
 
             if (err instanceof ApiError) {
                 throw err;

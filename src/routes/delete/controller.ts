@@ -17,10 +17,7 @@ export const deleteResource: RequestHandler = async (req, res) => {
 
         res.status(204).send();
     } catch (err: any) {
-        logger.error(
-            { err: err instanceof Error ? err.message : err },
-            '[DeleteController.deleteResource] An error occurred while deleting the resource',
-        );
+        logger.error({ err }, '[DeleteController.deleteResource] An error occurred while deleting the resource');
 
         if (err instanceof ApiError) {
             return res.status(err.statusCode).json({ message: err.message });
