@@ -6,9 +6,7 @@ import { ApiError, ApplicationError, BadRequestError, ConflictError } from '../.
 import { AVAILABLE_BUCKETS, ALLOWED_UPLOAD_TYPES, DEFAULT_BUCKET } from '../../config';
 import { isValidUUID } from '../../utils';
 import { IStoreParams, IStoreFileParams } from '../../types';
-import { getLogger } from '../../services/logging';
-
-const logger = getLogger();
+import { apiLogger as logger } from '../../services/logging';
 
 export class PublicService {
     /**

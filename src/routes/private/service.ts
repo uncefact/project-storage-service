@@ -5,9 +5,7 @@ import { AVAILABLE_BUCKETS, ALLOWED_UPLOAD_TYPES, DEFAULT_BUCKET } from '../../c
 import { IStoreParams, IStoreFileParams } from '../../types';
 import { isValidUUID } from '../../utils';
 import { ApiError, ApplicationError, BadRequestError, ConflictError } from '../../errors';
-import { getLogger } from '../../services/logging';
-
-const logger = getLogger();
+import { apiLogger as logger } from '../../services/logging';
 
 export class PrivateService {
     /**

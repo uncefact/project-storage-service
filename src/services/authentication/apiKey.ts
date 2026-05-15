@@ -2,9 +2,7 @@ import crypto from 'crypto';
 import { Request } from 'express';
 import { AuthResult, IAuthenticationService } from '.';
 import { AUTH_HEADER_NAME, getApiKey } from '../../config';
-import { getLogger } from '../logging';
-
-const logger = getLogger();
+import { authLogger as logger } from '../logging';
 
 export class ApiKeyAuthenticationService implements IAuthenticationService {
     /**

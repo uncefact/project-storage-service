@@ -7,10 +7,8 @@ import swaggerDocument from './swagger/swagger.json';
 import { updateSwagger } from './swagger/helpers';
 import { API_VERSION, DOMAIN, EXTERNAL_PORT, MAX_UPLOAD_SIZE, PROTOCOL } from './config';
 import { buildBaseUrl } from './utils';
-import { getLogger } from './services/logging';
+import { apiLogger as logger } from './services/logging';
 import { correlationIdMiddleware } from './middleware/correlation-id';
-
-const logger = getLogger();
 
 export const app = express();
 

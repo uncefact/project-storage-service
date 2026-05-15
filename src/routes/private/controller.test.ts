@@ -12,6 +12,12 @@ mockLogger.child = jest.fn(() => mockLogger);
 
 jest.mock('../../services/logging', () => ({
     getLogger: () => mockLogger,
+    apiLogger: mockLogger,
+    authLogger: mockLogger,
+    cryptoLogger: mockLogger,
+    storageLogger: mockLogger,
+    configLogger: mockLogger,
+    serverLogger: mockLogger,
 }));
 
 import { BadRequestError } from '../../errors';

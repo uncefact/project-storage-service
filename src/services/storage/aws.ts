@@ -8,10 +8,10 @@ import {
     DeleteObjectCommand,
 } from '@aws-sdk/client-s3';
 import { IStorageService } from '.';
-import { getLogger } from '../logging';
-
-const logger = getLogger();
+import { storageLogger } from '../logging';
 import { S3_REGION, S3_ENDPOINT, S3_FORCE_PATH_STYLE, generatePublicUri } from '../../config';
+
+const logger = storageLogger.child({ adapter: 'aws' });
 
 /**
  * Creates the S3 client configuration.

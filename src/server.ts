@@ -1,9 +1,7 @@
 import { app } from './app';
 import { API_VERSION, DOMAIN, EXTERNAL_PORT, MAX_UPLOAD_SIZE, PORT, PROTOCOL, getApiKey } from './config';
 import { buildBaseUrl } from './utils';
-import { getLogger } from './services/logging';
-
-const logger = getLogger();
+import { serverLogger as logger } from './services/logging';
 
 // Validate required environment variables at runtime
 if (!getApiKey()) {

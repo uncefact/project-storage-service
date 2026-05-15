@@ -1,6 +1,4 @@
-import { getLogger } from './services/logging';
-
-const logger = getLogger();
+import { configLogger as logger } from './services/logging';
 
 interface BucketConfiguration {
     /** The default bucket name, or undefined if not configured. Always a member of AVAILABLE_BUCKETS when defined. */

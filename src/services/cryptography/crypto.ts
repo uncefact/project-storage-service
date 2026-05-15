@@ -12,9 +12,7 @@ import {
     IEncryptionResult,
 } from './index';
 
-import { getLogger } from '../logging';
-
-const logger = getLogger();
+import { cryptoLogger as logger } from '../logging';
 
 type MultibaseDigestModule = typeof import('@uncefact/untp-utils/multibase-digest');
 

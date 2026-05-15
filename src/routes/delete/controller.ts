@@ -2,9 +2,9 @@ import { RequestHandler } from 'express';
 import { initialiseStorageService, IStorageService } from '../../services';
 import { DeleteService } from './service';
 import { ApiError } from '../../errors';
-import { getLogger } from '../../services/logging';
+import { apiLogger } from '../../services/logging';
 
-const logger = getLogger();
+const logger = apiLogger.child({ route: 'DELETE /:bucket/:id' });
 
 export const deleteResource: RequestHandler = async (req, res) => {
     try {

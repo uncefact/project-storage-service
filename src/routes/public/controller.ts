@@ -5,9 +5,9 @@ import { RequestHandler } from 'express';
 import { initialiseStorageService, CryptographyService, IStorageService } from '../../services';
 import { PublicService } from './service';
 import { ApiError, BadRequestError } from '../../errors';
-import { getLogger } from '../../services/logging';
+import { apiLogger } from '../../services/logging';
 
-const logger = getLogger();
+const logger = apiLogger.child({ route: 'POST /public' });
 const UPLOAD_DIR = path.resolve(os.tmpdir());
 
 /**

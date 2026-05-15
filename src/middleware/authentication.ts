@@ -1,10 +1,9 @@
 import { NextFunction, Request, Response } from 'express';
 import { UnauthorizedError } from '../errors';
 import { ApiKeyAuthenticationService } from '../services/authentication';
-import { getLogger } from '../services/logging';
+import { authLogger as logger } from '../services/logging';
 
 const authService = new ApiKeyAuthenticationService();
-const logger = getLogger();
 
 /**
  * Middleware to authenticate requests using API key authentication.
