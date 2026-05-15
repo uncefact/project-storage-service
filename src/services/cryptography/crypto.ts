@@ -68,7 +68,8 @@ export class CryptographyService implements ICryptographyService {
             return digest.toString();
         } catch (err) {
             console.error(
-                `[CryptographyService.computeDigestMultibase] MultibaseDigest.fromData failed (algorithm=${algorithm}, base=${base}, bytes=${bytes.byteLength}).`,
+                '[CryptographyService.computeDigestMultibase] MultibaseDigest.fromData failed',
+                { algorithm, base, bytes: bytes.byteLength },
                 err,
             );
             throw err;
