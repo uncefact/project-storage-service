@@ -13,7 +13,7 @@ jest.mock('../../config', () => ({
 
 jest.mock('../../services/cryptography', () => ({
     CryptographyService: jest.fn().mockImplementation(() => ({
-        computeHash: jest.fn().mockReturnValue('mocked-hash'),
+        computeDigestMultibase: jest.fn().mockResolvedValue('mocked-digest'),
         generateEncryptionKey: jest.fn().mockResolvedValue('test-encryption-key'),
         encryptString: jest
             .fn()
@@ -49,8 +49,7 @@ describe('Private Controller', () => {
         it('should successfully store a JSON document and return 201', async () => {
             const spy = jest.spyOn(PrivateService.prototype, 'encryptAndStoreDocument').mockResolvedValue({
                 uri: 'mock-uri',
-                hash: 'mocked-hash',
-                digestMultibase: 'mocked-digest-multibase',
+                digestMultibase: 'mocked-digest',
                 decryptionKey: 'test-encryption-key',
             });
 
@@ -67,8 +66,7 @@ describe('Private Controller', () => {
             expect(mockRes.status).toHaveBeenCalledWith(201);
             expect(mockRes.json).toHaveBeenCalledWith({
                 uri: 'mock-uri',
-                hash: 'mocked-hash',
-                digestMultibase: 'mocked-digest-multibase',
+                digestMultibase: 'mocked-digest',
                 decryptionKey: 'test-encryption-key',
             });
             expect(spy).toHaveBeenCalledWith(
@@ -81,8 +79,7 @@ describe('Private Controller', () => {
         it('should successfully store a binary file and return 201', async () => {
             const spy = jest.spyOn(PrivateService.prototype, 'encryptAndStoreFile').mockResolvedValue({
                 uri: 'mock-uri',
-                hash: 'mocked-hash',
-                digestMultibase: 'mocked-digest-multibase',
+                digestMultibase: 'mocked-digest',
                 decryptionKey: 'test-encryption-key',
             });
 
@@ -104,8 +101,7 @@ describe('Private Controller', () => {
             expect(mockRes.status).toHaveBeenCalledWith(201);
             expect(mockRes.json).toHaveBeenCalledWith({
                 uri: 'mock-uri',
-                hash: 'mocked-hash',
-                digestMultibase: 'mocked-digest-multibase',
+                digestMultibase: 'mocked-digest',
                 decryptionKey: 'test-encryption-key',
             });
             expect(spy).toHaveBeenCalledWith(
@@ -183,8 +179,7 @@ describe('Private Controller', () => {
         it('should clean up the temporary file after a binary upload', async () => {
             jest.spyOn(PrivateService.prototype, 'encryptAndStoreFile').mockResolvedValue({
                 uri: 'mock-uri',
-                hash: 'mocked-hash',
-                digestMultibase: 'mocked-digest-multibase',
+                digestMultibase: 'mocked-digest',
                 decryptionKey: 'test-encryption-key',
             });
 
@@ -208,8 +203,7 @@ describe('Private Controller', () => {
         it('should not attempt to clean up when there is no temporary file', async () => {
             jest.spyOn(PrivateService.prototype, 'encryptAndStoreDocument').mockResolvedValue({
                 uri: 'mock-uri',
-                hash: 'mocked-hash',
-                digestMultibase: 'mocked-digest-multibase',
+                digestMultibase: 'mocked-digest',
                 decryptionKey: 'test-encryption-key',
             });
 
@@ -253,8 +247,7 @@ describe('Private Controller', () => {
 
             jest.spyOn(PrivateService.prototype, 'encryptAndStoreFile').mockResolvedValue({
                 uri: 'mock-uri',
-                hash: 'mocked-hash',
-                digestMultibase: 'mocked-digest-multibase',
+                digestMultibase: 'mocked-digest',
                 decryptionKey: 'test-encryption-key',
             });
 

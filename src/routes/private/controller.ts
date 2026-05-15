@@ -19,7 +19,7 @@ const UPLOAD_DIR = path.resolve(os.tmpdir());
  *
  * @param req The request object containing either a file upload or JSON body.
  * @param res The response object.
- * @returns A JSON response with the stored item's URI, hash, and decryption key on success,
+ * @returns A JSON response with the stored item's URI, multibase digest, and decryption key on success,
  *          or an error message with an appropriate status code on failure.
  */
 export const storePrivate: RequestHandler = async (req, res) => {

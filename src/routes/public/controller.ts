@@ -20,7 +20,7 @@ const UPLOAD_DIR = path.resolve(os.tmpdir());
  *
  * @param req The request object.
  * @param res The response object.
- * @returns The response with the stored URI and hash.
+ * @returns The response with the stored URI and multibase digest.
  */
 export const storePublic: RequestHandler = async (req, res) => {
     let tempPath: string | undefined;
