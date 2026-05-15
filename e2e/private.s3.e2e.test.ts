@@ -106,7 +106,7 @@ describe('Private API - S3 E2E Tests', () => {
         });
 
         describe('Storage', () => {
-            it('should return 201 with uri, hash, and decryptionKey', async () => {
+            it('should return 201 with uri, digestMultibase, and decryptionKey', async () => {
                 const response = await request(APP_BASE_URL)
                     .post(`/api/${API_VERSION}/private`)
                     .set('X-API-Key', API_KEY)
@@ -115,8 +115,8 @@ describe('Private API - S3 E2E Tests', () => {
 
                 expect(response.body.uri).toEqual(expect.any(String));
                 expect(response.body.uri.length).toBeGreaterThan(0);
-                expect(response.body.hash).toEqual(expect.any(String));
-                expect(response.body.hash.length).toBeGreaterThan(0);
+                expect(response.body.digestMultibase).toEqual(expect.any(String));
+                expect(response.body.digestMultibase.length).toBeGreaterThan(0);
                 expect(response.body.decryptionKey).toEqual(expect.any(String));
                 expect(response.body.decryptionKey.length).toBeGreaterThan(0);
             });
@@ -209,15 +209,15 @@ describe('Private API - S3 E2E Tests', () => {
                 expect(recovered).toEqual(testDocument);
             });
 
-            it('should produce a valid SHA-256 hash of the original (unencrypted) data', async () => {
+            it('should produce a valid multibase digest of the original (unencrypted) data', async () => {
                 const postResponse = await request(APP_BASE_URL)
                     .post(`/api/${API_VERSION}/private`)
                     .set('X-API-Key', API_KEY)
                     .send({ bucket: 'documents', data: testDocument })
                     .expect(201);
 
-                const expectedHash = computeHash(JSON.stringify(testDocument));
-                expect(postResponse.body.hash).toBe(expectedHash);
+                const expectedHash = await computeHash(JSON.stringify(testDocument));
+                expect(postResponse.body.digestMultibase).toBe(expectedHash);
             });
         });
     });
@@ -327,8 +327,8 @@ describe('Private API - S3 E2E Tests', () => {
 
                 expect(response.body.uri).toEqual(expect.any(String));
                 expect(response.body.uri.length).toBeGreaterThan(0);
-                expect(response.body.hash).toEqual(expect.any(String));
-                expect(response.body.hash.length).toBeGreaterThan(0);
+                expect(response.body.digestMultibase).toEqual(expect.any(String));
+                expect(response.body.digestMultibase.length).toBeGreaterThan(0);
                 expect(response.body.decryptionKey).toEqual(expect.any(String));
                 expect(response.body.decryptionKey.length).toBeGreaterThan(0);
             });
@@ -343,8 +343,8 @@ describe('Private API - S3 E2E Tests', () => {
 
                 expect(response.body.uri).toEqual(expect.any(String));
                 expect(response.body.uri.length).toBeGreaterThan(0);
-                expect(response.body.hash).toEqual(expect.any(String));
-                expect(response.body.hash.length).toBeGreaterThan(0);
+                expect(response.body.digestMultibase).toEqual(expect.any(String));
+                expect(response.body.digestMultibase.length).toBeGreaterThan(0);
                 expect(response.body.decryptionKey).toEqual(expect.any(String));
                 expect(response.body.decryptionKey.length).toBeGreaterThan(0);
             });
@@ -446,7 +446,7 @@ describe('Private API - S3 E2E Tests', () => {
                 expect(recovered.equals(MINIMAL_PNG)).toBe(true);
             });
 
-            it('should produce a valid SHA-256 hash of the original (unencrypted) file buffer', async () => {
+            it('should produce a valid multibase digest of the original (unencrypted) file buffer', async () => {
                 const postResponse = await request(APP_BASE_URL)
                     .post(`/api/${API_VERSION}/private`)
                     .set('X-API-Key', API_KEY)
@@ -454,8 +454,8 @@ describe('Private API - S3 E2E Tests', () => {
                     .field('bucket', 'files')
                     .expect(201);
 
-                const expectedHash = computeHash(MINIMAL_PNG);
-                expect(postResponse.body.hash).toBe(expectedHash);
+                const expectedHash = await computeHash(MINIMAL_PNG);
+                expect(postResponse.body.digestMultibase).toBe(expectedHash);
             });
         });
     });

@@ -15,8 +15,7 @@ const storageService = {
 };
 
 const cryptographyService = {
-    computeHash: jest.fn().mockReturnValue('mocked-hash'),
-    toDigestMultibase: jest.fn().mockReturnValue('mocked-digest-multibase'),
+    computeHash: jest.fn().mockResolvedValue('mocked-hash'),
     generateEncryptionKey: jest.fn().mockResolvedValue('test-encryption-key'),
     encryptString: jest.fn().mockReturnValue({
         cipherText: 'encrypted',
@@ -34,8 +33,7 @@ describe('PrivateService', () => {
         jest.clearAllMocks();
         storageService.uploadFile.mockResolvedValue({ uri: 'mock-uri' });
         storageService.objectExists.mockResolvedValue(false);
-        cryptographyService.computeHash.mockReturnValue('mocked-hash');
-        cryptographyService.toDigestMultibase.mockReturnValue('mocked-digest-multibase');
+        cryptographyService.computeHash.mockResolvedValue('mocked-hash');
         cryptographyService.generateEncryptionKey.mockResolvedValue('test-encryption-key');
         cryptographyService.encryptString.mockReturnValue({
             cipherText: 'encrypted',
@@ -78,8 +76,7 @@ describe('PrivateService', () => {
 
             expect(result).toEqual({
                 uri: 'mock-uri',
-                hash: 'mocked-hash',
-                digestMultibase: 'mocked-digest-multibase',
+                digestMultibase: 'mocked-hash',
                 decryptionKey: 'test-encryption-key',
             });
         });
@@ -123,7 +120,7 @@ describe('PrivateService', () => {
             expect(result).toEqual(
                 expect.objectContaining({
                     uri: 'mock-uri',
-                    hash: 'mocked-hash',
+                    digestMultibase: 'mocked-hash',
                     decryptionKey: 'test-encryption-key',
                 }),
             );
@@ -227,7 +224,7 @@ describe('PrivateService', () => {
             expect(result).toEqual(
                 expect.objectContaining({
                     uri: expect.any(String),
-                    hash: expect.any(String),
+                    digestMultibase: expect.any(String),
                     decryptionKey: expect.any(String),
                 }),
             );
@@ -268,7 +265,7 @@ describe('PrivateService', () => {
                 expect(result).toEqual(
                     expect.objectContaining({
                         uri: expect.any(String),
-                        hash: expect.any(String),
+                        digestMultibase: expect.any(String),
                         decryptionKey: expect.any(String),
                     }),
                 );
@@ -302,7 +299,7 @@ describe('PrivateService', () => {
                 expect(result).toEqual(
                     expect.objectContaining({
                         uri: expect.any(String),
-                        hash: expect.any(String),
+                        digestMultibase: expect.any(String),
                         decryptionKey: expect.any(String),
                     }),
                 );
@@ -380,9 +377,7 @@ describe('PrivateService', () => {
         });
 
         it('should propagate error when computeHash throws', async () => {
-            cryptographyService.computeHash.mockImplementationOnce(() => {
-                throw new Error('Hash computation failed');
-            });
+            cryptographyService.computeHash.mockRejectedValueOnce(new Error('Hash computation failed'));
 
             const params = {
                 bucket: 'bucketName',
@@ -460,8 +455,7 @@ describe('PrivateService', () => {
 
             expect(result).toEqual({
                 uri: 'mock-uri',
-                hash: 'mocked-hash',
-                digestMultibase: 'mocked-digest-multibase',
+                digestMultibase: 'mocked-hash',
                 decryptionKey: 'test-encryption-key',
             });
         });
@@ -533,7 +527,7 @@ describe('PrivateService', () => {
             expect(result).toEqual(
                 expect.objectContaining({
                     uri: 'mock-uri',
-                    hash: 'mocked-hash',
+                    digestMultibase: 'mocked-hash',
                     decryptionKey: 'test-encryption-key',
                 }),
             );
@@ -574,7 +568,7 @@ describe('PrivateService', () => {
             ).rejects.toThrow(ConflictError);
         });
 
-        it('should compute the hash from the original buffer before base64 encoding', async () => {
+        it('should compute the multibase digest from the original buffer before base64 encoding', async () => {
             const params = {
                 bucket: 'bucketName',
                 id: '550e8400-e29b-41d4-a716-446655440000',
@@ -654,7 +648,7 @@ describe('PrivateService', () => {
                 expect(result).toEqual(
                     expect.objectContaining({
                         uri: expect.any(String),
-                        hash: expect.any(String),
+                        digestMultibase: expect.any(String),
                         decryptionKey: expect.any(String),
                     }),
                 );
@@ -689,7 +683,7 @@ describe('PrivateService', () => {
                 expect(result).toEqual(
                     expect.objectContaining({
                         uri: expect.any(String),
-                        hash: expect.any(String),
+                        digestMultibase: expect.any(String),
                         decryptionKey: expect.any(String),
                     }),
                 );
@@ -755,7 +749,7 @@ describe('PrivateService', () => {
             expect(result).toEqual(
                 expect.objectContaining({
                     uri: expect.any(String),
-                    hash: expect.any(String),
+                    digestMultibase: expect.any(String),
                     decryptionKey: expect.any(String),
                 }),
             );
@@ -792,9 +786,7 @@ describe('PrivateService', () => {
         });
 
         it('should propagate error when computeHash throws', async () => {
-            cryptographyService.computeHash.mockImplementationOnce(() => {
-                throw new Error('Hash computation failed');
-            });
+            cryptographyService.computeHash.mockRejectedValueOnce(new Error('Hash computation failed'));
 
             const params = {
                 bucket: 'bucketName',

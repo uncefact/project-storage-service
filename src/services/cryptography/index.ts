@@ -1,7 +1,23 @@
 export * from './crypto';
 
+/**
+ * Hash algorithms accepted by {@link ICryptographyService.computeHash}. String
+ * values match the multihash codec names used by `@uncefact/untp-utils`.
+ * Extend when upstream adds support for new algorithms.
+ */
 export enum HashAlgorithm {
-    SHA_256 = 'sha256',
+    SHA256 = 'sha2-256',
+    SHA512 = 'sha2-512',
+}
+
+/**
+ * Multibase encodings accepted by {@link ICryptographyService.computeHash}.
+ * String values match the multibase codec names used by `@uncefact/untp-utils`.
+ * Extend when upstream adds support for new encodings.
+ */
+export enum MultibaseEncoding {
+    BASE58_BTC = 'base58btc',
+    BASE_64 = 'base64',
 }
 
 export enum EncryptionAlgorithm {
@@ -27,22 +43,29 @@ export interface IEncryptionResult {
     type: EncryptionAlgorithm;
 }
 
+export interface IComputeHashOptions {
+    algorithm?: HashAlgorithm;
+    base?: MultibaseEncoding;
+}
+
 export interface ICryptographyService {
     /**
-     * Generates a hash from a given input.
+     * Computes a multibase-encoded multihash of the input. The returned string
+     * self-describes the hash algorithm (via the multihash prefix) and the
+     * text encoding (via the multibase prefix character), so callers and
+     * verifiers do not need out-of-band metadata to recover them.
+     *
      * @param input The string or Buffer to hash.
-     * @param algorithm The hash algorithm to use (default: SHA-256).
-     * @returns The hash of the input as a hexadecimal string.
+     * @param options Optional algorithm and multibase encoding. Defaults to
+     *   `sha2-256` and `base58btc`.
+     * @returns The multibase-encoded multihash as a string.
+     * @throws Rejects if the ESM multibase-digest module fails to load, or if
+     *   the underlying `@uncefact/untp-utils` helper rejects the algorithm or
+     *   base. Implementations are expected to surface the upstream error.
+     * @see https://github.com/multiformats/multihash Multihash specification
+     * @see https://github.com/multiformats/multibase Multibase specification
      */
-    computeHash(input: string | Buffer, algorithm?: HashAlgorithm): string;
-
-    /**
-     * Encodes a hex SHA-256 digest as a multibase-encoded multihash string.
-     * Uses base58btc encoding (prefix `z`) and SHA-256 multihash header (0x12, 0x20).
-     * @param hexHash The SHA-256 digest as a hexadecimal string.
-     * @returns The multibase-encoded multihash string (e.g. `zQm...`).
-     */
-    toDigestMultibase(hexHash: string): string;
+    computeHash(input: string | Buffer, options?: IComputeHashOptions): Promise<string>;
 
     /**
      * Generates a cryptographic key.

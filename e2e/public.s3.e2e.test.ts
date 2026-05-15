@@ -106,7 +106,7 @@ describe('Public API - S3 E2E Tests', () => {
         });
 
         describe('Storage', () => {
-            it('should return 201 with uri and hash', async () => {
+            it('should return 201 with uri and digestMultibase', async () => {
                 const response = await request(APP_BASE_URL)
                     .post(`/api/${API_VERSION}/public`)
                     .set('X-API-Key', API_KEY)
@@ -115,8 +115,8 @@ describe('Public API - S3 E2E Tests', () => {
 
                 expect(response.body.uri).toEqual(expect.any(String));
                 expect(response.body.uri.length).toBeGreaterThan(0);
-                expect(response.body.hash).toEqual(expect.any(String));
-                expect(response.body.hash.length).toBeGreaterThan(0);
+                expect(response.body.digestMultibase).toEqual(expect.any(String));
+                expect(response.body.digestMultibase.length).toBeGreaterThan(0);
             });
 
             it('should return 201 with custom UUID id', async () => {
@@ -168,15 +168,15 @@ describe('Public API - S3 E2E Tests', () => {
                 expect(body).toEqual(testDocument);
             });
 
-            it('should produce a valid SHA-256 hash of the stored data', async () => {
+            it('should produce a valid multibase digest of the stored data', async () => {
                 const response = await request(APP_BASE_URL)
                     .post(`/api/${API_VERSION}/public`)
                     .set('X-API-Key', API_KEY)
                     .send({ bucket: 'documents', data: testDocument })
                     .expect(201);
 
-                const expectedHash = computeHash(JSON.stringify(testDocument));
-                expect(response.body.hash).toBe(expectedHash);
+                const expectedHash = await computeHash(JSON.stringify(testDocument));
+                expect(response.body.digestMultibase).toBe(expectedHash);
             });
         });
     });
@@ -286,8 +286,8 @@ describe('Public API - S3 E2E Tests', () => {
 
                 expect(response.body.uri).toEqual(expect.any(String));
                 expect(response.body.uri.length).toBeGreaterThan(0);
-                expect(response.body.hash).toEqual(expect.any(String));
-                expect(response.body.hash.length).toBeGreaterThan(0);
+                expect(response.body.digestMultibase).toEqual(expect.any(String));
+                expect(response.body.digestMultibase.length).toBeGreaterThan(0);
             });
 
             it('should return 201 when uploading a valid PDF', async () => {
@@ -300,8 +300,8 @@ describe('Public API - S3 E2E Tests', () => {
 
                 expect(response.body.uri).toEqual(expect.any(String));
                 expect(response.body.uri.length).toBeGreaterThan(0);
-                expect(response.body.hash).toEqual(expect.any(String));
-                expect(response.body.hash.length).toBeGreaterThan(0);
+                expect(response.body.digestMultibase).toEqual(expect.any(String));
+                expect(response.body.digestMultibase.length).toBeGreaterThan(0);
             });
 
             it('should return 201 when uploading a valid JPEG', async () => {
@@ -317,8 +317,8 @@ describe('Public API - S3 E2E Tests', () => {
 
                 expect(response.body.uri).toEqual(expect.any(String));
                 expect(response.body.uri.length).toBeGreaterThan(0);
-                expect(response.body.hash).toEqual(expect.any(String));
-                expect(response.body.hash.length).toBeGreaterThan(0);
+                expect(response.body.digestMultibase).toEqual(expect.any(String));
+                expect(response.body.digestMultibase.length).toBeGreaterThan(0);
             });
 
             it('should return 201 with a custom UUID id', async () => {
@@ -393,7 +393,7 @@ describe('Public API - S3 E2E Tests', () => {
                 expect(buf.equals(MINIMAL_PDF)).toBe(true);
             });
 
-            it('should produce a valid SHA-256 hash of the stored file', async () => {
+            it('should produce a valid multibase digest of the stored file', async () => {
                 const response = await request(APP_BASE_URL)
                     .post(`/api/${API_VERSION}/public`)
                     .set('X-API-Key', API_KEY)
@@ -401,8 +401,8 @@ describe('Public API - S3 E2E Tests', () => {
                     .field('bucket', 'files')
                     .expect(201);
 
-                const expectedHash = computeHash(MINIMAL_PNG);
-                expect(response.body.hash).toBe(expectedHash);
+                const expectedHash = await computeHash(MINIMAL_PNG);
+                expect(response.body.digestMultibase).toBe(expectedHash);
             });
         });
     });

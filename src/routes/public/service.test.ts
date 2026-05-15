@@ -31,8 +31,7 @@ describe('PublicService', () => {
         };
 
         mockCryptoService = {
-            computeHash: jest.fn().mockReturnValue('mocked-hash'),
-            toDigestMultibase: jest.fn().mockReturnValue('mocked-digest-multibase'),
+            computeHash: jest.fn().mockResolvedValue('mocked-hash'),
         } as unknown as jest.Mocked<ICryptographyService>;
     });
 
@@ -43,7 +42,7 @@ describe('PublicService', () => {
             data: { name: 'test' },
         };
 
-        it('should successfully store a document and return uri and hash', async () => {
+        it('should successfully store a document and return uri and digestMultibase', async () => {
             const result = await service.storeDocument(mockStorageService, mockCryptoService, validParams);
 
             expect(mockStorageService.objectExists).toHaveBeenCalledWith(
@@ -59,8 +58,7 @@ describe('PublicService', () => {
             );
             expect(result).toEqual({
                 uri: 'https://storage.example.com/my-bucket/test-id.json',
-                hash: 'mocked-hash',
-                digestMultibase: 'mocked-digest-multibase',
+                digestMultibase: 'mocked-hash',
             });
         });
 
@@ -192,7 +190,6 @@ describe('PublicService', () => {
 
             expect(result).toEqual({
                 uri: expect.any(String),
-                hash: expect.any(String),
                 digestMultibase: expect.any(String),
             });
         });
@@ -230,11 +227,7 @@ describe('PublicService', () => {
                     expect.any(String),
                     'application/json',
                 );
-                expect(result).toEqual({
-                    uri: expect.any(String),
-                    hash: expect.any(String),
-                    digestMultibase: expect.any(String),
-                });
+                expect(result).toEqual({ uri: expect.any(String), digestMultibase: expect.any(String) });
             } finally {
                 configModule.DEFAULT_BUCKET = undefined;
             }
@@ -256,11 +249,7 @@ describe('PublicService', () => {
                     expect.any(String),
                     'application/json',
                 );
-                expect(result).toEqual({
-                    uri: expect.any(String),
-                    hash: expect.any(String),
-                    digestMultibase: expect.any(String),
-                });
+                expect(result).toEqual({ uri: expect.any(String), digestMultibase: expect.any(String) });
             } finally {
                 configModule.DEFAULT_BUCKET = undefined;
             }
@@ -282,11 +271,7 @@ describe('PublicService', () => {
                     expect.any(String),
                     'application/json',
                 );
-                expect(result).toEqual({
-                    uri: expect.any(String),
-                    hash: expect.any(String),
-                    digestMultibase: expect.any(String),
-                });
+                expect(result).toEqual({ uri: expect.any(String), digestMultibase: expect.any(String) });
             } finally {
                 configModule.DEFAULT_BUCKET = undefined;
             }
@@ -326,9 +311,7 @@ describe('PublicService', () => {
         });
 
         it('should propagate error when computeHash throws', async () => {
-            mockCryptoService.computeHash.mockImplementation(() => {
-                throw new Error('Hash computation failed');
-            });
+            mockCryptoService.computeHash.mockRejectedValue(new Error('Hash computation failed'));
 
             await expect(service.storeDocument(mockStorageService, mockCryptoService, validParams)).rejects.toThrow(
                 ApplicationError,
@@ -349,7 +332,7 @@ describe('PublicService', () => {
             mimeType: 'image/png',
         };
 
-        it('should successfully store a file and return uri and hash', async () => {
+        it('should successfully store a file and return uri and digestMultibase', async () => {
             const result = await service.storeFile(mockStorageService, mockCryptoService, validParams);
 
             expect(mockStorageService.objectExists).toHaveBeenCalledWith(
@@ -365,8 +348,7 @@ describe('PublicService', () => {
             );
             expect(result).toEqual({
                 uri: 'https://storage.example.com/my-bucket/test-id.json',
-                hash: 'mocked-hash',
-                digestMultibase: 'mocked-digest-multibase',
+                digestMultibase: 'mocked-hash',
             });
         });
 
@@ -500,7 +482,7 @@ describe('PublicService', () => {
             mockStorageService.uploadFile.mockResolvedValue({
                 uri: 'https://storage.example.com/my-bucket/test-id.jpg',
             });
-            mockCryptoService.computeHash.mockReturnValue('mocked-hash');
+            mockCryptoService.computeHash.mockResolvedValue('mocked-hash');
 
             // image/jpeg -> jpg (mime-types maps jpeg to .jpg)
             await service.storeFile(mockStorageService, mockCryptoService, {
@@ -519,7 +501,7 @@ describe('PublicService', () => {
             mockStorageService.uploadFile.mockResolvedValue({
                 uri: 'https://storage.example.com/my-bucket/test-id.pdf',
             });
-            mockCryptoService.computeHash.mockReturnValue('mocked-hash');
+            mockCryptoService.computeHash.mockResolvedValue('mocked-hash');
 
             // application/pdf -> pdf
             await service.storeFile(mockStorageService, mockCryptoService, {
@@ -567,11 +549,7 @@ describe('PublicService', () => {
                     expect.any(Buffer),
                     'image/png',
                 );
-                expect(result).toEqual({
-                    uri: expect.any(String),
-                    hash: expect.any(String),
-                    digestMultibase: expect.any(String),
-                });
+                expect(result).toEqual({ uri: expect.any(String), digestMultibase: expect.any(String) });
             } finally {
                 configModule.DEFAULT_BUCKET = undefined;
             }
@@ -593,11 +571,7 @@ describe('PublicService', () => {
                     expect.any(Buffer),
                     'image/png',
                 );
-                expect(result).toEqual({
-                    uri: expect.any(String),
-                    hash: expect.any(String),
-                    digestMultibase: expect.any(String),
-                });
+                expect(result).toEqual({ uri: expect.any(String), digestMultibase: expect.any(String) });
             } finally {
                 configModule.DEFAULT_BUCKET = undefined;
             }
@@ -619,11 +593,7 @@ describe('PublicService', () => {
                     expect.any(Buffer),
                     'image/png',
                 );
-                expect(result).toEqual({
-                    uri: expect.any(String),
-                    hash: expect.any(String),
-                    digestMultibase: expect.any(String),
-                });
+                expect(result).toEqual({ uri: expect.any(String), digestMultibase: expect.any(String) });
             } finally {
                 configModule.DEFAULT_BUCKET = undefined;
             }
@@ -647,7 +617,6 @@ describe('PublicService', () => {
 
             expect(result).toEqual({
                 uri: expect.any(String),
-                hash: expect.any(String),
                 digestMultibase: expect.any(String),
             });
         });
@@ -675,9 +644,7 @@ describe('PublicService', () => {
         });
 
         it('should propagate error when computeHash throws', async () => {
-            mockCryptoService.computeHash.mockImplementation(() => {
-                throw new Error('Hash computation failed');
-            });
+            mockCryptoService.computeHash.mockRejectedValue(new Error('Hash computation failed'));
 
             await expect(service.storeFile(mockStorageService, mockCryptoService, validParams)).rejects.toThrow(
                 ApplicationError,
@@ -701,7 +668,6 @@ describe('PublicService', () => {
             );
             expect(result).toEqual({
                 uri: expect.any(String),
-                hash: expect.any(String),
                 digestMultibase: expect.any(String),
             });
         });

@@ -10,17 +10,17 @@ export class PrivateService {
     /**
      * Encrypts and stores a JSON document in a storage service.
      *
-     * The document is stringified, hashed, encrypted with a generated key, and stored
+     * The document is stringified, digested, encrypted with a generated key, and stored
      * as a JSON envelope containing the cipher text, IV, auth tag, encryption type,
      * and content type.
      *
      * @param storageService - The storage service used for uploading the encrypted document.
-     * @param cryptographyService - The cryptography service used for hashing, key generation, and encryption.
+     * @param cryptographyService - The cryptography service used for digesting, key generation, and encryption.
      * @param params - An object containing the following properties:
      * @param params.bucket - The name of the bucket where the document will be stored. Falls back to DEFAULT_BUCKET if omitted.
      * @param params.id - (Optional) The identifier for the document. If not provided, a UUID will be generated.
      * @param params.data - The data to be encrypted and stored. Must be a plain object.
-     * @returns An object containing the URI of the uploaded file, the hash of the data, and the decryption key.
+     * @returns An object containing the URI of the uploaded file, the multibase digest of the data, and the decryption key.
      * @throws {BadRequestError} If no bucket is resolved (neither provided nor configured via DEFAULT_BUCKET), or if the bucket is invalid.
      * @throws {BadRequestError} If the data is not a plain object.
      * @throws {BadRequestError} If the provided ID is not a valid UUID.
@@ -73,8 +73,7 @@ export class PrivateService {
 
             const stringifiedData = JSON.stringify(data);
 
-            const hash = cryptographyService.computeHash(stringifiedData);
-            const digestMultibase = cryptographyService.toDigestMultibase(hash);
+            const digestMultibase = await cryptographyService.computeHash(stringifiedData);
 
             const key = await cryptographyService.generateEncryptionKey();
 
@@ -93,7 +92,6 @@ export class PrivateService {
 
             return {
                 uri,
-                hash,
                 digestMultibase,
                 decryptionKey: key,
             };
@@ -114,20 +112,20 @@ export class PrivateService {
     /**
      * Encrypts and stores a binary file in a storage service.
      *
-     * The file buffer is hashed (before encoding), base64-encoded, encrypted with a
+     * The file buffer is digested (before encoding), base64-encoded, encrypted with a
      * generated key, and stored as a JSON envelope containing the cipher text, IV,
      * auth tag, encryption type, and content type. The encrypted file is always stored
      * with a `.json` extension because the envelope is JSON, regardless of the original
      * file's MIME type.
      *
      * @param storageService - The storage service used for uploading the encrypted file.
-     * @param cryptographyService - The cryptography service used for hashing, key generation, and encryption.
+     * @param cryptographyService - The cryptography service used for digesting, key generation, and encryption.
      * @param params - An object containing the following properties:
      * @param params.bucket - The name of the bucket where the file will be stored. Falls back to DEFAULT_BUCKET if omitted.
      * @param params.id - (Optional) The identifier for the file. If not provided, a UUID will be generated.
      * @param params.file - The binary file content as a Buffer.
      * @param params.mimeType - The MIME type of the file.
-     * @returns An object containing the URI of the uploaded file, the hash of the original file, and the decryption key.
+     * @returns An object containing the URI of the uploaded file, the multibase digest of the original file, and the decryption key.
      * @throws {BadRequestError} If no bucket is resolved (neither provided nor configured via DEFAULT_BUCKET), or if the bucket is invalid.
      * @throws {BadRequestError} If the file is not provided.
      * @throws {BadRequestError} If the MIME type is missing or not in the allowed types.
@@ -185,8 +183,7 @@ export class PrivateService {
                 throw new ConflictError('A file with the provided ID already exists in the specified bucket.');
             }
 
-            const hash = cryptographyService.computeHash(file);
-            const digestMultibase = cryptographyService.toDigestMultibase(hash);
+            const digestMultibase = await cryptographyService.computeHash(file);
 
             const base64Data = file.toString('base64');
 
@@ -207,7 +204,6 @@ export class PrivateService {
 
             return {
                 uri,
-                hash,
                 digestMultibase,
                 decryptionKey: key,
             };
