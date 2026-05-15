@@ -48,7 +48,7 @@ const importEsm = new Function('specifier', 'return import(specifier)') as <T>(s
  */
 export async function computeDigestMultibase(input: string | Buffer): Promise<string> {
     const { MultibaseDigest } = await importEsm<MultibaseDigestModule>('@uncefact/untp-utils/multibase-digest');
-    const bytes = typeof input === 'string' ? new TextEncoder().encode(input) : new Uint8Array(input);
+    const bytes = typeof input === 'string' ? new TextEncoder().encode(input) : input;
     const digest = await MultibaseDigest.fromData(bytes, { algorithm: 'sha2-256', base: 'base58btc' });
     return digest.toString();
 }

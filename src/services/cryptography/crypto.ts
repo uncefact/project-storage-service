@@ -61,7 +61,7 @@ export class CryptographyService implements ICryptographyService {
     ): Promise<string> {
         const algorithm = options.algorithm ?? HashAlgorithm.SHA256;
         const base = options.base ?? MultibaseEncoding.BASE58_BTC;
-        const bytes = typeof input === 'string' ? new TextEncoder().encode(input) : new Uint8Array(input);
+        const bytes = typeof input === 'string' ? new TextEncoder().encode(input) : input;
         const { MultibaseDigest } = await loadMultibaseDigest();
         try {
             const digest = await MultibaseDigest.fromData(bytes, { algorithm, base });
