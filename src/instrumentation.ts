@@ -29,16 +29,32 @@ if (endpoint) {
     const sdk = new NodeSDK({
         resource: buildResource(),
         traceExporter: new OTLPTraceExporter({ url: endpoint }),
-        instrumentations: [getNodeAutoInstrumentations()],
+        // Disable fs auto-instrumentation: every internal Node/Express/AWS-SDK
+        // file read becomes a span, drowning out the spans operators actually
+        // care about (HTTP, S3, handler logic). Flip this back on temporarily
+        // if a specific investigation needs filesystem-level traces.
+        instrumentations: [
+            getNodeAutoInstrumentations({
+                '@opentelemetry/instrumentation-fs': { enabled: false },
+            }),
+        ],
     });
 
     sdk.start();
 
-    const shutdown = () => {
-        sdk.shutdown().catch((err: unknown) => {
+    // Process must exit after the SDK flushes, otherwise lingering handles
+    // (timers, sockets) hold the process up until the container manager sends
+    // SIGKILL, which drops any in-flight spans. Exit explicitly with the right
+    // code so containers see a clean shutdown.
+    const shutdown = async () => {
+        try {
+            await sdk.shutdown();
+            process.exit(0);
+        } catch (err) {
             // eslint-disable-next-line no-console
             console.error('OpenTelemetry SDK shutdown failed', err);
-        });
+            process.exit(1);
+        }
     };
 
     process.on('SIGTERM', shutdown);

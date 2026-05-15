@@ -11,10 +11,12 @@ const ATTR_SERVICE_NAME = 'service.name';
 const ATTR_SERVICE_VERSION = 'service.version';
 const ATTR_DEPLOYMENT_ENVIRONMENT_NAME = 'deployment.environment.name';
 
-const SERVICE_NAME = 'storage-service';
+const DEFAULT_SERVICE_NAME = 'storage-service';
 const DEFAULT_ENVIRONMENT = 'local';
 
 export interface BuildResourceOptions {
+    /** Overrides `process.env.OTEL_SERVICE_NAME` and the hardcoded default. */
+    serviceName?: string;
     /** Overrides `process.env.DEPLOYMENT_ENVIRONMENT`. */
     deploymentEnvironment?: string;
     /** Overrides the version read from `package.json`. */
@@ -29,15 +31,20 @@ export interface BuildResourceOptions {
  * `service.name` or `deployment.environment.name` will silently break
  * dashboards built against the canonical labels.
  *
- * Defaults derive from `process.env.DEPLOYMENT_ENVIRONMENT` and the package's
- * own `package.json`; tests inject explicit values via {@link BuildResourceOptions}.
- * An empty or whitespace-only environment string is treated as absent so
- * misconfigured deployments that ship `DEPLOYMENT_ENVIRONMENT=` fall back to
- * the default rather than tagging telemetry with an empty environment.
+ * Defaults derive from `process.env.OTEL_SERVICE_NAME` /
+ * `process.env.DEPLOYMENT_ENVIRONMENT` and the package's own `package.json`;
+ * tests inject explicit values via {@link BuildResourceOptions}. Empty or
+ * whitespace-only env-var values are treated as absent so misconfigured
+ * deployments that ship `DEPLOYMENT_ENVIRONMENT=` fall back to the default
+ * rather than tagging telemetry with an empty environment.
  *
  * @see https://opentelemetry.io/docs/specs/semconv/resource/ Resource semantic conventions
  */
 export function buildResource(options: BuildResourceOptions = {}): Resource {
+    const nameFromOptions = options.serviceName?.trim();
+    const nameFromProcess = process.env.OTEL_SERVICE_NAME?.trim();
+    const serviceName = nameFromOptions || nameFromProcess || DEFAULT_SERVICE_NAME;
+
     const envFromOptions = options.deploymentEnvironment?.trim();
     const envFromProcess = process.env.DEPLOYMENT_ENVIRONMENT?.trim();
     const deploymentEnvironment = envFromOptions || envFromProcess || DEFAULT_ENVIRONMENT;
@@ -45,7 +52,7 @@ export function buildResource(options: BuildResourceOptions = {}): Resource {
     const serviceVersion = options.serviceVersion ?? pkg.version;
 
     return resourceFromAttributes({
-        [ATTR_SERVICE_NAME]: SERVICE_NAME,
+        [ATTR_SERVICE_NAME]: serviceName,
         [ATTR_SERVICE_VERSION]: serviceVersion,
         [ATTR_DEPLOYMENT_ENVIRONMENT_NAME]: deploymentEnvironment,
     });

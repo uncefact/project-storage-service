@@ -13,15 +13,40 @@ describe('buildResource', () => {
     beforeEach(() => {
         process.env = { ...originalEnv };
         delete process.env.DEPLOYMENT_ENVIRONMENT;
+        delete process.env.OTEL_SERVICE_NAME;
     });
 
     afterAll(() => {
         process.env = originalEnv;
     });
 
-    it('sets service.name to "storage-service"', () => {
+    it('falls back to "storage-service" when OTEL_SERVICE_NAME is unset', () => {
         const attrs = buildResource().attributes;
         expect(attrs[ATTR_SERVICE_NAME]).toBe('storage-service');
+    });
+
+    it('treats an empty OTEL_SERVICE_NAME as unset', () => {
+        process.env.OTEL_SERVICE_NAME = '';
+        const attrs = buildResource().attributes;
+        expect(attrs[ATTR_SERVICE_NAME]).toBe('storage-service');
+    });
+
+    it('treats a whitespace-only OTEL_SERVICE_NAME as unset', () => {
+        process.env.OTEL_SERVICE_NAME = '   ';
+        const attrs = buildResource().attributes;
+        expect(attrs[ATTR_SERVICE_NAME]).toBe('storage-service');
+    });
+
+    it('uses OTEL_SERVICE_NAME from the process environment when set', () => {
+        process.env.OTEL_SERVICE_NAME = 'storage-staging';
+        const attrs = buildResource().attributes;
+        expect(attrs[ATTR_SERVICE_NAME]).toBe('storage-staging');
+    });
+
+    it('honours an explicit serviceName option over the env var', () => {
+        process.env.OTEL_SERVICE_NAME = 'storage-staging';
+        const attrs = buildResource({ serviceName: 'storage-explicit' }).attributes;
+        expect(attrs[ATTR_SERVICE_NAME]).toBe('storage-explicit');
     });
 
     it('reads service.version from package.json by default', () => {
