@@ -132,6 +132,19 @@ Configure the storage service using the following environment variables:
 - `ALLOWED_UPLOAD_TYPES`:
   Comma-separated list of permitted MIME types (default: `image/png,image/jpeg,image/webp,application/pdf`).
 
+### Logging
+
+The service emits structured JSON logs via Pino. Every log line includes a `correlationId` matching the request that produced it.
+
+- `LOG_LEVEL`:
+  Minimum level emitted: `debug`, `info`, `warn`, or `error` (default: `info`).
+- `LOG_PRETTY`:
+  Set to `true` to format logs for human reading (uses `pino-pretty`). Off by default; production should leave this unset so logs stay structured JSON for ingestion by log pipelines.
+
+### Correlation IDs
+
+Every response carries an `x-correlation-id` header. Inbound `x-correlation-id` request headers are accepted and propagated when they pass validation (max 128 characters, charset `[A-Za-z0-9_-]`); invalid or missing values are replaced by a freshly minted UUID. Use this to trace a single logical request across services.
+
 ### S3-Compatible Storage (AWS, MinIO, DigitalOcean Spaces, Cloudflare R2, etc.)
 
 - `S3_REGION`:

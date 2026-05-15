@@ -12,6 +12,8 @@ import {
     IEncryptionResult,
 } from './index';
 
+import { cryptoLogger as logger } from '../logging';
+
 type MultibaseDigestModule = typeof import('@uncefact/untp-utils/multibase-digest');
 
 // @uncefact/untp-utils ships ESM only. ts-jest (and `tsc` with `module: "commonjs"`)
@@ -32,9 +34,9 @@ async function loadMultibaseDigest(): Promise<MultibaseDigestModule> {
     if (!digestMultibaseModulePromise) {
         const pending = importEsm<MultibaseDigestModule>('@uncefact/untp-utils/multibase-digest');
         pending.catch((err) => {
-            console.error(
+            logger.error(
+                { err },
                 '[CryptographyService] Failed to dynamically import "@uncefact/untp-utils/multibase-digest"; the module cache will be cleared so the next call retries.',
-                err,
             );
             if (digestMultibaseModulePromise === pending) {
                 digestMultibaseModulePromise = undefined;
@@ -67,10 +69,9 @@ export class CryptographyService implements ICryptographyService {
             const digest = await MultibaseDigest.fromData(bytes, { algorithm, base });
             return digest.toString();
         } catch (err) {
-            console.error(
+            logger.error(
+                { algorithm, base, bytes: bytes.byteLength, err },
                 '[CryptographyService.computeDigestMultibase] MultibaseDigest.fromData failed',
-                { algorithm, base, bytes: bytes.byteLength },
-                err,
             );
             throw err;
         }

@@ -1,3 +1,5 @@
+import { configLogger as logger } from './services/logging';
+
 interface BucketConfiguration {
     /** The default bucket name, or undefined if not configured. Always a member of AVAILABLE_BUCKETS when defined. */
     DEFAULT_BUCKET: string | undefined;
@@ -14,9 +16,9 @@ export function getBucketConfiguration(env: NodeJS.ProcessEnv): BucketConfigurat
     const shouldAutoAddDefaultBucket = DEFAULT_BUCKET && !configuredBuckets.includes(DEFAULT_BUCKET);
 
     if (shouldAutoAddDefaultBucket) {
-        console.warn(
-            `[config] DEFAULT_BUCKET="${DEFAULT_BUCKET}" is not in AVAILABLE_BUCKETS (${configuredBuckets.join(', ')}). ` +
-                'It will be auto-added, but consider including it in AVAILABLE_BUCKETS explicitly.',
+        logger.warn(
+            { defaultBucket: DEFAULT_BUCKET, configuredBuckets },
+            '[config] DEFAULT_BUCKET is not in AVAILABLE_BUCKETS. It will be auto-added, but consider including it in AVAILABLE_BUCKETS explicitly.',
         );
     }
 

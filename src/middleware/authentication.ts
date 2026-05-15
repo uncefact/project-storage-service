@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { UnauthorizedError } from '../errors';
 import { ApiKeyAuthenticationService } from '../services/authentication';
+import { authLogger as logger } from '../services/logging';
 
 const authService = new ApiKeyAuthenticationService();
 
@@ -22,7 +23,7 @@ export const authenticateRequest = async (req: Request, res: Response, next: Nex
 
         next();
     } catch (err: any) {
-        console.log('[AuthenticationMiddleware] Authentication failed.', err);
+        logger.info({ err }, '[AuthenticationMiddleware] Authentication failed');
 
         if (err instanceof UnauthorizedError) {
             return res.status(err.statusCode).json({ message: err.message });
