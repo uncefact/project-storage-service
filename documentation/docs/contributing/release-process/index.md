@@ -17,12 +17,11 @@ This page describes the branch structure, versioning scheme, and step-by-step re
 
 The project maintains version information in three files:
 
-- **`version.json`** -- Contains `version`, `apiVersion`, and `docVersion` fields:
+- **`version.json`** -- Contains `version` and `docVersion` fields:
 
 ```json
 {
     "version": "MAJOR.MINOR.PATCH",
-    "apiVersion": "MAJOR.MINOR.PATCH",
     "docVersion": "MAJOR.MINOR.PATCH",
     "dependencies": {}
 }
@@ -52,7 +51,7 @@ git checkout -b release/X.Y.Z
 ```
 
 2. **Update version files.** Set the new version number in:
-    - `version.json` (`version`, `apiVersion` if the API has changed, `docVersion`)
+    - `version.json` (`version`, `docVersion`)
     - `package.json` (`version`)
     - `documentation/package.json` (`version`, if `docVersion` changed)
 
