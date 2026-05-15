@@ -2,6 +2,9 @@ import crypto from 'crypto';
 import { Request } from 'express';
 import { AuthResult, IAuthenticationService } from '.';
 import { AUTH_HEADER_NAME, getApiKey } from '../../config';
+import { getLogger } from '../logging';
+
+const logger = getLogger();
 
 export class ApiKeyAuthenticationService implements IAuthenticationService {
     /**
@@ -43,7 +46,10 @@ export class ApiKeyAuthenticationService implements IAuthenticationService {
                 return invalidKeyResponse;
             }
         } catch (err: unknown) {
-            console.error('[ApiKeyAuthenticationService] Error comparing API keys:', err);
+            logger.error(
+                { err: err instanceof Error ? err.message : err },
+                '[ApiKeyAuthenticationService] Error comparing API keys',
+            );
 
             return invalidKeyResponse;
         }

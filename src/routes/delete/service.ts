@@ -2,6 +2,9 @@ import { IStorageService } from '../../services';
 import { ApiError, ApplicationError, BadRequestError, NotFoundError } from '../../errors';
 import { AVAILABLE_BUCKETS } from '../../config';
 import { isValidUUID } from '../../utils';
+import { getLogger } from '../../services/logging';
+
+const logger = getLogger();
 
 export class DeleteService {
     public async deleteDocument(storageService: IStorageService, bucket: string, id: string): Promise<void> {
@@ -24,7 +27,10 @@ export class DeleteService {
 
             await Promise.all(matchingKeys.map((key) => storageService.deleteFile(bucket, key)));
         } catch (err: any) {
-            console.error('[DeleteService.deleteDocument] An error occurred while deleting the resource.', err);
+            logger.error(
+                { err: err instanceof Error ? err.message : err },
+                '[DeleteService.deleteDocument] An error occurred while deleting the resource',
+            );
 
             if (err instanceof ApiError) {
                 throw err;

@@ -5,7 +5,9 @@ import { RequestHandler } from 'express';
 import { initialiseStorageService, CryptographyService, IStorageService } from '../../services';
 import { PublicService } from './service';
 import { ApiError, BadRequestError } from '../../errors';
+import { getLogger } from '../../services/logging';
 
+const logger = getLogger();
 const UPLOAD_DIR = path.resolve(os.tmpdir());
 
 /**
@@ -56,7 +58,10 @@ export const storePublic: RequestHandler = async (req, res) => {
 
         res.status(201).json(response);
     } catch (err: any) {
-        console.error('[PublicController.storePublic] An error occurred while storing the resource.', err);
+        logger.error(
+            { err: err instanceof Error ? err.message : err },
+            '[PublicController.storePublic] An error occurred while storing the resource',
+        );
 
         if (err instanceof ApiError) {
             return res.status(err.statusCode).json({ message: err.message });
@@ -71,10 +76,9 @@ export const storePublic: RequestHandler = async (req, res) => {
                 await fs.promises.unlink(tempPath);
             } catch (cleanupErr: any) {
                 if (cleanupErr.code !== 'ENOENT') {
-                    console.error(
-                        '[PublicController.storePublic] Failed to clean up temp file %s:',
-                        tempPath,
-                        cleanupErr,
+                    logger.error(
+                        { tempPath, err: cleanupErr instanceof Error ? cleanupErr.message : cleanupErr },
+                        '[PublicController.storePublic] Failed to clean up temp file',
                     );
                 }
             }
