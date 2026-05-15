@@ -12,12 +12,12 @@ export class PublicService {
      * Stores a JSON document in a storage service without encryption.
      *
      * @param storageService - The storage service used for uploading the document.
-     * @param cryptoService - The crypto service used for generating the hash.
+     * @param cryptoService - The crypto service used for generating the multibase digest.
      * @param params - An object containing the parameters for storing the document.
      * @param params.bucket - The name of the bucket where the document will be stored. Falls back to DEFAULT_BUCKET if omitted.
      * @param params.id - The optional ID of the document. If not provided, a new UUID will be generated.
      * @param params.data - The JSON object containing the document data.
-     * @returns An object containing the URI of the uploaded document and the hash of the document data.
+     * @returns An object containing the URI of the uploaded document and the multibase digest of the document data.
      * @throws {BadRequestError} If no bucket is resolved (neither provided nor configured via DEFAULT_BUCKET), or if the bucket is invalid, or if the data is not a JSON object.
      * @throws {BadRequestError} If the provided ID is not a valid UUID.
      * @throws {ConflictError} If a document with the provided ID already exists in the specified bucket.
@@ -69,8 +69,7 @@ export class PublicService {
 
             const stringifiedData = JSON.stringify(data);
 
-            const hash = cryptoService.computeHash(stringifiedData);
-            const digestMultibase = cryptoService.toDigestMultibase(hash);
+            const digestMultibase = await cryptoService.computeDigestMultibase(stringifiedData);
 
             const { uri } = await storageService.uploadFile(
                 resolvedBucket,
@@ -81,7 +80,6 @@ export class PublicService {
 
             return {
                 uri,
-                hash,
                 digestMultibase,
             };
         } catch (err: any) {
@@ -99,13 +97,13 @@ export class PublicService {
      * Stores a binary file in a storage service without encryption.
      *
      * @param storageService - The storage service used for uploading the file.
-     * @param cryptoService - The crypto service used for generating the hash.
+     * @param cryptoService - The crypto service used for generating the multibase digest.
      * @param params - An object containing the parameters for storing the file.
      * @param params.bucket - The name of the bucket where the file will be stored. Falls back to DEFAULT_BUCKET if omitted.
      * @param params.id - The optional ID of the file. If not provided, a new UUID will be generated.
      * @param params.file - The binary file content as a Buffer.
      * @param params.mimeType - The MIME type of the file.
-     * @returns An object containing the URI of the uploaded file and the hash of the file content.
+     * @returns An object containing the URI of the uploaded file and the multibase digest of the file content.
      * @throws {BadRequestError} If no bucket is resolved (neither provided nor configured via DEFAULT_BUCKET), or if the bucket is invalid, or if the file or MIME type is missing/invalid.
      * @throws {BadRequestError} If the provided ID is not a valid UUID.
      * @throws {ConflictError} If a file with the provided ID already exists in the specified bucket.
@@ -165,14 +163,12 @@ export class PublicService {
                 throw new ConflictError('A file with the provided ID already exists in the specified bucket.');
             }
 
-            const hash = cryptoService.computeHash(file);
-            const digestMultibase = cryptoService.toDigestMultibase(hash);
+            const digestMultibase = await cryptoService.computeDigestMultibase(file);
 
             const { uri } = await storageService.uploadFile(resolvedBucket, objectName, file, mimeType);
 
             return {
                 uri,
-                hash,
                 digestMultibase,
             };
         } catch (err: any) {

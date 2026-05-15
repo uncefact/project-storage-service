@@ -16,8 +16,7 @@ The service offers the following functionality:
   (local file system, AWS S3 and S3-compatible providers, or Google Cloud Storage).
 - **Data Retrieval**:
   Upon successful storage, the service returns:
-    - The hash of the original document.
-    - A multibase-encoded multihash (`digestMultibase`) of the document.
+    - A multibase-encoded multihash (`digestMultibase`) of the original document.
     - A decryption key for the encrypted document (if applicable).
     - The URI of the stored encrypted document.
 
@@ -30,8 +29,7 @@ This service offers two ways to store data, depending on whether your data is pu
 For data that doesn't require protection. Accepts both JSON (`application/json`) and binary files (`multipart/form-data`). The service stores your content as-is and returns:
 
 - A **URI** (the location of your stored data)
-- A **hash** (a fingerprint to verify the data hasn't changed)
-- A **digestMultibase** (the same digest as a multibase-encoded multihash string)
+- A **digestMultibase** (a multibase-encoded multihash fingerprint, used to verify the data hasn't changed)
 
 Allowed file types and maximum upload size are [configurable](#file-upload-configuration).
 
@@ -42,8 +40,7 @@ For sensitive data that needs protection. Accepts both JSON (`application/json`)
 The response includes:
 
 - A **URI** (the location of your stored data)
-- A **hash** (a fingerprint to verify the data hasn't changed)
-- A **digestMultibase** (the same digest as a multibase-encoded multihash string)
+- A **digestMultibase** (a multibase-encoded multihash fingerprint, used to verify the data hasn't changed)
 - A **decryptionKey** (your unique decryption key)
 
 **Save this key securely** — it's the only way to decrypt your data later.

@@ -22,7 +22,7 @@ jest.mock('../../services/storage/gcp', () => ({
 
 jest.mock('../../services/cryptography', () => ({
     CryptographyService: jest.fn().mockImplementation(() => ({
-        computeHash: jest.fn().mockReturnValue('mocked-hash'),
+        computeDigestMultibase: jest.fn().mockResolvedValue('mocked-digest'),
     })),
 }));
 
@@ -41,11 +41,10 @@ describe('PublicController', () => {
     });
 
     describe('storePublic', () => {
-        it('should successfully store a JSON document and return 201 with uri and hash', async () => {
+        it('should successfully store a JSON document and return 201 with uri and digestMultibase', async () => {
             const storeDocumentSpy = jest.spyOn(PublicService.prototype, 'storeDocument').mockResolvedValue({
                 uri: 'mock-uri',
-                hash: 'mocked-hash',
-                digestMultibase: 'mocked-digest-multibase',
+                digestMultibase: 'mocked-digest',
             });
 
             const mockReq = getMockReq({
@@ -61,8 +60,7 @@ describe('PublicController', () => {
             expect(mockRes.status).toHaveBeenCalledWith(201);
             expect(mockRes.json).toHaveBeenCalledWith({
                 uri: 'mock-uri',
-                hash: 'mocked-hash',
-                digestMultibase: 'mocked-digest-multibase',
+                digestMultibase: 'mocked-digest',
             });
             expect(storeDocumentSpy).toHaveBeenCalledWith(
                 expect.anything(), // storageService
@@ -71,11 +69,10 @@ describe('PublicController', () => {
             );
         });
 
-        it('should successfully store a binary file and return 201 with uri and hash', async () => {
+        it('should successfully store a binary file and return 201 with uri and digestMultibase', async () => {
             const storeFileSpy = jest.spyOn(PublicService.prototype, 'storeFile').mockResolvedValue({
                 uri: 'mock-file-uri',
-                hash: 'mocked-file-hash',
-                digestMultibase: 'mocked-file-digest-multibase',
+                digestMultibase: 'mocked-file-digest',
             });
 
             const tempFilePath = path.join(os.tmpdir(), 'upload-12345');
@@ -96,8 +93,7 @@ describe('PublicController', () => {
             expect(mockRes.status).toHaveBeenCalledWith(201);
             expect(mockRes.json).toHaveBeenCalledWith({
                 uri: 'mock-file-uri',
-                hash: 'mocked-file-hash',
-                digestMultibase: 'mocked-file-digest-multibase',
+                digestMultibase: 'mocked-file-digest',
             });
             expect(storeFileSpy).toHaveBeenCalledWith(
                 expect.anything(), // storageService
@@ -174,8 +170,7 @@ describe('PublicController', () => {
         it('should clean up the temporary file after a binary upload', async () => {
             jest.spyOn(PublicService.prototype, 'storeFile').mockResolvedValue({
                 uri: 'mock-file-uri',
-                hash: 'mocked-file-hash',
-                digestMultibase: 'mocked-file-digest-multibase',
+                digestMultibase: 'mocked-file-digest',
             });
 
             const tempFilePath = path.join(os.tmpdir(), 'upload-cleanup-test');
@@ -196,8 +191,7 @@ describe('PublicController', () => {
         it('should not attempt to clean up when there is no temporary file', async () => {
             jest.spyOn(PublicService.prototype, 'storeDocument').mockResolvedValue({
                 uri: 'mock-uri',
-                hash: 'mocked-hash',
-                digestMultibase: 'mocked-digest-multibase',
+                digestMultibase: 'mocked-digest',
             });
 
             const mockReq = getMockReq({
@@ -240,8 +234,7 @@ describe('PublicController', () => {
 
             jest.spyOn(PublicService.prototype, 'storeFile').mockResolvedValue({
                 uri: 'mock-uri',
-                hash: 'mocked-hash',
-                digestMultibase: 'mocked-digest-multibase',
+                digestMultibase: 'mocked-digest',
             });
 
             const tempPath = path.join(os.tmpdir(), 'upload-unlink-error');
