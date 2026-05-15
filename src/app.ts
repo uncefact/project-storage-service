@@ -5,7 +5,7 @@ import bodyParser from 'body-parser';
 import { router } from './routes';
 import swaggerDocument from './swagger/swagger.json';
 import { updateSwagger } from './swagger/helpers';
-import { API_VERSION, DOMAIN, EXTERNAL_PORT, MAX_UPLOAD_SIZE, PROTOCOL } from './config';
+import { DOMAIN, EXTERNAL_PORT, MAX_UPLOAD_SIZE, PROTOCOL } from './config';
 import { buildBaseUrl } from './utils';
 import { apiLogger as logger } from './services/logging';
 import { correlationIdMiddleware } from './middleware/correlation-id';
@@ -23,8 +23,8 @@ app.use(
     (req: any, res: any, next: any) => {
         // Build the Swagger server URL from config rather than request internals (req.protocol,
         // req.hostname, req.socket.localPort) which reflect the container's internal address.
-        const url = buildBaseUrl(PROTOCOL, DOMAIN, EXTERNAL_PORT, `api/${API_VERSION}`);
-        swaggerJson = updateSwagger(swaggerJson, { version: API_VERSION, url });
+        const url = buildBaseUrl(PROTOCOL, DOMAIN, EXTERNAL_PORT, 'api/v4');
+        swaggerJson = updateSwagger(swaggerJson, { version: 'v4', url });
         req.swaggerDoc = swaggerJson;
         next();
     },
@@ -41,7 +41,7 @@ app.get('/health-check', (req, res) => {
     res.send('OK');
 });
 
-app.use(`/api/${API_VERSION}`, router);
+app.use('/api', router);
 
 // Global error handler for unhandled errors
 app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {

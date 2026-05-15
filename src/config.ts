@@ -3,23 +3,11 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
-import fs from 'fs';
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { getBucketConfiguration } from './bucket-config';
 import { createPublicUriGenerator } from './public-url';
-const VERSION_FILE = 'version.json';
 
-// The API_VERSION is set manually, it should be updated when having change impact on the API.
-const getApiVersion = () => {
-    const version = fs.readFileSync(VERSION_FILE, 'utf8');
-    const { apiVersion } = JSON.parse(version);
-
-    if (!apiVersion) throw Error('API version not found');
-    return apiVersion;
-};
-
-export const API_VERSION = getApiVersion();
 export const PROTOCOL = process.env.PROTOCOL || 'http';
 export const DOMAIN = process.env.DOMAIN || 'localhost';
 export const PORT = process.env.PORT || 3333;

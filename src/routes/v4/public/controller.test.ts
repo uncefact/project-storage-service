@@ -1,3 +1,4 @@
+import fs from 'fs';
 import os from 'os';
 import path from 'path';
 import { getMockReq, getMockRes } from '@jest-mock/express';
@@ -21,86 +22,77 @@ jest.mock('../../services/logging', () => ({
     serverLogger: mockLogger,
 }));
 
-import { BadRequestError } from '../../errors';
-import { PrivateService } from './service';
+import { storePublic } from './controller';
+import { PublicService } from './service';
+import { BadRequestError } from '../../../errors';
 
 const { res: mockRes, next: mockNext, clearMockRes } = getMockRes();
 
-jest.mock('../../config', () => ({
+jest.mock('../../../config', () => ({
     AVAILABLE_BUCKETS: ['bucketName'],
     STORAGE_TYPE: 'gcp',
 }));
 
-jest.mock('../../services/cryptography', () => ({
-    CryptographyService: jest.fn().mockImplementation(() => ({
-        computeDigestMultibase: jest.fn().mockResolvedValue('mocked-digest'),
-        generateEncryptionKey: jest.fn().mockResolvedValue('test-encryption-key'),
-        encryptString: jest
-            .fn()
-            .mockReturnValue({ cipherText: 'encrypted', iv: 'test-iv', tag: 'test-tag', type: 'aes-256-gcm' }),
-    })),
-}));
-
-jest.mock('../../services/storage/gcp', () => ({
+jest.mock('../../../services/storage/gcp', () => ({
     GCPStorageService: jest.fn().mockImplementation(() => ({
         uploadFile: jest.fn().mockResolvedValue({ uri: 'mock-uri' }),
         objectExists: jest.fn().mockResolvedValue(false),
     })),
 }));
 
+jest.mock('../../../services/cryptography', () => ({
+    CryptographyService: jest.fn().mockImplementation(() => ({
+        computeDigestMultibase: jest.fn().mockResolvedValue('mocked-digest'),
+    })),
+}));
+
 jest.mock('fs', () => ({
     ...jest.requireActual('fs'),
     promises: {
-        readFile: jest.fn().mockResolvedValue(Buffer.from('binary-content')),
+        readFile: jest.fn().mockResolvedValue(Buffer.from('fake-binary-content')),
         unlink: jest.fn().mockResolvedValue(undefined),
     },
 }));
 
-import fs from 'fs';
-import { storePrivate } from './controller';
-
-describe('Private Controller', () => {
+describe('PublicController', () => {
     beforeEach(() => {
         clearMockRes();
         jest.clearAllMocks();
     });
 
-    describe('storePrivate', () => {
-        it('should successfully store a JSON document and return 201', async () => {
-            const spy = jest.spyOn(PrivateService.prototype, 'encryptAndStoreDocument').mockResolvedValue({
+    describe('storePublic', () => {
+        it('should successfully store a JSON document and return 201 with uri and digestMultibase', async () => {
+            const storeDocumentSpy = jest.spyOn(PublicService.prototype, 'storeDocument').mockResolvedValue({
                 uri: 'mock-uri',
                 digestMultibase: 'mocked-digest',
-                decryptionKey: 'test-encryption-key',
             });
 
             const mockReq = getMockReq({
                 body: {
                     bucket: 'bucketName',
-                    id: '550e8400-e29b-41d4-a716-446655440000',
-                    data: { key: 'value' },
+                    id: '123e4567-e89b-12d3-a456-426614174000',
+                    data: { name: 'test' },
                 },
             });
 
-            await storePrivate(mockReq, mockRes, mockNext);
+            await storePublic(mockReq, mockRes, mockNext);
 
             expect(mockRes.status).toHaveBeenCalledWith(201);
             expect(mockRes.json).toHaveBeenCalledWith({
                 uri: 'mock-uri',
                 digestMultibase: 'mocked-digest',
-                decryptionKey: 'test-encryption-key',
             });
-            expect(spy).toHaveBeenCalledWith(
+            expect(storeDocumentSpy).toHaveBeenCalledWith(
                 expect.anything(), // storageService
-                expect.anything(), // cryptographyService
-                { bucket: 'bucketName', id: '550e8400-e29b-41d4-a716-446655440000', data: { key: 'value' } },
+                expect.anything(), // cryptoService
+                { bucket: 'bucketName', id: '123e4567-e89b-12d3-a456-426614174000', data: { name: 'test' } },
             );
         });
 
-        it('should successfully store a binary file and return 201', async () => {
-            const spy = jest.spyOn(PrivateService.prototype, 'encryptAndStoreFile').mockResolvedValue({
-                uri: 'mock-uri',
-                digestMultibase: 'mocked-digest',
-                decryptionKey: 'test-encryption-key',
+        it('should successfully store a binary file and return 201 with uri and digestMultibase', async () => {
+            const storeFileSpy = jest.spyOn(PublicService.prototype, 'storeFile').mockResolvedValue({
+                uri: 'mock-file-uri',
+                digestMultibase: 'mocked-file-digest',
             });
 
             const tempFilePath = path.join(os.tmpdir(), 'upload-12345');
@@ -108,28 +100,27 @@ describe('Private Controller', () => {
                 file: {
                     path: tempFilePath,
                     mimetype: 'image/png',
-                } as any,
+                } as Express.Multer.File,
                 body: {
                     bucket: 'bucketName',
-                    id: '550e8400-e29b-41d4-a716-446655440000',
+                    id: '123e4567-e89b-12d3-a456-426614174000',
                 },
             });
 
-            await storePrivate(mockReq, mockRes, mockNext);
+            await storePublic(mockReq, mockRes, mockNext);
 
             expect(fs.promises.readFile).toHaveBeenCalledWith(path.resolve(tempFilePath));
             expect(mockRes.status).toHaveBeenCalledWith(201);
             expect(mockRes.json).toHaveBeenCalledWith({
-                uri: 'mock-uri',
-                digestMultibase: 'mocked-digest',
-                decryptionKey: 'test-encryption-key',
+                uri: 'mock-file-uri',
+                digestMultibase: 'mocked-file-digest',
             });
-            expect(spy).toHaveBeenCalledWith(
-                expect.anything(),
-                expect.anything(),
+            expect(storeFileSpy).toHaveBeenCalledWith(
+                expect.anything(), // storageService
+                expect.anything(), // cryptoService
                 expect.objectContaining({
                     bucket: 'bucketName',
-                    id: '550e8400-e29b-41d4-a716-446655440000',
+                    id: '123e4567-e89b-12d3-a456-426614174000',
                     file: expect.any(Buffer),
                     mimeType: 'image/png',
                 }),
@@ -137,18 +128,18 @@ describe('Private Controller', () => {
         });
 
         it('should return 400 for an invalid bucket', async () => {
-            jest.spyOn(PrivateService.prototype, 'encryptAndStoreDocument').mockRejectedValue(
+            jest.spyOn(PublicService.prototype, 'storeDocument').mockRejectedValue(
                 new BadRequestError('Invalid bucket. Must be one of the following buckets: bucketName'),
             );
 
             const mockReq = getMockReq({
                 body: {
-                    bucket: 'invalidBucket',
-                    data: { key: 'value' },
+                    bucket: 'invalid-bucket',
+                    data: { name: 'test' },
                 },
             });
 
-            await storePrivate(mockReq, mockRes, mockNext);
+            await storePublic(mockReq, mockRes, mockNext);
 
             expect(mockRes.status).toHaveBeenCalledWith(400);
             expect(mockRes.json).toHaveBeenCalledWith({
@@ -156,23 +147,23 @@ describe('Private Controller', () => {
             });
         });
 
-        it('should return 500 when a non-ApiError is thrown', async () => {
-            jest.spyOn(PrivateService.prototype, 'encryptAndStoreDocument').mockRejectedValue(
+        it('should return 500 for unexpected errors', async () => {
+            jest.spyOn(PublicService.prototype, 'storeDocument').mockRejectedValue(
                 new Error('Something went terribly wrong'),
             );
 
             const mockReq = getMockReq({
                 body: {
                     bucket: 'bucketName',
-                    data: { key: 'value' },
+                    data: { name: 'test' },
                 },
             });
 
-            await storePrivate(mockReq, mockRes, mockNext);
+            await storePublic(mockReq, mockRes, mockNext);
 
             expect(mockRes.status).toHaveBeenCalledWith(500);
             expect(mockRes.json).toHaveBeenCalledWith({
-                message: 'An unexpected error occurred while storing private data.',
+                message: 'An unexpected error occurred while storing the resource.',
             });
         });
 
@@ -180,7 +171,7 @@ describe('Private Controller', () => {
             const mockReq = getMockReq({
                 body: {
                     bucket: 'bucketName',
-                    id: '550e8400-e29b-41d4-a716-446655440000',
+                    id: '123e4567-e89b-12d3-a456-426614174000',
                 },
             });
             mockReq.is = jest.fn((type: string) =>
@@ -188,7 +179,7 @@ describe('Private Controller', () => {
             ) as any;
             mockReq.file = undefined;
 
-            await storePrivate(mockReq, mockRes, mockNext);
+            await storePublic(mockReq, mockRes, mockNext);
 
             expect(mockRes.status).toHaveBeenCalledWith(400);
             expect(mockRes.json).toHaveBeenCalledWith({
@@ -197,45 +188,41 @@ describe('Private Controller', () => {
         });
 
         it('should clean up the temporary file after a binary upload', async () => {
-            jest.spyOn(PrivateService.prototype, 'encryptAndStoreFile').mockResolvedValue({
-                uri: 'mock-uri',
-                digestMultibase: 'mocked-digest',
-                decryptionKey: 'test-encryption-key',
+            jest.spyOn(PublicService.prototype, 'storeFile').mockResolvedValue({
+                uri: 'mock-file-uri',
+                digestMultibase: 'mocked-file-digest',
             });
 
-            const tempPath = path.join(os.tmpdir(), 'upload-cleanup-test');
+            const tempFilePath = path.join(os.tmpdir(), 'upload-cleanup-test');
             const mockReq = getMockReq({
                 file: {
-                    path: tempPath,
+                    path: tempFilePath,
                     mimetype: 'image/png',
-                } as any,
+                } as Express.Multer.File,
                 body: {
                     bucket: 'bucketName',
-                    id: '550e8400-e29b-41d4-a716-446655440000',
                 },
             });
 
-            await storePrivate(mockReq, mockRes, mockNext);
+            await storePublic(mockReq, mockRes, mockNext);
 
-            expect(fs.promises.unlink).toHaveBeenCalledWith(path.resolve(tempPath));
+            expect(fs.promises.unlink).toHaveBeenCalledWith(path.resolve(tempFilePath));
         });
-
         it('should not attempt to clean up when there is no temporary file', async () => {
-            jest.spyOn(PrivateService.prototype, 'encryptAndStoreDocument').mockResolvedValue({
+            jest.spyOn(PublicService.prototype, 'storeDocument').mockResolvedValue({
                 uri: 'mock-uri',
                 digestMultibase: 'mocked-digest',
-                decryptionKey: 'test-encryption-key',
             });
 
             const mockReq = getMockReq({
                 body: {
                     bucket: 'bucketName',
-                    id: '550e8400-e29b-41d4-a716-446655440000',
-                    data: { key: 'value' },
+                    id: '123e4567-e89b-12d3-a456-426614174000',
+                    data: { name: 'test' },
                 },
             });
 
-            await storePrivate(mockReq, mockRes, mockNext);
+            await storePublic(mockReq, mockRes, mockNext);
 
             expect(fs.promises.unlink).not.toHaveBeenCalled();
         });
@@ -248,13 +235,13 @@ describe('Private Controller', () => {
                 file: {
                     path: tempPath,
                     mimetype: 'image/png',
-                } as any,
+                } as Express.Multer.File,
                 body: {
                     bucket: 'bucketName',
                 },
             });
 
-            await storePrivate(mockReq, mockRes, mockNext);
+            await storePublic(mockReq, mockRes, mockNext);
 
             expect(fs.promises.unlink).toHaveBeenCalledWith(path.resolve(tempPath));
         });
@@ -264,10 +251,9 @@ describe('Private Controller', () => {
                 Object.assign(new Error('EACCES: permission denied'), { code: 'EACCES' }),
             );
 
-            jest.spyOn(PrivateService.prototype, 'encryptAndStoreFile').mockResolvedValue({
+            jest.spyOn(PublicService.prototype, 'storeFile').mockResolvedValue({
                 uri: 'mock-uri',
                 digestMultibase: 'mocked-digest',
-                decryptionKey: 'test-encryption-key',
             });
 
             const tempPath = path.join(os.tmpdir(), 'upload-unlink-error');
@@ -276,7 +262,7 @@ describe('Private Controller', () => {
                 body: { bucket: 'bucketName', id: '550e8400-e29b-41d4-a716-446655440000' },
             });
 
-            await storePrivate(mockReq, mockRes, mockNext);
+            await storePublic(mockReq, mockRes, mockNext);
 
             expect(fs.promises.unlink).toHaveBeenCalledWith(path.resolve(tempPath));
             expect(mockLogger.error).toHaveBeenCalledWith(
@@ -290,14 +276,14 @@ describe('Private Controller', () => {
                 file: {
                     path: '/etc/passwd',
                     mimetype: 'application/octet-stream',
-                } as any,
+                } as Express.Multer.File,
                 body: {
                     bucket: 'bucketName',
-                    id: '550e8400-e29b-41d4-a716-446655440000',
+                    id: '123e4567-e89b-12d3-a456-426614174000',
                 },
             });
 
-            await storePrivate(mockReq, mockRes, mockNext);
+            await storePublic(mockReq, mockRes, mockNext);
 
             expect(mockRes.status).toHaveBeenCalledWith(400);
             expect(mockRes.json).toHaveBeenCalledWith({

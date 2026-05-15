@@ -1,8 +1,8 @@
-import { IStorageService } from '../../services';
-import { ApiError, ApplicationError, BadRequestError, NotFoundError } from '../../errors';
-import { AVAILABLE_BUCKETS } from '../../config';
-import { isValidUUID } from '../../utils';
-import { apiLogger as logger } from '../../services/logging';
+import { IStorageService } from '../../../services';
+import { ApiError, ApplicationError, BadRequestError, NotFoundError } from '../../../errors';
+import { AVAILABLE_BUCKETS } from '../../../config';
+import { isValidUUID } from '../../../utils';
+import { apiLogger as logger } from '../../../services/logging';
 
 export class DeleteService {
     public async deleteDocument(storageService: IStorageService, bucket: string, id: string): Promise<void> {

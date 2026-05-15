@@ -1,16 +1,16 @@
 import { getMockReq, getMockRes } from '@jest-mock/express';
 import { deleteResource } from './controller';
 import { DeleteService } from './service';
-import { BadRequestError, NotFoundError } from '../../errors';
+import { BadRequestError, NotFoundError } from '../../../errors';
 
 const { res: mockRes, next: mockNext, clearMockRes } = getMockRes();
 
-jest.mock('../../config', () => ({
+jest.mock('../../../config', () => ({
     AVAILABLE_BUCKETS: ['my-bucket'],
     STORAGE_TYPE: 'gcp',
 }));
 
-jest.mock('../../services/storage/gcp', () => ({
+jest.mock('../../../services/storage/gcp', () => ({
     GCPStorageService: jest.fn().mockImplementation(() => ({
         uploadFile: jest.fn(),
         objectExists: jest.fn(),

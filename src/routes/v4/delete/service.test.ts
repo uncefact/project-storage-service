@@ -1,8 +1,8 @@
-import { IStorageService } from '../../services';
+import { IStorageService } from '../../../services';
 import { DeleteService } from './service';
-import { BadRequestError, NotFoundError, ApplicationError } from '../../errors';
+import { BadRequestError, NotFoundError, ApplicationError } from '../../../errors';
 
-jest.mock('../../config', () => ({
+jest.mock('../../../config', () => ({
     AVAILABLE_BUCKETS: ['my-bucket'],
 }));
 

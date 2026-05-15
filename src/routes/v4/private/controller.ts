@@ -2,35 +2,35 @@ import fs from 'fs';
 import path from 'path';
 import os from 'os';
 import { RequestHandler } from 'express';
-import { initialiseStorageService, CryptographyService, IStorageService } from '../../services';
-import { PublicService } from './service';
-import { ApiError, BadRequestError } from '../../errors';
+import { CryptographyService, IStorageService, initialiseStorageService } from '../../../services';
+import { ApiError, BadRequestError } from '../../../errors';
+import { PrivateService } from './service';
 import { apiLogger } from '../../services/logging';
 
-const logger = apiLogger.child({ route: 'POST /public' });
+const logger = apiLogger.child({ route: 'POST /private' });
 const UPLOAD_DIR = path.resolve(os.tmpdir());
 
 /**
- * Handles the request to store a public document or file.
+ * Handles the request to store private data (JSON or binary) with encryption.
  *
- * For multipart/form-data requests (binary uploads), reads the uploaded file
- * from the temporary path, stores it via PublicService.storeFile(), and cleans
- * up the temporary file afterwards.
+ * For binary uploads (multipart/form-data), the file is read from the temporary
+ * path, encrypted, and stored. The temporary file is cleaned up in a finally block.
  *
- * For JSON requests, extracts parameters from the request body and stores the
- * document via PublicService.storeDocument().
+ * For JSON uploads, the body parameters are passed directly to the service for
+ * encryption and storage.
  *
- * @param req The request object.
+ * @param req The request object containing either a file upload or JSON body.
  * @param res The response object.
- * @returns The response with the stored URI and multibase digest.
+ * @returns A JSON response with the stored item's URI, multibase digest, and decryption key on success,
+ *          or an error message with an appropriate status code on failure.
  */
-export const storePublic: RequestHandler = async (req, res) => {
+export const storePrivate: RequestHandler = async (req, res) => {
     let tempPath: string | undefined;
 
     try {
-        const publicService = new PublicService();
+        const privateService = new PrivateService();
         const storageService: IStorageService = initialiseStorageService();
-        const cryptoService = new CryptographyService();
+        const cryptographyService = new CryptographyService();
 
         let response;
 
@@ -42,7 +42,7 @@ export const storePublic: RequestHandler = async (req, res) => {
             tempPath = resolvedPath;
             const fileBuffer = await fs.promises.readFile(tempPath);
 
-            response = await publicService.storeFile(storageService, cryptoService, {
+            response = await privateService.encryptAndStoreFile(storageService, cryptographyService, {
                 bucket: req.body.bucket,
                 id: req.body.id,
                 file: fileBuffer,
@@ -53,19 +53,19 @@ export const storePublic: RequestHandler = async (req, res) => {
         } else {
             const params = req.body;
 
-            response = await publicService.storeDocument(storageService, cryptoService, params);
+            response = await privateService.encryptAndStoreDocument(storageService, cryptographyService, params);
         }
 
         res.status(201).json(response);
     } catch (err: any) {
-        logger.error({ err }, '[PublicController.storePublic] An error occurred while storing the resource');
+        logger.error({ err }, '[PrivateController.storePrivate] An error occurred while storing private data');
 
         if (err instanceof ApiError) {
             return res.status(err.statusCode).json({ message: err.message });
         }
 
         res.status(500).json({
-            message: 'An unexpected error occurred while storing the resource.',
+            message: 'An unexpected error occurred while storing private data.',
         });
     } finally {
         if (tempPath && tempPath.startsWith(UPLOAD_DIR + path.sep)) {
@@ -75,7 +75,7 @@ export const storePublic: RequestHandler = async (req, res) => {
                 if (cleanupErr.code !== 'ENOENT') {
                     logger.error(
                         { tempPath, err: cleanupErr },
-                        '[PublicController.storePublic] Failed to clean up temp file',
+                        '[PrivateController.storePrivate] Failed to clean up temp file',
                     );
                 }
             }
