@@ -15,7 +15,7 @@ const storageService = {
 };
 
 const cryptographyService = {
-    computeHash: jest.fn().mockResolvedValue('mocked-hash'),
+    computeDigestMultibase: jest.fn().mockResolvedValue('mocked-digest'),
     generateEncryptionKey: jest.fn().mockResolvedValue('test-encryption-key'),
     encryptString: jest.fn().mockReturnValue({
         cipherText: 'encrypted',
@@ -33,7 +33,7 @@ describe('PrivateService', () => {
         jest.clearAllMocks();
         storageService.uploadFile.mockResolvedValue({ uri: 'mock-uri' });
         storageService.objectExists.mockResolvedValue(false);
-        cryptographyService.computeHash.mockResolvedValue('mocked-hash');
+        cryptographyService.computeDigestMultibase.mockResolvedValue('mocked-digest');
         cryptographyService.generateEncryptionKey.mockResolvedValue('test-encryption-key');
         cryptographyService.encryptString.mockReturnValue({
             cipherText: 'encrypted',
@@ -76,7 +76,7 @@ describe('PrivateService', () => {
 
             expect(result).toEqual({
                 uri: 'mock-uri',
-                digestMultibase: 'mocked-hash',
+                digestMultibase: 'mocked-digest',
                 decryptionKey: 'test-encryption-key',
             });
         });
@@ -120,7 +120,7 @@ describe('PrivateService', () => {
             expect(result).toEqual(
                 expect.objectContaining({
                     uri: 'mock-uri',
-                    digestMultibase: 'mocked-hash',
+                    digestMultibase: 'mocked-digest',
                     decryptionKey: 'test-encryption-key',
                 }),
             );
@@ -376,8 +376,8 @@ describe('PrivateService', () => {
             ).rejects.toThrow(ApplicationError);
         });
 
-        it('should propagate error when computeHash throws', async () => {
-            cryptographyService.computeHash.mockRejectedValueOnce(new Error('Hash computation failed'));
+        it('should propagate error when computeDigestMultibase throws', async () => {
+            cryptographyService.computeDigestMultibase.mockRejectedValueOnce(new Error('Digest computation failed'));
 
             const params = {
                 bucket: 'bucketName',
@@ -455,7 +455,7 @@ describe('PrivateService', () => {
 
             expect(result).toEqual({
                 uri: 'mock-uri',
-                digestMultibase: 'mocked-hash',
+                digestMultibase: 'mocked-digest',
                 decryptionKey: 'test-encryption-key',
             });
         });
@@ -527,7 +527,7 @@ describe('PrivateService', () => {
             expect(result).toEqual(
                 expect.objectContaining({
                     uri: 'mock-uri',
-                    digestMultibase: 'mocked-hash',
+                    digestMultibase: 'mocked-digest',
                     decryptionKey: 'test-encryption-key',
                 }),
             );
@@ -578,8 +578,8 @@ describe('PrivateService', () => {
 
             await service.encryptAndStoreFile(storageService as any, cryptographyService as any, params);
 
-            // computeHash should be called with the raw buffer, not the base64 string
-            expect(cryptographyService.computeHash).toHaveBeenCalledWith(fileBuffer);
+            // computeDigestMultibase should be called with the raw buffer, not the base64 string
+            expect(cryptographyService.computeDigestMultibase).toHaveBeenCalledWith(fileBuffer);
         });
 
         it('should always use .json extension for the object name', async () => {
@@ -785,8 +785,8 @@ describe('PrivateService', () => {
             ).rejects.toThrow(ApplicationError);
         });
 
-        it('should propagate error when computeHash throws', async () => {
-            cryptographyService.computeHash.mockRejectedValueOnce(new Error('Hash computation failed'));
+        it('should propagate error when computeDigestMultibase throws', async () => {
+            cryptographyService.computeDigestMultibase.mockRejectedValueOnce(new Error('Digest computation failed'));
 
             const params = {
                 bucket: 'bucketName',

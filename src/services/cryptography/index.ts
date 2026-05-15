@@ -1,7 +1,7 @@
 export * from './crypto';
 
 /**
- * Hash algorithms accepted by {@link ICryptographyService.computeHash}. String
+ * Hash algorithms accepted by {@link ICryptographyService.computeDigestMultibase}. String
  * values match the multihash codec names used by `@uncefact/untp-utils`.
  * Extend when upstream adds support for new algorithms.
  */
@@ -11,7 +11,7 @@ export enum HashAlgorithm {
 }
 
 /**
- * Multibase encodings accepted by {@link ICryptographyService.computeHash}.
+ * Multibase encodings accepted by {@link ICryptographyService.computeDigestMultibase}.
  * String values match the multibase codec names used by `@uncefact/untp-utils`.
  * Extend when upstream adds support for new encodings.
  */
@@ -43,7 +43,7 @@ export interface IEncryptionResult {
     type: EncryptionAlgorithm;
 }
 
-export interface IComputeHashOptions {
+export interface IComputeDigestMultibaseOptions {
     algorithm?: HashAlgorithm;
     base?: MultibaseEncoding;
 }
@@ -65,7 +65,7 @@ export interface ICryptographyService {
      * @see https://github.com/multiformats/multihash Multihash specification
      * @see https://github.com/multiformats/multibase Multibase specification
      */
-    computeHash(input: string | Buffer, options?: IComputeHashOptions): Promise<string>;
+    computeDigestMultibase(input: string | Buffer, options?: IComputeDigestMultibaseOptions): Promise<string>;
 
     /**
      * Generates a cryptographic key.

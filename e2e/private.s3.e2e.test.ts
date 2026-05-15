@@ -5,7 +5,7 @@ import {
     API_KEY,
     API_VERSION,
     resolveUri,
-    computeHash,
+    computeDigestMultibase,
     decryptEnvelope,
     EncryptedEnvelope,
 } from './helpers';
@@ -216,8 +216,8 @@ describe('Private API - S3 E2E Tests', () => {
                     .send({ bucket: 'documents', data: testDocument })
                     .expect(201);
 
-                const expectedHash = await computeHash(JSON.stringify(testDocument));
-                expect(postResponse.body.digestMultibase).toBe(expectedHash);
+                const expectedDigest = await computeDigestMultibase(JSON.stringify(testDocument));
+                expect(postResponse.body.digestMultibase).toBe(expectedDigest);
             });
         });
     });
@@ -454,8 +454,8 @@ describe('Private API - S3 E2E Tests', () => {
                     .field('bucket', 'files')
                     .expect(201);
 
-                const expectedHash = await computeHash(MINIMAL_PNG);
-                expect(postResponse.body.digestMultibase).toBe(expectedHash);
+                const expectedDigest = await computeDigestMultibase(MINIMAL_PNG);
+                expect(postResponse.body.digestMultibase).toBe(expectedDigest);
             });
         });
     });

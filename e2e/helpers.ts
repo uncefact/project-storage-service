@@ -46,7 +46,7 @@ const importEsm = new Function('specifier', 'return import(specifier)') as <T>(s
  * @see https://github.com/multiformats/multihash Multihash specification
  * @see https://github.com/multiformats/multibase Multibase specification
  */
-export async function computeHash(input: string | Buffer): Promise<string> {
+export async function computeDigestMultibase(input: string | Buffer): Promise<string> {
     const { MultibaseDigest } = await importEsm<MultibaseDigestModule>('@uncefact/untp-utils/multibase-digest');
     const bytes = typeof input === 'string' ? new TextEncoder().encode(input) : new Uint8Array(input);
     const digest = await MultibaseDigest.fromData(bytes, { algorithm: 'sha2-256', base: 'base58btc' });

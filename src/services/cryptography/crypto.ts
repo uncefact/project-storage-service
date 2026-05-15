@@ -8,7 +8,7 @@ import {
     MultibaseEncoding,
     EncryptionAlgorithm,
     ICryptographyService,
-    IComputeHashOptions,
+    IComputeDigestMultibaseOptions,
     IEncryptionResult,
 } from './index';
 
@@ -55,7 +55,10 @@ async function loadMultibaseDigest(): Promise<MultibaseDigestModule> {
  * @see https://github.com/multiformats/multibase Multibase specification
  */
 export class CryptographyService implements ICryptographyService {
-    async computeHash(input: string | Buffer, options: IComputeHashOptions = {}): Promise<string> {
+    async computeDigestMultibase(
+        input: string | Buffer,
+        options: IComputeDigestMultibaseOptions = {},
+    ): Promise<string> {
         const algorithm = options.algorithm ?? HashAlgorithm.SHA256;
         const base = options.base ?? MultibaseEncoding.BASE58_BTC;
         const bytes = typeof input === 'string' ? new TextEncoder().encode(input) : new Uint8Array(input);
@@ -65,7 +68,7 @@ export class CryptographyService implements ICryptographyService {
             return digest.toString();
         } catch (err) {
             console.error(
-                `[CryptographyService.computeHash] MultibaseDigest.fromData failed (algorithm=${algorithm}, base=${base}, bytes=${bytes.byteLength}).`,
+                `[CryptographyService.computeDigestMultibase] MultibaseDigest.fromData failed (algorithm=${algorithm}, base=${base}, bytes=${bytes.byteLength}).`,
                 err,
             );
             throw err;

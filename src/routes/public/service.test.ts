@@ -31,7 +31,7 @@ describe('PublicService', () => {
         };
 
         mockCryptoService = {
-            computeHash: jest.fn().mockResolvedValue('mocked-hash'),
+            computeDigestMultibase: jest.fn().mockResolvedValue('mocked-digest'),
         } as unknown as jest.Mocked<ICryptographyService>;
     });
 
@@ -49,7 +49,7 @@ describe('PublicService', () => {
                 'my-bucket',
                 '123e4567-e89b-12d3-a456-426614174000.json',
             );
-            expect(mockCryptoService.computeHash).toHaveBeenCalledWith(JSON.stringify(validParams.data));
+            expect(mockCryptoService.computeDigestMultibase).toHaveBeenCalledWith(JSON.stringify(validParams.data));
             expect(mockStorageService.uploadFile).toHaveBeenCalledWith(
                 'my-bucket',
                 '123e4567-e89b-12d3-a456-426614174000.json',
@@ -58,7 +58,7 @@ describe('PublicService', () => {
             );
             expect(result).toEqual({
                 uri: 'https://storage.example.com/my-bucket/test-id.json',
-                digestMultibase: 'mocked-hash',
+                digestMultibase: 'mocked-digest',
             });
         });
 
@@ -310,8 +310,8 @@ describe('PublicService', () => {
             );
         });
 
-        it('should propagate error when computeHash throws', async () => {
-            mockCryptoService.computeHash.mockRejectedValue(new Error('Hash computation failed'));
+        it('should propagate error when computeDigestMultibase throws', async () => {
+            mockCryptoService.computeDigestMultibase.mockRejectedValue(new Error('Digest computation failed'));
 
             await expect(service.storeDocument(mockStorageService, mockCryptoService, validParams)).rejects.toThrow(
                 ApplicationError,
@@ -339,7 +339,7 @@ describe('PublicService', () => {
                 'my-bucket',
                 '123e4567-e89b-12d3-a456-426614174000.png',
             );
-            expect(mockCryptoService.computeHash).toHaveBeenCalledWith(fileBuffer);
+            expect(mockCryptoService.computeDigestMultibase).toHaveBeenCalledWith(fileBuffer);
             expect(mockStorageService.uploadFile).toHaveBeenCalledWith(
                 'my-bucket',
                 '123e4567-e89b-12d3-a456-426614174000.png',
@@ -348,7 +348,7 @@ describe('PublicService', () => {
             );
             expect(result).toEqual({
                 uri: 'https://storage.example.com/my-bucket/test-id.json',
-                digestMultibase: 'mocked-hash',
+                digestMultibase: 'mocked-digest',
             });
         });
 
@@ -482,7 +482,7 @@ describe('PublicService', () => {
             mockStorageService.uploadFile.mockResolvedValue({
                 uri: 'https://storage.example.com/my-bucket/test-id.jpg',
             });
-            mockCryptoService.computeHash.mockResolvedValue('mocked-hash');
+            mockCryptoService.computeDigestMultibase.mockResolvedValue('mocked-digest');
 
             // image/jpeg -> jpg (mime-types maps jpeg to .jpg)
             await service.storeFile(mockStorageService, mockCryptoService, {
@@ -501,7 +501,7 @@ describe('PublicService', () => {
             mockStorageService.uploadFile.mockResolvedValue({
                 uri: 'https://storage.example.com/my-bucket/test-id.pdf',
             });
-            mockCryptoService.computeHash.mockResolvedValue('mocked-hash');
+            mockCryptoService.computeDigestMultibase.mockResolvedValue('mocked-digest');
 
             // application/pdf -> pdf
             await service.storeFile(mockStorageService, mockCryptoService, {
@@ -643,8 +643,8 @@ describe('PublicService', () => {
             );
         });
 
-        it('should propagate error when computeHash throws', async () => {
-            mockCryptoService.computeHash.mockRejectedValue(new Error('Hash computation failed'));
+        it('should propagate error when computeDigestMultibase throws', async () => {
+            mockCryptoService.computeDigestMultibase.mockRejectedValue(new Error('Digest computation failed'));
 
             await expect(service.storeFile(mockStorageService, mockCryptoService, validParams)).rejects.toThrow(
                 ApplicationError,

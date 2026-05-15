@@ -1,6 +1,6 @@
 import request from 'supertest';
 import { v4 as uuidv4 } from 'uuid';
-import { APP_BASE_URL, API_KEY, API_VERSION, resolveUri, computeHash } from './helpers';
+import { APP_BASE_URL, API_KEY, API_VERSION, resolveUri, computeDigestMultibase } from './helpers';
 
 jest.setTimeout(30000);
 
@@ -175,8 +175,8 @@ describe('Public API - S3 E2E Tests', () => {
                     .send({ bucket: 'documents', data: testDocument })
                     .expect(201);
 
-                const expectedHash = await computeHash(JSON.stringify(testDocument));
-                expect(response.body.digestMultibase).toBe(expectedHash);
+                const expectedDigest = await computeDigestMultibase(JSON.stringify(testDocument));
+                expect(response.body.digestMultibase).toBe(expectedDigest);
             });
         });
     });
@@ -401,8 +401,8 @@ describe('Public API - S3 E2E Tests', () => {
                     .field('bucket', 'files')
                     .expect(201);
 
-                const expectedHash = await computeHash(MINIMAL_PNG);
-                expect(response.body.digestMultibase).toBe(expectedHash);
+                const expectedDigest = await computeDigestMultibase(MINIMAL_PNG);
+                expect(response.body.digestMultibase).toBe(expectedDigest);
             });
         });
     });

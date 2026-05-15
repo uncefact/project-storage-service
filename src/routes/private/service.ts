@@ -73,7 +73,7 @@ export class PrivateService {
 
             const stringifiedData = JSON.stringify(data);
 
-            const digestMultibase = await cryptographyService.computeHash(stringifiedData);
+            const digestMultibase = await cryptographyService.computeDigestMultibase(stringifiedData);
 
             const key = await cryptographyService.generateEncryptionKey();
 
@@ -183,7 +183,7 @@ export class PrivateService {
                 throw new ConflictError('A file with the provided ID already exists in the specified bucket.');
             }
 
-            const digestMultibase = await cryptographyService.computeHash(file);
+            const digestMultibase = await cryptographyService.computeDigestMultibase(file);
 
             const base64Data = file.toString('base64');
 

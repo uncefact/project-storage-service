@@ -69,7 +69,7 @@ export class PublicService {
 
             const stringifiedData = JSON.stringify(data);
 
-            const digestMultibase = await cryptoService.computeHash(stringifiedData);
+            const digestMultibase = await cryptoService.computeDigestMultibase(stringifiedData);
 
             const { uri } = await storageService.uploadFile(
                 resolvedBucket,
@@ -163,7 +163,7 @@ export class PublicService {
                 throw new ConflictError('A file with the provided ID already exists in the specified bucket.');
             }
 
-            const digestMultibase = await cryptoService.computeHash(file);
+            const digestMultibase = await cryptoService.computeDigestMultibase(file);
 
             const { uri } = await storageService.uploadFile(resolvedBucket, objectName, file, mimeType);
 
