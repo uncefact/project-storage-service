@@ -145,6 +145,25 @@ The service emits structured JSON logs via Pino. Every log line includes a `corr
 
 Every response carries an `x-correlation-id` header. Inbound `x-correlation-id` request headers are accepted and propagated when they pass validation (max 128 characters, charset `[A-Za-z0-9_-]`); invalid or missing values are replaced by a freshly minted UUID. Use this to trace a single logical request across services.
 
+### OpenTelemetry
+
+The service ships with the OpenTelemetry Node SDK and auto-instrumentations for HTTP, Express, and AWS SDK calls. Tracing is **opt-in**: the SDK starts only when `OTEL_EXPORTER_OTLP_ENDPOINT` is set. With no endpoint configured the service runs as before with zero SDK overhead.
+
+- `OTEL_EXPORTER_OTLP_ENDPOINT`:
+  OTLP gRPC endpoint to export traces to (e.g. `http://localhost:4317`). When unset, the SDK does not start.
+- `OTEL_SERVICE_NAME`:
+  Overrides the `service.name` resource attribute (default: `storage-service`). The standard OpenTelemetry env var the wider ecosystem expects.
+- `DEPLOYMENT_ENVIRONMENT`:
+  Resource attribute `deployment.environment.name` (default: `local`). Set this in deployed environments (`staging`, `production`, etc.) so dashboards can tenant signals by environment.
+
+Resource attributes the SDK emits with every span:
+
+| Attribute                     | Value                                                                 |
+| ----------------------------- | --------------------------------------------------------------------- |
+| `service.name`                | `OTEL_SERVICE_NAME` env var (default `storage-service`)               |
+| `service.version`             | Read from `package.json`                                              |
+| `deployment.environment.name` | `DEPLOYMENT_ENVIRONMENT` env var (default `local`)                    |
+
 ### S3-Compatible Storage (AWS, MinIO, DigitalOcean Spaces, Cloudflare R2, etc.)
 
 - `S3_REGION`:
