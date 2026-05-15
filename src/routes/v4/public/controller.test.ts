@@ -12,7 +12,7 @@ const mockLogger: any = {
 };
 mockLogger.child = jest.fn(() => mockLogger);
 
-jest.mock('../../services/logging', () => ({
+jest.mock('../../../services/logging', () => ({
     getLogger: () => mockLogger,
     apiLogger: mockLogger,
     authLogger: mockLogger,
