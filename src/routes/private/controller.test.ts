@@ -1,6 +1,26 @@
 import os from 'os';
 import path from 'path';
 import { getMockReq, getMockRes } from '@jest-mock/express';
+
+const mockLogger: any = {
+    debug: jest.fn(),
+    info: jest.fn(),
+    warn: jest.fn(),
+    error: jest.fn(),
+    fatal: jest.fn(),
+};
+mockLogger.child = jest.fn(() => mockLogger);
+
+jest.mock('../../services/logging', () => ({
+    getLogger: () => mockLogger,
+    apiLogger: mockLogger,
+    authLogger: mockLogger,
+    cryptoLogger: mockLogger,
+    storageLogger: mockLogger,
+    configLogger: mockLogger,
+    serverLogger: mockLogger,
+}));
+
 import { BadRequestError } from '../../errors';
 import { PrivateService } from './service';
 
@@ -243,7 +263,6 @@ describe('Private Controller', () => {
             (fs.promises.unlink as jest.Mock).mockRejectedValueOnce(
                 Object.assign(new Error('EACCES: permission denied'), { code: 'EACCES' }),
             );
-            const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
 
             jest.spyOn(PrivateService.prototype, 'encryptAndStoreFile').mockResolvedValue({
                 uri: 'mock-uri',
@@ -260,13 +279,10 @@ describe('Private Controller', () => {
             await storePrivate(mockReq, mockRes, mockNext);
 
             expect(fs.promises.unlink).toHaveBeenCalledWith(path.resolve(tempPath));
-            expect(consoleSpy).toHaveBeenCalledWith(
+            expect(mockLogger.error).toHaveBeenCalledWith(
+                expect.objectContaining({ tempPath: expect.any(String), err: expect.any(Error) }),
                 expect.stringContaining('Failed to clean up temp file'),
-                expect.any(String),
-                expect.any(Error),
             );
-
-            consoleSpy.mockRestore();
         });
 
         it('should return 400 when file path is outside the upload directory', async () => {

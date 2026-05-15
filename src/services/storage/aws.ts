@@ -8,7 +8,10 @@ import {
     DeleteObjectCommand,
 } from '@aws-sdk/client-s3';
 import { IStorageService } from '.';
+import { storageLogger } from '../logging';
 import { S3_REGION, S3_ENDPOINT, S3_FORCE_PATH_STYLE, generatePublicUri } from '../../config';
+
+const logger = storageLogger.child({ adapter: 'aws' });
 
 /**
  * Creates the S3 client configuration.
@@ -92,10 +95,10 @@ export class AWSStorageService implements IStorageService {
         try {
             const command = new PutObjectCommand(params);
             await this.storage.send(command);
-            console.log(`File uploaded successfully to ${bucket}/${key}`);
+            logger.info({ bucket, key }, '[AWSStorageService.uploadFile] File uploaded successfully');
             return { uri: generateUri(bucket, key) };
         } catch (error) {
-            console.error(`Error uploading file: ${error}`);
+            logger.error({ bucket, key, err: error }, '[AWSStorageService.uploadFile] Error uploading file');
             throw error;
         }
     }
@@ -137,7 +140,10 @@ export class AWSStorageService implements IStorageService {
             const response = await this.storage.send(command);
             return (response.Contents || []).map((obj) => obj.Key!).filter(Boolean);
         } catch (error) {
-            console.error(`Error listing objects with prefix ${prefix}: ${error}`);
+            logger.error(
+                { bucket, prefix, err: error },
+                '[AWSStorageService.listObjectsByPrefix] Error listing objects',
+            );
             throw error;
         }
     }
@@ -155,9 +161,9 @@ export class AWSStorageService implements IStorageService {
 
         try {
             await this.storage.send(command);
-            console.log(`File deleted successfully from ${bucket}/${key}`);
+            logger.info({ bucket, key }, '[AWSStorageService.deleteFile] File deleted successfully');
         } catch (error) {
-            console.error(`Error deleting file: ${error}`);
+            logger.error({ bucket, key, err: error }, '[AWSStorageService.deleteFile] Error deleting file');
             throw error;
         }
     }

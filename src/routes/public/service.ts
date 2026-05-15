@@ -6,6 +6,7 @@ import { ApiError, ApplicationError, BadRequestError, ConflictError } from '../.
 import { AVAILABLE_BUCKETS, ALLOWED_UPLOAD_TYPES, DEFAULT_BUCKET } from '../../config';
 import { isValidUUID } from '../../utils';
 import { IStoreParams, IStoreFileParams } from '../../types';
+import { apiLogger as logger } from '../../services/logging';
 
 export class PublicService {
     /**
@@ -32,8 +33,9 @@ export class PublicService {
             const resolvedBucket = bucket || DEFAULT_BUCKET;
 
             if (!bucket && resolvedBucket) {
-                console.info(
-                    `[PublicService.storeDocument] No bucket specified; using DEFAULT_BUCKET="${resolvedBucket}"`,
+                logger.info(
+                    { defaultBucket: resolvedBucket },
+                    '[PublicService.storeDocument] No bucket specified; falling back to DEFAULT_BUCKET',
                 );
             }
 
@@ -83,7 +85,7 @@ export class PublicService {
                 digestMultibase,
             };
         } catch (err: any) {
-            console.error('[PublicService.storeDocument] An error occurred while storing the document.', err);
+            logger.error({ err }, '[PublicService.storeDocument] An error occurred while storing the document');
 
             if (err instanceof ApiError) {
                 throw err;
@@ -118,7 +120,10 @@ export class PublicService {
             const resolvedBucket = bucket || DEFAULT_BUCKET;
 
             if (!bucket && resolvedBucket) {
-                console.info(`[PublicService.storeFile] No bucket specified; using DEFAULT_BUCKET="${resolvedBucket}"`);
+                logger.info(
+                    { defaultBucket: resolvedBucket },
+                    '[PublicService.storeFile] No bucket specified; falling back to DEFAULT_BUCKET',
+                );
             }
 
             if (!resolvedBucket) {
@@ -172,7 +177,7 @@ export class PublicService {
                 digestMultibase,
             };
         } catch (err: any) {
-            console.error('[PublicService.storeFile] An error occurred while storing the file.', err);
+            logger.error({ err }, '[PublicService.storeFile] An error occurred while storing the file');
 
             if (err instanceof ApiError) {
                 throw err;

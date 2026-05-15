@@ -7,8 +7,14 @@ import swaggerDocument from './swagger/swagger.json';
 import { updateSwagger } from './swagger/helpers';
 import { API_VERSION, DOMAIN, EXTERNAL_PORT, MAX_UPLOAD_SIZE, PROTOCOL } from './config';
 import { buildBaseUrl } from './utils';
+import { apiLogger as logger } from './services/logging';
+import { correlationIdMiddleware } from './middleware/correlation-id';
 
 export const app = express();
+
+// Correlation ID middleware runs FIRST so every downstream handler and every
+// log line (via the registered request-context provider) carries the id.
+app.use(correlationIdMiddleware(logger));
 
 let swaggerJson: any = { ...swaggerDocument };
 
@@ -39,7 +45,7 @@ app.use(`/api/${API_VERSION}`, router);
 
 // Global error handler for unhandled errors
 app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
-    console.error('[GlobalErrorHandler] Unhandled error:', err);
+    logger.error({ err }, '[GlobalErrorHandler] Unhandled error');
     res.status(500).json({
         message: 'An unexpected error occurred.',
     });

@@ -5,7 +5,9 @@ import { RequestHandler } from 'express';
 import { CryptographyService, IStorageService, initialiseStorageService } from '../../services';
 import { ApiError, BadRequestError } from '../../errors';
 import { PrivateService } from './service';
+import { apiLogger } from '../../services/logging';
 
+const logger = apiLogger.child({ route: 'POST /private' });
 const UPLOAD_DIR = path.resolve(os.tmpdir());
 
 /**
@@ -56,7 +58,7 @@ export const storePrivate: RequestHandler = async (req, res) => {
 
         res.status(201).json(response);
     } catch (err: any) {
-        console.error('[PrivateController.storePrivate] An error occurred while storing private data.', err);
+        logger.error({ err }, '[PrivateController.storePrivate] An error occurred while storing private data');
 
         if (err instanceof ApiError) {
             return res.status(err.statusCode).json({ message: err.message });
@@ -71,10 +73,9 @@ export const storePrivate: RequestHandler = async (req, res) => {
                 await fs.promises.unlink(tempPath);
             } catch (cleanupErr: any) {
                 if (cleanupErr.code !== 'ENOENT') {
-                    console.error(
-                        '[PrivateController.storePrivate] Failed to clean up temp file %s:',
-                        tempPath,
-                        cleanupErr,
+                    logger.error(
+                        { tempPath, err: cleanupErr },
+                        '[PrivateController.storePrivate] Failed to clean up temp file',
                     );
                 }
             }

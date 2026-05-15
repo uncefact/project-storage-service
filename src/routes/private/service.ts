@@ -5,6 +5,7 @@ import { AVAILABLE_BUCKETS, ALLOWED_UPLOAD_TYPES, DEFAULT_BUCKET } from '../../c
 import { IStoreParams, IStoreFileParams } from '../../types';
 import { isValidUUID } from '../../utils';
 import { ApiError, ApplicationError, BadRequestError, ConflictError } from '../../errors';
+import { apiLogger as logger } from '../../services/logging';
 
 export class PrivateService {
     /**
@@ -36,8 +37,9 @@ export class PrivateService {
             const resolvedBucket = bucket || DEFAULT_BUCKET;
 
             if (!bucket && resolvedBucket) {
-                console.info(
-                    `[PrivateService.encryptAndStoreDocument] No bucket specified; using DEFAULT_BUCKET="${resolvedBucket}"`,
+                logger.info(
+                    { defaultBucket: resolvedBucket },
+                    '[PrivateService.encryptAndStoreDocument] No bucket specified; falling back to DEFAULT_BUCKET',
                 );
             }
 
@@ -96,9 +98,9 @@ export class PrivateService {
                 decryptionKey: key,
             };
         } catch (err: any) {
-            console.error(
-                '[PrivateService.encryptAndStoreDocument] An error occurred while encrypting and storing the document.',
-                err,
+            logger.error(
+                { err },
+                '[PrivateService.encryptAndStoreDocument] An error occurred while encrypting and storing the document',
             );
 
             if (err instanceof ApiError) {
@@ -142,8 +144,9 @@ export class PrivateService {
             const resolvedBucket = bucket || DEFAULT_BUCKET;
 
             if (!bucket && resolvedBucket) {
-                console.info(
-                    `[PrivateService.encryptAndStoreFile] No bucket specified; using DEFAULT_BUCKET="${resolvedBucket}"`,
+                logger.info(
+                    { defaultBucket: resolvedBucket },
+                    '[PrivateService.encryptAndStoreFile] No bucket specified; falling back to DEFAULT_BUCKET',
                 );
             }
 
@@ -208,9 +211,9 @@ export class PrivateService {
                 decryptionKey: key,
             };
         } catch (err: any) {
-            console.error(
-                '[PrivateService.encryptAndStoreFile] An error occurred while encrypting and storing the file.',
-                err,
+            logger.error(
+                { err },
+                '[PrivateService.encryptAndStoreFile] An error occurred while encrypting and storing the file',
             );
 
             if (err instanceof ApiError) {
