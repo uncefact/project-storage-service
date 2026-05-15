@@ -158,11 +158,11 @@ The service ships with the OpenTelemetry Node SDK and auto-instrumentations for 
 
 Resource attributes the SDK emits with every span:
 
-| Attribute                     | Value                                                                 |
-| ----------------------------- | --------------------------------------------------------------------- |
-| `service.name`                | `OTEL_SERVICE_NAME` env var (default `storage-service`)               |
-| `service.version`             | Read from `package.json`                                              |
-| `deployment.environment.name` | `DEPLOYMENT_ENVIRONMENT` env var (default `local`)                    |
+| Attribute                     | Value                                                   |
+| ----------------------------- | ------------------------------------------------------- |
+| `service.name`                | `OTEL_SERVICE_NAME` env var (default `storage-service`) |
+| `service.version`             | Read from `package.json`                                |
+| `deployment.environment.name` | `DEPLOYMENT_ENVIRONMENT` env var (default `local`)      |
 
 ### S3-Compatible Storage (AWS, MinIO, DigitalOcean Spaces, Cloudflare R2, etc.)
 
