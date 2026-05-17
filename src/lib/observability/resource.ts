@@ -12,7 +12,9 @@ const ATTR_SERVICE_VERSION = 'service.version';
 const ATTR_DEPLOYMENT_ENVIRONMENT_NAME = 'deployment.environment.name';
 
 const DEFAULT_SERVICE_NAME = 'storage-service';
-const DEFAULT_ENVIRONMENT = 'local';
+// The service operates in two environments only: `development` (covers laptops
+// and the deployed dev environment) and `production`. Anything else is a typo.
+const DEFAULT_ENVIRONMENT = 'development';
 
 export interface BuildResourceOptions {
     /** Overrides `process.env.OTEL_SERVICE_NAME` and the hardcoded default. */

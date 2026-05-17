@@ -59,21 +59,21 @@ describe('buildResource', () => {
         expect(attrs[ATTR_SERVICE_VERSION]).toBe('9.9.9-test');
     });
 
-    it('falls back to "local" when DEPLOYMENT_ENVIRONMENT is unset', () => {
+    it('falls back to "development" when DEPLOYMENT_ENVIRONMENT is unset', () => {
         const attrs = buildResource().attributes;
-        expect(attrs[ATTR_DEPLOYMENT_ENVIRONMENT_NAME]).toBe('local');
+        expect(attrs[ATTR_DEPLOYMENT_ENVIRONMENT_NAME]).toBe('development');
     });
 
     it('treats an empty DEPLOYMENT_ENVIRONMENT as unset', () => {
         process.env.DEPLOYMENT_ENVIRONMENT = '';
         const attrs = buildResource().attributes;
-        expect(attrs[ATTR_DEPLOYMENT_ENVIRONMENT_NAME]).toBe('local');
+        expect(attrs[ATTR_DEPLOYMENT_ENVIRONMENT_NAME]).toBe('development');
     });
 
     it('treats a whitespace-only DEPLOYMENT_ENVIRONMENT as unset', () => {
         process.env.DEPLOYMENT_ENVIRONMENT = '   ';
         const attrs = buildResource().attributes;
-        expect(attrs[ATTR_DEPLOYMENT_ENVIRONMENT_NAME]).toBe('local');
+        expect(attrs[ATTR_DEPLOYMENT_ENVIRONMENT_NAME]).toBe('development');
     });
 
     it('uses DEPLOYMENT_ENVIRONMENT from the process environment when set', () => {
@@ -84,8 +84,8 @@ describe('buildResource', () => {
 
     it('honours an explicit deploymentEnvironment option over the env var', () => {
         process.env.DEPLOYMENT_ENVIRONMENT = 'production';
-        const attrs = buildResource({ deploymentEnvironment: 'staging' }).attributes;
-        expect(attrs[ATTR_DEPLOYMENT_ENVIRONMENT_NAME]).toBe('staging');
+        const attrs = buildResource({ deploymentEnvironment: 'development' }).attributes;
+        expect(attrs[ATTR_DEPLOYMENT_ENVIRONMENT_NAME]).toBe('development');
     });
 
     it('falls back to the env var when the option is empty', () => {

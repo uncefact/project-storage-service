@@ -154,15 +154,15 @@ The service ships with the OpenTelemetry Node SDK and auto-instrumentations for 
 - `OTEL_SERVICE_NAME`:
   Overrides the `service.name` resource attribute (default: `storage-service`). The standard OpenTelemetry env var the wider ecosystem expects.
 - `DEPLOYMENT_ENVIRONMENT`:
-  Resource attribute `deployment.environment.name` (default: `local`). Set this in deployed environments (`staging`, `production`, etc.) so dashboards can tenant signals by environment.
+  Resource attribute `deployment.environment.name`. Valid values are `development` (default; covers laptops and the deployed dev environment) and `production`. Set this to `production` in prod deployments so dashboards can tenant signals by environment.
 
 Resource attributes the SDK emits with every span:
 
-| Attribute                     | Value                                                   |
-| ----------------------------- | ------------------------------------------------------- |
-| `service.name`                | `OTEL_SERVICE_NAME` env var (default `storage-service`) |
-| `service.version`             | Read from `package.json`                                |
-| `deployment.environment.name` | `DEPLOYMENT_ENVIRONMENT` env var (default `local`)      |
+| Attribute                     | Value                                                    |
+| ----------------------------- | -------------------------------------------------------- |
+| `service.name`                | `OTEL_SERVICE_NAME` env var (default `storage-service`)  |
+| `service.version`             | Read from `package.json`                                 |
+| `deployment.environment.name` | `DEPLOYMENT_ENVIRONMENT` env var (default `development`) |
 
 ### S3-Compatible Storage (AWS, MinIO, DigitalOcean Spaces, Cloudflare R2, etc.)
 
