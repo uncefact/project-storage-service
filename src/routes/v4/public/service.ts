@@ -6,7 +6,7 @@ import { ApiError, ApplicationError, BadRequestError, ConflictError } from '../.
 import { AVAILABLE_BUCKETS, ALLOWED_UPLOAD_TYPES, DEFAULT_BUCKET } from '../../../config';
 import { isValidUUID } from '../../../utils';
 import { IStoreParams, IStoreFileParams } from '../../../types';
-import { apiLogger as logger } from '../../../services/logging';
+import { apiLogger } from '../../../services/logging';
 
 export class PublicService {
     /**
@@ -29,50 +29,57 @@ export class PublicService {
         cryptoService: ICryptographyService,
         { bucket, id, data }: IStoreParams,
     ) {
+        const logger = apiLogger.child({ service: 'PublicService', method: 'storeDocument' });
         try {
+            logger.info({ bucket, id: id ?? null }, 'Validating store-document parameters');
             const resolvedBucket = bucket || DEFAULT_BUCKET;
 
             if (!bucket && resolvedBucket) {
-                logger.info(
-                    { defaultBucket: resolvedBucket },
-                    '[PublicService.storeDocument] No bucket specified; falling back to DEFAULT_BUCKET',
-                );
+                logger.info({ defaultBucket: resolvedBucket }, 'No bucket specified; falling back to DEFAULT_BUCKET');
             }
 
             if (!resolvedBucket) {
+                logger.warn('No bucket resolved; rejecting request');
                 throw new BadRequestError(
                     'Bucket is required. Please provide a bucket name, or set the DEFAULT_BUCKET environment variable.',
                 );
             }
 
             if (!AVAILABLE_BUCKETS.includes(resolvedBucket)) {
+                logger.warn({ bucket: resolvedBucket }, 'Rejected unsupported bucket');
                 throw new BadRequestError(
                     `Invalid bucket. Must be one of the following buckets: ${AVAILABLE_BUCKETS.join(', ')}`,
                 );
             }
 
             if (!isPlainObject(data)) {
+                logger.warn('Rejected non-object data payload');
                 throw new BadRequestError('Data must be a JSON object. Please provide a valid JSON object.');
             }
 
             const documentId = id || v4();
 
             if (!isValidUUID(documentId)) {
+                logger.warn({ id: documentId }, 'Rejected invalid document id');
                 throw new BadRequestError(`Invalid id ${documentId}. Please provide a valid UUID.`);
             }
 
             const objectName = documentId + '.json';
 
+            logger.info({ bucket: resolvedBucket, objectName }, 'Checking object existence');
             const objectExists = await storageService.objectExists(resolvedBucket, objectName);
 
             if (objectExists) {
+                logger.warn({ bucket: resolvedBucket, objectName }, 'Rejected duplicate document id');
                 throw new ConflictError('A document with the provided ID already exists in the specified bucket.');
             }
 
             const stringifiedData = JSON.stringify(data);
 
+            logger.info('Computing multibase digest');
             const digestMultibase = await cryptoService.computeDigestMultibase(stringifiedData);
 
+            logger.info({ bucket: resolvedBucket, objectName }, 'Uploading document to storage');
             const { uri } = await storageService.uploadFile(
                 resolvedBucket,
                 objectName,
@@ -80,12 +87,13 @@ export class PublicService {
                 'application/json',
             );
 
+            logger.info({ uri }, 'Public document stored successfully');
             return {
                 uri,
                 digestMultibase,
             };
         } catch (err: any) {
-            logger.error({ err }, '[PublicService.storeDocument] An error occurred while storing the document');
+            logger.error({ err }, 'Error storing public document');
 
             if (err instanceof ApiError) {
                 throw err;
@@ -116,33 +124,36 @@ export class PublicService {
         cryptoService: ICryptographyService,
         { bucket, id, file, mimeType }: IStoreFileParams,
     ) {
+        const logger = apiLogger.child({ service: 'PublicService', method: 'storeFile' });
         try {
+            logger.info({ bucket, id: id ?? null, mimeType }, 'Validating store-file parameters');
             const resolvedBucket = bucket || DEFAULT_BUCKET;
 
             if (!bucket && resolvedBucket) {
-                logger.info(
-                    { defaultBucket: resolvedBucket },
-                    '[PublicService.storeFile] No bucket specified; falling back to DEFAULT_BUCKET',
-                );
+                logger.info({ defaultBucket: resolvedBucket }, 'No bucket specified; falling back to DEFAULT_BUCKET');
             }
 
             if (!resolvedBucket) {
+                logger.warn('No bucket resolved; rejecting request');
                 throw new BadRequestError(
                     'Bucket is required. Please provide a bucket name, or set the DEFAULT_BUCKET environment variable.',
                 );
             }
 
             if (!AVAILABLE_BUCKETS.includes(resolvedBucket)) {
+                logger.warn({ bucket: resolvedBucket }, 'Rejected unsupported bucket');
                 throw new BadRequestError(
                     `Invalid bucket. Must be one of the following buckets: ${AVAILABLE_BUCKETS.join(', ')}`,
                 );
             }
 
             if (!file) {
+                logger.warn('Rejected missing file');
                 throw new BadRequestError('File is required. Please provide a file.');
             }
 
             if (!mimeType || !ALLOWED_UPLOAD_TYPES.includes(mimeType)) {
+                logger.warn({ mimeType }, 'Rejected unsupported MIME type');
                 throw new BadRequestError(
                     `Invalid MIME type. Must be one of the following types: ${ALLOWED_UPLOAD_TYPES.join(', ')}`,
                 );
@@ -151,33 +162,40 @@ export class PublicService {
             const fileId = id || v4();
 
             if (!isValidUUID(fileId)) {
+                logger.warn({ id: fileId }, 'Rejected invalid file id');
                 throw new BadRequestError(`Invalid id ${fileId}. Please provide a valid UUID.`);
             }
 
             const ext = extension(mimeType);
 
             if (!ext) {
+                logger.warn({ mimeType }, 'Rejected MIME type with no resolvable file extension');
                 throw new BadRequestError(`Unable to determine file extension for MIME type '${mimeType}'.`);
             }
 
             const objectName = `${fileId}.${ext}`;
 
+            logger.info({ bucket: resolvedBucket, objectName }, 'Checking object existence');
             const objectExists = await storageService.objectExists(resolvedBucket, objectName);
 
             if (objectExists) {
+                logger.warn({ bucket: resolvedBucket, objectName }, 'Rejected duplicate file id');
                 throw new ConflictError('A file with the provided ID already exists in the specified bucket.');
             }
 
+            logger.info('Computing multibase digest');
             const digestMultibase = await cryptoService.computeDigestMultibase(file);
 
+            logger.info({ bucket: resolvedBucket, objectName }, 'Uploading file to storage');
             const { uri } = await storageService.uploadFile(resolvedBucket, objectName, file, mimeType);
 
+            logger.info({ uri }, 'Public file stored successfully');
             return {
                 uri,
                 digestMultibase,
             };
         } catch (err: any) {
-            logger.error({ err }, '[PublicService.storeFile] An error occurred while storing the file');
+            logger.error({ err }, 'Error storing public file');
 
             if (err instanceof ApiError) {
                 throw err;
