@@ -3,10 +3,27 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
+import fs from 'fs';
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { getBucketConfiguration } from './bucket-config';
 import { createPublicUriGenerator } from './public-url';
+
+const VERSION_FILE = 'version.json';
+
+// apiVersion is the MAJOR.MINOR pair the API contract publishes. It is kept in
+// lockstep with the URL path version segment under src/routes/v<MAJOR>/: the
+// MAJOR of apiVersion always equals the MAJOR in the URL. MINOR bumps document
+// backwards-compatible additions and do not change the URL.
+export const getApiVersion = () => {
+    const version = fs.readFileSync(VERSION_FILE, 'utf8');
+    const { apiVersion } = JSON.parse(version);
+
+    if (!apiVersion) throw Error('API version not found');
+    return apiVersion;
+};
+
+export const API_VERSION = getApiVersion();
 
 export const PROTOCOL = process.env.PROTOCOL || 'http';
 export const DOMAIN = process.env.DOMAIN || 'localhost';

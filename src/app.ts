@@ -5,7 +5,7 @@ import bodyParser from 'body-parser';
 import { router } from './routes';
 import swaggerDocument from './swagger/swagger.json';
 import { updateSwagger } from './swagger/helpers';
-import { DOMAIN, EXTERNAL_PORT, MAX_UPLOAD_SIZE, PROTOCOL } from './config';
+import { API_VERSION, DOMAIN, EXTERNAL_PORT, MAX_UPLOAD_SIZE, PROTOCOL } from './config';
 import { buildBaseUrl } from './utils';
 import { apiLogger as logger } from './services/logging';
 import { correlationIdMiddleware } from './middleware/correlation-id';
@@ -24,7 +24,7 @@ app.use(
         // Build the Swagger server URL from config rather than request internals (req.protocol,
         // req.hostname, req.socket.localPort) which reflect the container's internal address.
         const url = buildBaseUrl(PROTOCOL, DOMAIN, EXTERNAL_PORT, 'api/v4');
-        swaggerJson = updateSwagger(swaggerJson, { version: 'v4', url });
+        swaggerJson = updateSwagger(swaggerJson, { version: API_VERSION, url });
         req.swaggerDoc = swaggerJson;
         next();
     },
