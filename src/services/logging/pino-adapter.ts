@@ -26,6 +26,14 @@ export class PinoLoggerAdapter implements LoggerService {
         const config = (configOrLogger as LoggerConfig | undefined) ?? {};
         this.logger = pino({
             level: config.level ?? process.env.LOG_LEVEL ?? 'info',
+            // Redact paths cover the secrets this service actually produces or
+            // accepts: the `decryptionKey` returned with private uploads, and
+            // the `x-api-key` request header. The list is deliberately narrow.
+            // Add to it only when new code starts emitting a new secret.
+            redact: {
+                paths: ['*.decryptionKey', 'decryptionKey', '*.headers["x-api-key"]', 'headers["x-api-key"]'],
+                censor: '[REDACTED]',
+            },
             // Register Pino's standard error serializer under both common keys.
             // Callers can pass `logger.error({ err: someError }, '...')` (or `error`)
             // and Pino captures `message`, `stack`, `code`, `cause` as nested fields.

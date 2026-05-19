@@ -7,7 +7,7 @@ import { ApiError, BadRequestError } from '../../../errors';
 import { PrivateService } from './service';
 import { apiLogger } from '../../../services/logging';
 
-const logger = apiLogger.child({ route: 'POST /private' });
+const logger = apiLogger.child({ route: 'POST /api/v4/private' });
 const UPLOAD_DIR = path.resolve(os.tmpdir());
 
 /**

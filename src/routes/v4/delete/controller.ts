@@ -4,7 +4,7 @@ import { DeleteService } from './service';
 import { ApiError } from '../../../errors';
 import { apiLogger } from '../../../services/logging';
 
-const logger = apiLogger.child({ route: 'DELETE /:bucket/:id' });
+const logger = apiLogger.child({ route: 'DELETE /api/v4/:bucket/:id' });
 
 export const deleteResource: RequestHandler = async (req, res) => {
     try {
