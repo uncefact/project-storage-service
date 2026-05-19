@@ -11,6 +11,11 @@ on:
             - '.github/workflows/build_publish_docs.yml'
     workflow_dispatch:
 
+# `contents: write` is required by `peaceiris/actions-gh-pages` to push the
+# built site to the `gh-pages` branch.
+permissions:
+    contents: write
+
 jobs:
     deploy:
         name: Deploy to GitHub Pages
