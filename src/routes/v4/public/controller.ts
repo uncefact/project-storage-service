@@ -5,9 +5,9 @@ import { RequestHandler } from 'express';
 import { initialiseStorageService, CryptographyService, IStorageService } from '../../../services';
 import { PublicService } from './service';
 import { ApiError, BadRequestError } from '../../../errors';
-import { apiLogger } from '../../../services/logging';
+import { apiLogger as logger, updateRequestContext } from '../../../services/logging';
 
-const logger = apiLogger.child({ route: 'POST /api/v4/public' });
+const ROUTE = 'POST /api/v4/public';
 const UPLOAD_DIR = path.resolve(os.tmpdir());
 
 /**
@@ -28,6 +28,7 @@ export const storePublic: RequestHandler = async (req, res) => {
     let tempPath: string | undefined;
 
     try {
+        updateRequestContext({ route: ROUTE });
         logger.info({ contentType: req.headers['content-type'] }, 'Handling public store request');
         const publicService = new PublicService();
         const storageService: IStorageService = initialiseStorageService();
