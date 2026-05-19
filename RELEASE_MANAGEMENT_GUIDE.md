@@ -211,7 +211,7 @@ compile cleanly. Does not publish.
 Triggers on push to `main` and on `v<X.Y.Z>` tag pushes.
 
 - Push to `main`: builds and pushes `ghcr.io/uncefact/project-storage-service:main`
-  plus a `:sha-<short>` tag pinnable to the specific commit.
+  plus a `:main-<short-sha>` tag pinnable to the specific commit.
 - Tag push: builds and pushes `:<X.Y.Z>` (the semver value) and `:latest`
   (suppressed for `-rc`, `-alpha`, `-beta`, `-pre` suffixes).
 - `workflow_dispatch` with an explicit `version` input lets a maintainer
