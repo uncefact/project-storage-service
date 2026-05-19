@@ -7,8 +7,8 @@ that provides endpoints to store, encrypt, and delete documents.
 
 The service offers the following functionality:
 
-- **Hash Computation**:
-  Computes the SHA-256 hash of a given document to ensure data integrity.
+- **Digest Computation**:
+  Computes a multibase-encoded multihash (`digestMultibase`) of the document so consumers can verify data integrity without out-of-band metadata about the algorithm or encoding.
 - **Encryption**:
   Encrypts the document using AES-256-GCM for enhanced security.
 - **Storage**:
@@ -134,7 +134,7 @@ Configure the storage service using the following environment variables:
 
 ### Logging
 
-The service emits structured JSON logs via Pino. Every log line includes a `correlationId` matching the request that produced it.
+The service emits structured JSON logs via [Pino](https://github.com/pinojs/pino). Every log line includes a `correlationId` matching the request that produced it.
 
 - `LOG_LEVEL`:
   Minimum level emitted: `debug`, `info`, `warn`, or `error` (default: `info`).
@@ -320,14 +320,17 @@ Images support `linux/amd64` and `linux/arm64` architectures (Intel/AMD and Appl
 ### Pulling Images
 
 ```bash
-# Pull a specific version (e.g., 3.0.0)
-docker pull ghcr.io/uncefact/project-storage-service:3.0.0
+# Pull a specific version (e.g., 4.0.0)
+docker pull ghcr.io/uncefact/project-storage-service:4.0.0
 
 # Or pull the latest release
 docker pull ghcr.io/uncefact/project-storage-service:latest
 
-# Or pull the latest development image from the next branch
-docker pull ghcr.io/uncefact/project-storage-service:next
+# Or pull the rolling head of main
+docker pull ghcr.io/uncefact/project-storage-service:main
+
+# Or pin to a specific main commit
+docker pull ghcr.io/uncefact/project-storage-service:main-<short-sha>
 ```
 
 ### Building and Running Locally with Docker
