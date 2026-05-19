@@ -1,7 +1,7 @@
 # ADR: Trunk-based development with tag-driven releases
 
 - **Date:** 2026-05-19
-- **Status:** proposed
+- **Status:** accepted
 
 ## Context
 
