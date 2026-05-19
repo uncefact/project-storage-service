@@ -32,6 +32,16 @@
         "@docusaurus/types": "3.6.3",
         "typescript": "~5.2.2"
     },
+    "resolutions": {
+        "@babel/plugin-transform-modules-systemjs": "^7.29.4",
+        "fast-uri": "^3.1.2",
+        "image-size": "^1.2.1",
+        "immutable": "^5.1.5",
+        "lodash": "^4.18.0",
+        "lodash-es": "^4.18.0",
+        "node-forge": "^1.4.0",
+        "serialize-javascript": "^7.0.3"
+    },
     "browserslist": {
         "production": [
             ">0.5%",
