@@ -1,20 +1,31 @@
 name: Test and Build
 
+# See: RELEASE_MANAGEMENT_GUIDE.md § Pipelines for trigger behaviour.
+
 on:
     pull_request:
         branches:
-            - next
+            - main
+        paths:
+            - 'src/**'
+            - 'package.json'
+            - 'yarn.lock'
+            - 'tsconfig.json'
+            - 'webpack.config.cjs'
+            - 'jest.config.js'
+            - 'Dockerfile'
+            - '.github/workflows/test_build.yml'
 
 jobs:
     test-and-build:
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v3
+            - uses: actions/checkout@v4
 
             - name: Install Node.js
-              uses: actions/setup-node@v3
+              uses: actions/setup-node@v4
               with:
-                  node-version: '22'
+                  node-version-file: '.nvmrc'
                   cache: 'yarn'
 
             - name: Install dependencies
@@ -43,24 +54,3 @@ jobs:
 
             - name: Run e2e tests
               run: yarn test:e2e:ci
-
-    build_docs:
-        runs-on: ubuntu-latest
-        steps:
-            - name: Checkout repository
-              uses: actions/checkout@v4
-
-            - name: Setup Node.js
-              uses: actions/setup-node@v3
-              with:
-                  node-version: '22'
-                  cache: yarn
-
-            - name: Install and build documentation
-              run: |
-                  cd documentation
-                  yarn install --frozen-lockfile
-                  yarn build
-              env:
-                  DOCS_BASE_URL: ${{ vars.DOCS_BASE_URL }}
-                  DOCS_URL: ${{ vars.DOCS_URL }}

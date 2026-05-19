@@ -1,0 +1,32 @@
+name: Build Docs
+
+# See: RELEASE_MANAGEMENT_GUIDE.md § Pipelines for trigger behaviour.
+
+on:
+    pull_request:
+        branches:
+            - main
+        paths:
+            - 'documentation/**'
+            - '.github/workflows/build_docs.yml'
+
+jobs:
+    build_docs:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version-file: '.nvmrc'
+                  cache: yarn
+
+            - name: Install and build documentation
+              run: |
+                  cd documentation
+                  yarn install --frozen-lockfile
+                  yarn build
+              env:
+                  DOCS_BASE_URL: ${{ vars.DOCS_BASE_URL }}
+                  DOCS_URL: ${{ vars.DOCS_URL }}
