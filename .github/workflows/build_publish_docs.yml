@@ -1,4 +1,4 @@
-name: Deploy to GitHub Pages
+name: Build and Prepare Docs
 
 # See: RELEASE_MANAGEMENT_GUIDE.md § Pipelines for trigger behaviour.
 
@@ -15,8 +15,8 @@ permissions:
     contents: write
 
 jobs:
-    deploy:
-        name: Deploy to GitHub Pages
+    build-and-prepare:
+        name: Build and Prepare Docs
         runs-on: ubuntu-latest
         environment: github-pages
 
@@ -49,7 +49,7 @@ jobs:
             # Deploy built documentation to gh-pages branch for GitHub Pages hosting
             # Popular action to deploy to GitHub Pages:
             # Docs: https://github.com/peaceiris/actions-gh-pages#%EF%B8%8F-docusaurus
-            - name: Deploy to GitHub Pages
+            - name: Push to gh-pages
               uses: peaceiris/actions-gh-pages@v4
               with:
                   github_token: ${{ secrets.GITHUB_TOKEN }}

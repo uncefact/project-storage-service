@@ -221,6 +221,6 @@ Uses GitHub Actions cache scoped to this workflow (`docker-storage-service`)
 so build layers persist across runs without colliding with other Docker
 workflows in the repository.
 
-### Deploy to GitHub Pages
+### Build and Prepare Docs
 
-Triggers on push to `main`. Builds the Docusaurus site and deploys it.
+Triggers on push to `main` that touches `documentation/**`. Builds the Docusaurus site and pushes the build output to the `gh-pages` branch. GitHub's own `pages build and deployment` workflow then fires on the `gh-pages` push and publishes the content to the public Pages URL.
