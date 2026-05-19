@@ -1,4 +1,5 @@
-import { Resource } from '@opentelemetry/resources';
+import { resourceFromAttributes } from '@opentelemetry/resources';
+import type { Resource } from '@opentelemetry/resources';
 
 import pkg from '../../../package.json';
 
@@ -52,11 +53,7 @@ export function buildResource(options: BuildResourceOptions = {}): Resource {
 
     const serviceVersion = options.serviceVersion ?? pkg.version;
 
-    // `new Resource({...})` is the constructor available in `@opentelemetry/resources`
-    // 1.x (what yarn resolves here due to a transitive pin from `@redocly/cli`) and
-    // is retained in 2.x. The 2.x-only `resourceFromAttributes()` factory cannot be
-    // used while the 1.x resolution stands.
-    return new Resource({
+    return resourceFromAttributes({
         [ATTR_SERVICE_NAME]: serviceName,
         [ATTR_SERVICE_VERSION]: serviceVersion,
         [ATTR_DEPLOYMENT_ENVIRONMENT_NAME]: deploymentEnvironment,
