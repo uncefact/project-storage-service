@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { IStorageService } from '.';
-import { API_VERSION, DOMAIN, EXTERNAL_PORT, LOCAL_DIRECTORY, PROTOCOL, __dirname } from '../../config';
+import { DOMAIN, EXTERNAL_PORT, LOCAL_DIRECTORY, PROTOCOL, __dirname } from '../../config';
 import { buildBaseUrl } from '../../utils';
 
 /**
@@ -28,7 +28,7 @@ export class LocalStorageService implements IStorageService {
 
         // Write data to file
         fs.writeFileSync(filePath, body);
-        return { uri: buildBaseUrl(PROTOCOL, DOMAIN, EXTERNAL_PORT, `api/${API_VERSION}/${bucket}/${key}`) };
+        return { uri: buildBaseUrl(PROTOCOL, DOMAIN, EXTERNAL_PORT, `api/v4/${bucket}/${key}`) };
     }
 
     /**

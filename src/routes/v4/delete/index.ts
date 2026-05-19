@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { deleteResource } from './controller';
-import { authenticateRequest } from '../../middleware/authentication';
+import { authenticateRequest } from '../../../middleware/authentication';
 
 export const deleteRouter = Router();
 

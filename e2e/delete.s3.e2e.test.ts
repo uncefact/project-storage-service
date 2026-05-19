@@ -1,6 +1,6 @@
 import request from 'supertest';
 import { v4 as uuidv4 } from 'uuid';
-import { APP_BASE_URL, API_KEY, API_VERSION } from './helpers';
+import { APP_BASE_URL, API_KEY } from './helpers';
 
 jest.setTimeout(30000);
 
@@ -22,19 +22,17 @@ const MINIMAL_PNG = Buffer.from(
 );
 
 describe('Delete API - S3 E2E Tests', () => {
-    describe(`DELETE /api/${API_VERSION}/:bucket/:id`, () => {
+    describe(`DELETE /api/v4/:bucket/:id`, () => {
         describe('Authentication', () => {
             it('should return 401 when API key is missing', async () => {
-                const response = await request(APP_BASE_URL)
-                    .delete(`/api/${API_VERSION}/documents/${uuidv4()}`)
-                    .expect(401);
+                const response = await request(APP_BASE_URL).delete(`/api/v4/documents/${uuidv4()}`).expect(401);
 
                 expect(response.body.message).toContain('API key is required');
             });
 
             it('should return 401 when API key is invalid', async () => {
                 const response = await request(APP_BASE_URL)
-                    .delete(`/api/${API_VERSION}/documents/${uuidv4()}`)
+                    .delete(`/api/v4/documents/${uuidv4()}`)
                     .set('X-API-Key', 'wrong-api-key')
                     .expect(401);
 
@@ -45,7 +43,7 @@ describe('Delete API - S3 E2E Tests', () => {
         describe('Validation', () => {
             it('should return 400 when bucket is not in available list', async () => {
                 const response = await request(APP_BASE_URL)
-                    .delete(`/api/${API_VERSION}/nonexistent/${uuidv4()}`)
+                    .delete(`/api/v4/nonexistent/${uuidv4()}`)
                     .set('X-API-Key', API_KEY)
                     .expect(400);
 
@@ -54,7 +52,7 @@ describe('Delete API - S3 E2E Tests', () => {
 
             it('should return 400 when id is not a valid UUID', async () => {
                 const response = await request(APP_BASE_URL)
-                    .delete(`/api/${API_VERSION}/documents/not-a-uuid`)
+                    .delete(`/api/v4/documents/not-a-uuid`)
                     .set('X-API-Key', API_KEY)
                     .expect(400);
 
@@ -68,16 +66,13 @@ describe('Delete API - S3 E2E Tests', () => {
 
                 // Store first
                 await request(APP_BASE_URL)
-                    .post(`/api/${API_VERSION}/public`)
+                    .post(`/api/v4/public`)
                     .set('X-API-Key', API_KEY)
                     .send({ bucket: 'documents', id: docId, data: testDocument })
                     .expect(201);
 
                 // Delete
-                await request(APP_BASE_URL)
-                    .delete(`/api/${API_VERSION}/documents/${docId}`)
-                    .set('X-API-Key', API_KEY)
-                    .expect(204);
+                await request(APP_BASE_URL).delete(`/api/v4/documents/${docId}`).set('X-API-Key', API_KEY).expect(204);
             });
 
             it('should return 204 when deleting a public binary file', async () => {
@@ -85,7 +80,7 @@ describe('Delete API - S3 E2E Tests', () => {
 
                 // Store first
                 await request(APP_BASE_URL)
-                    .post(`/api/${API_VERSION}/public`)
+                    .post(`/api/v4/public`)
                     .set('X-API-Key', API_KEY)
                     .attach('file', MINIMAL_PNG, { filename: 'test.png', contentType: 'image/png' })
                     .field('bucket', 'files')
@@ -93,10 +88,7 @@ describe('Delete API - S3 E2E Tests', () => {
                     .expect(201);
 
                 // Delete
-                await request(APP_BASE_URL)
-                    .delete(`/api/${API_VERSION}/files/${fileId}`)
-                    .set('X-API-Key', API_KEY)
-                    .expect(204);
+                await request(APP_BASE_URL).delete(`/api/v4/files/${fileId}`).set('X-API-Key', API_KEY).expect(204);
             });
 
             it('should return 204 when deleting a private document', async () => {
@@ -104,21 +96,18 @@ describe('Delete API - S3 E2E Tests', () => {
 
                 // Store first
                 await request(APP_BASE_URL)
-                    .post(`/api/${API_VERSION}/private`)
+                    .post(`/api/v4/private`)
                     .set('X-API-Key', API_KEY)
                     .send({ bucket: 'documents', id: docId, data: testDocument })
                     .expect(201);
 
                 // Delete
-                await request(APP_BASE_URL)
-                    .delete(`/api/${API_VERSION}/documents/${docId}`)
-                    .set('X-API-Key', API_KEY)
-                    .expect(204);
+                await request(APP_BASE_URL).delete(`/api/v4/documents/${docId}`).set('X-API-Key', API_KEY).expect(204);
             });
 
             it('should return 404 when resource does not exist', async () => {
                 const response = await request(APP_BASE_URL)
-                    .delete(`/api/${API_VERSION}/documents/${uuidv4()}`)
+                    .delete(`/api/v4/documents/${uuidv4()}`)
                     .set('X-API-Key', API_KEY)
                     .expect(404);
 
@@ -130,20 +119,17 @@ describe('Delete API - S3 E2E Tests', () => {
 
                 // Store
                 await request(APP_BASE_URL)
-                    .post(`/api/${API_VERSION}/public`)
+                    .post(`/api/v4/public`)
                     .set('X-API-Key', API_KEY)
                     .send({ bucket: 'documents', id: docId, data: testDocument })
                     .expect(201);
 
                 // First delete succeeds
-                await request(APP_BASE_URL)
-                    .delete(`/api/${API_VERSION}/documents/${docId}`)
-                    .set('X-API-Key', API_KEY)
-                    .expect(204);
+                await request(APP_BASE_URL).delete(`/api/v4/documents/${docId}`).set('X-API-Key', API_KEY).expect(204);
 
                 // Second delete returns 404
                 const response = await request(APP_BASE_URL)
-                    .delete(`/api/${API_VERSION}/documents/${docId}`)
+                    .delete(`/api/v4/documents/${docId}`)
                     .set('X-API-Key', API_KEY)
                     .expect(404);
 

@@ -1,6 +1,6 @@
 import request from 'supertest';
 import { v4 as uuidv4 } from 'uuid';
-import { APP_BASE_URL, API_KEY, API_VERSION, resolveUri, computeDigestMultibase } from './helpers';
+import { APP_BASE_URL, API_KEY, resolveUri, computeDigestMultibase } from './helpers';
 
 jest.setTimeout(30000);
 
@@ -41,11 +41,11 @@ describe('Public API - S3 E2E Tests', () => {
         });
     });
 
-    describe(`POST /api/${API_VERSION}/public (JSON)`, () => {
+    describe(`POST /api/v4/public (JSON)`, () => {
         describe('Authentication', () => {
             it('should return 401 when API key is missing', async () => {
                 const response = await request(APP_BASE_URL)
-                    .post(`/api/${API_VERSION}/public`)
+                    .post(`/api/v4/public`)
                     .send({ bucket: 'documents', data: testDocument })
                     .expect(401);
 
@@ -54,7 +54,7 @@ describe('Public API - S3 E2E Tests', () => {
 
             it('should return 401 when API key is invalid', async () => {
                 const response = await request(APP_BASE_URL)
-                    .post(`/api/${API_VERSION}/public`)
+                    .post(`/api/v4/public`)
                     .set('X-API-Key', 'wrong-api-key')
                     .send({ bucket: 'documents', data: testDocument })
                     .expect(401);
@@ -66,7 +66,7 @@ describe('Public API - S3 E2E Tests', () => {
         describe('Validation', () => {
             it('should return 400 when bucket is missing', async () => {
                 const response = await request(APP_BASE_URL)
-                    .post(`/api/${API_VERSION}/public`)
+                    .post(`/api/v4/public`)
                     .set('X-API-Key', API_KEY)
                     .send({ data: { test: 'data' } })
                     .expect(400);
@@ -76,7 +76,7 @@ describe('Public API - S3 E2E Tests', () => {
 
             it('should return 400 when bucket is not in available list', async () => {
                 const response = await request(APP_BASE_URL)
-                    .post(`/api/${API_VERSION}/public`)
+                    .post(`/api/v4/public`)
                     .set('X-API-Key', API_KEY)
                     .send({ bucket: 'nonexistent', data: { test: 'data' } })
                     .expect(400);
@@ -86,7 +86,7 @@ describe('Public API - S3 E2E Tests', () => {
 
             it('should return 400 when data is not a JSON object', async () => {
                 const response = await request(APP_BASE_URL)
-                    .post(`/api/${API_VERSION}/public`)
+                    .post(`/api/v4/public`)
                     .set('X-API-Key', API_KEY)
                     .send({ bucket: 'documents', data: 'not-an-object' })
                     .expect(400);
@@ -96,7 +96,7 @@ describe('Public API - S3 E2E Tests', () => {
 
             it('should return 400 when id is not a valid UUID', async () => {
                 const response = await request(APP_BASE_URL)
-                    .post(`/api/${API_VERSION}/public`)
+                    .post(`/api/v4/public`)
                     .set('X-API-Key', API_KEY)
                     .send({ bucket: 'documents', id: 'not-a-uuid', data: { test: 'data' } })
                     .expect(400);
@@ -108,7 +108,7 @@ describe('Public API - S3 E2E Tests', () => {
         describe('Storage', () => {
             it('should return 201 with uri and digestMultibase', async () => {
                 const response = await request(APP_BASE_URL)
-                    .post(`/api/${API_VERSION}/public`)
+                    .post(`/api/v4/public`)
                     .set('X-API-Key', API_KEY)
                     .send({ bucket: 'documents', data: testDocument })
                     .expect(201);
@@ -122,7 +122,7 @@ describe('Public API - S3 E2E Tests', () => {
             it('should return 201 with custom UUID id', async () => {
                 const customId = '123e4567-e89b-12d3-a456-426614174000';
                 const response = await request(APP_BASE_URL)
-                    .post(`/api/${API_VERSION}/public`)
+                    .post(`/api/v4/public`)
                     .set('X-API-Key', API_KEY)
                     .send({ bucket: 'documents', id: customId, data: testDocument })
                     .expect(201);
@@ -135,7 +135,7 @@ describe('Public API - S3 E2E Tests', () => {
                 const duplicateId = uuidv4();
 
                 const first = await request(APP_BASE_URL)
-                    .post(`/api/${API_VERSION}/public`)
+                    .post(`/api/v4/public`)
                     .set('X-API-Key', API_KEY)
                     .send({ bucket: 'documents', id: duplicateId, data: testDocument })
                     .expect(201);
@@ -143,7 +143,7 @@ describe('Public API - S3 E2E Tests', () => {
                 expect(first.body.uri).toEqual(expect.any(String));
 
                 const second = await request(APP_BASE_URL)
-                    .post(`/api/${API_VERSION}/public`)
+                    .post(`/api/v4/public`)
                     .set('X-API-Key', API_KEY)
                     .send({ bucket: 'documents', id: duplicateId, data: testDocument })
                     .expect(409);
@@ -155,7 +155,7 @@ describe('Public API - S3 E2E Tests', () => {
         describe('Round-trip verification', () => {
             it('should store JSON and return it unchanged via GET on returned URI', async () => {
                 const response = await request(APP_BASE_URL)
-                    .post(`/api/${API_VERSION}/public`)
+                    .post(`/api/v4/public`)
                     .set('X-API-Key', API_KEY)
                     .send({ bucket: 'documents', data: testDocument })
                     .expect(201);
@@ -170,7 +170,7 @@ describe('Public API - S3 E2E Tests', () => {
 
             it('should produce a valid multibase digest of the stored data', async () => {
                 const response = await request(APP_BASE_URL)
-                    .post(`/api/${API_VERSION}/public`)
+                    .post(`/api/v4/public`)
                     .set('X-API-Key', API_KEY)
                     .send({ bucket: 'documents', data: testDocument })
                     .expect(201);
@@ -181,11 +181,11 @@ describe('Public API - S3 E2E Tests', () => {
         });
     });
 
-    describe(`POST /api/${API_VERSION}/public (Binary)`, () => {
+    describe(`POST /api/v4/public (Binary)`, () => {
         describe('Authentication', () => {
             it('should return 401 when API key is missing', async () => {
                 const response = await request(APP_BASE_URL)
-                    .post(`/api/${API_VERSION}/public`)
+                    .post(`/api/v4/public`)
                     .attach('file', MINIMAL_PNG, { filename: 'test.png', contentType: 'image/png' })
                     .field('bucket', 'files')
                     .expect(401);
@@ -195,7 +195,7 @@ describe('Public API - S3 E2E Tests', () => {
 
             it('should return 401 when API key is invalid', async () => {
                 const response = await request(APP_BASE_URL)
-                    .post(`/api/${API_VERSION}/public`)
+                    .post(`/api/v4/public`)
                     .set('X-API-Key', 'wrong-api-key')
                     .attach('file', MINIMAL_PNG, { filename: 'test.png', contentType: 'image/png' })
                     .field('bucket', 'files')
@@ -208,7 +208,7 @@ describe('Public API - S3 E2E Tests', () => {
         describe('Validation', () => {
             it('should return 400 when no file is attached', async () => {
                 const response = await request(APP_BASE_URL)
-                    .post(`/api/${API_VERSION}/public`)
+                    .post(`/api/v4/public`)
                     .set('X-API-Key', API_KEY)
                     .field('bucket', 'files')
                     .expect(400);
@@ -218,7 +218,7 @@ describe('Public API - S3 E2E Tests', () => {
 
             it('should return 400 when bucket is missing', async () => {
                 const response = await request(APP_BASE_URL)
-                    .post(`/api/${API_VERSION}/public`)
+                    .post(`/api/v4/public`)
                     .set('X-API-Key', API_KEY)
                     .attach('file', MINIMAL_PNG, { filename: 'test.png', contentType: 'image/png' })
                     .expect(400);
@@ -228,7 +228,7 @@ describe('Public API - S3 E2E Tests', () => {
 
             it('should return 400 when bucket is not in available list', async () => {
                 const response = await request(APP_BASE_URL)
-                    .post(`/api/${API_VERSION}/public`)
+                    .post(`/api/v4/public`)
                     .set('X-API-Key', API_KEY)
                     .attach('file', MINIMAL_PNG, { filename: 'test.png', contentType: 'image/png' })
                     .field('bucket', 'nonexistent-bucket')
@@ -239,7 +239,7 @@ describe('Public API - S3 E2E Tests', () => {
 
             it('should return 400 when id is not a valid UUID', async () => {
                 const response = await request(APP_BASE_URL)
-                    .post(`/api/${API_VERSION}/public`)
+                    .post(`/api/v4/public`)
                     .set('X-API-Key', API_KEY)
                     .attach('file', MINIMAL_PNG, { filename: 'test.png', contentType: 'image/png' })
                     .field('bucket', 'files')
@@ -251,7 +251,7 @@ describe('Public API - S3 E2E Tests', () => {
 
             it('should reject when MIME type is not in allow-list', async () => {
                 const response = await request(APP_BASE_URL)
-                    .post(`/api/${API_VERSION}/public`)
+                    .post(`/api/v4/public`)
                     .set('X-API-Key', API_KEY)
                     .attach('file', Buffer.from('not a real zip'), {
                         filename: 'test.zip',
@@ -265,7 +265,7 @@ describe('Public API - S3 E2E Tests', () => {
 
             it('should return 413 when file exceeds maximum allowed size', async () => {
                 const response = await request(APP_BASE_URL)
-                    .post(`/api/${API_VERSION}/public`)
+                    .post(`/api/v4/public`)
                     .set('X-API-Key', API_KEY)
                     .attach('file', OVERSIZED_FILE, { filename: 'large.png', contentType: 'image/png' })
                     .field('bucket', 'files')
@@ -278,7 +278,7 @@ describe('Public API - S3 E2E Tests', () => {
         describe('Storage', () => {
             it('should return 201 when uploading a valid PNG', async () => {
                 const response = await request(APP_BASE_URL)
-                    .post(`/api/${API_VERSION}/public`)
+                    .post(`/api/v4/public`)
                     .set('X-API-Key', API_KEY)
                     .attach('file', MINIMAL_PNG, { filename: 'test.png', contentType: 'image/png' })
                     .field('bucket', 'files')
@@ -292,7 +292,7 @@ describe('Public API - S3 E2E Tests', () => {
 
             it('should return 201 when uploading a valid PDF', async () => {
                 const response = await request(APP_BASE_URL)
-                    .post(`/api/${API_VERSION}/public`)
+                    .post(`/api/v4/public`)
                     .set('X-API-Key', API_KEY)
                     .attach('file', MINIMAL_PDF, { filename: 'test.pdf', contentType: 'application/pdf' })
                     .field('bucket', 'files')
@@ -306,7 +306,7 @@ describe('Public API - S3 E2E Tests', () => {
 
             it('should return 201 when uploading a valid JPEG', async () => {
                 const response = await request(APP_BASE_URL)
-                    .post(`/api/${API_VERSION}/public`)
+                    .post(`/api/v4/public`)
                     .set('X-API-Key', API_KEY)
                     .attach('file', Buffer.from('fake-jpeg-content'), {
                         filename: 'test.jpg',
@@ -324,7 +324,7 @@ describe('Public API - S3 E2E Tests', () => {
             it('should return 201 with a custom UUID id', async () => {
                 const customId = uuidv4();
                 const response = await request(APP_BASE_URL)
-                    .post(`/api/${API_VERSION}/public`)
+                    .post(`/api/v4/public`)
                     .set('X-API-Key', API_KEY)
                     .attach('file', MINIMAL_PNG, { filename: 'test.png', contentType: 'image/png' })
                     .field('bucket', 'files')
@@ -339,7 +339,7 @@ describe('Public API - S3 E2E Tests', () => {
                 const duplicateId = uuidv4();
 
                 const first = await request(APP_BASE_URL)
-                    .post(`/api/${API_VERSION}/public`)
+                    .post(`/api/v4/public`)
                     .set('X-API-Key', API_KEY)
                     .attach('file', MINIMAL_PNG, { filename: 'test.png', contentType: 'image/png' })
                     .field('bucket', 'files')
@@ -349,7 +349,7 @@ describe('Public API - S3 E2E Tests', () => {
                 expect(first.body.uri).toEqual(expect.any(String));
 
                 const second = await request(APP_BASE_URL)
-                    .post(`/api/${API_VERSION}/public`)
+                    .post(`/api/v4/public`)
                     .set('X-API-Key', API_KEY)
                     .attach('file', MINIMAL_PNG, { filename: 'test.png', contentType: 'image/png' })
                     .field('bucket', 'files')
@@ -363,7 +363,7 @@ describe('Public API - S3 E2E Tests', () => {
         describe('Round-trip verification', () => {
             it('should store a PNG and return the identical binary via GET on returned URI', async () => {
                 const response = await request(APP_BASE_URL)
-                    .post(`/api/${API_VERSION}/public`)
+                    .post(`/api/v4/public`)
                     .set('X-API-Key', API_KEY)
                     .attach('file', MINIMAL_PNG, { filename: 'test.png', contentType: 'image/png' })
                     .field('bucket', 'files')
@@ -379,7 +379,7 @@ describe('Public API - S3 E2E Tests', () => {
 
             it('should store a PDF and return the identical binary via GET on returned URI', async () => {
                 const response = await request(APP_BASE_URL)
-                    .post(`/api/${API_VERSION}/public`)
+                    .post(`/api/v4/public`)
                     .set('X-API-Key', API_KEY)
                     .attach('file', MINIMAL_PDF, { filename: 'test.pdf', contentType: 'application/pdf' })
                     .field('bucket', 'files')
@@ -395,7 +395,7 @@ describe('Public API - S3 E2E Tests', () => {
 
             it('should produce a valid multibase digest of the stored file', async () => {
                 const response = await request(APP_BASE_URL)
-                    .post(`/api/${API_VERSION}/public`)
+                    .post(`/api/v4/public`)
                     .set('X-API-Key', API_KEY)
                     .attach('file', MINIMAL_PNG, { filename: 'test.png', contentType: 'image/png' })
                     .field('bucket', 'files')

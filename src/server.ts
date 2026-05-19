@@ -1,5 +1,5 @@
 import { app } from './app';
-import { API_VERSION, DOMAIN, EXTERNAL_PORT, MAX_UPLOAD_SIZE, PORT, PROTOCOL, getApiKey } from './config';
+import { DOMAIN, EXTERNAL_PORT, MAX_UPLOAD_SIZE, PORT, PROTOCOL, getApiKey } from './config';
 import { buildBaseUrl } from './utils';
 import { serverLogger as logger } from './services/logging';
 
@@ -29,5 +29,5 @@ if (isNaN(MAX_UPLOAD_SIZE) || MAX_UPLOAD_SIZE <= 0) {
 
 app.listen(PORT, () => {
     const base = buildBaseUrl(PROTOCOL, DOMAIN, EXTERNAL_PORT);
-    logger.info({ url: `${base}/api/${API_VERSION}`, docsUrl: `${base}/api-docs` }, 'Server started');
+    logger.info({ url: `${base}/api/v4`, docsUrl: `${base}/api-docs` }, 'Server started');
 });

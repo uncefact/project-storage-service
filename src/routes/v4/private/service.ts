@@ -1,11 +1,11 @@
 import { isPlainObject } from 'lodash';
 import { v4 } from 'uuid';
-import { IStorageService, ICryptographyService } from '../../services';
-import { AVAILABLE_BUCKETS, ALLOWED_UPLOAD_TYPES, DEFAULT_BUCKET } from '../../config';
-import { IStoreParams, IStoreFileParams } from '../../types';
-import { isValidUUID } from '../../utils';
-import { ApiError, ApplicationError, BadRequestError, ConflictError } from '../../errors';
-import { apiLogger as logger } from '../../services/logging';
+import { IStorageService, ICryptographyService } from '../../../services';
+import { AVAILABLE_BUCKETS, ALLOWED_UPLOAD_TYPES, DEFAULT_BUCKET } from '../../../config';
+import { IStoreParams, IStoreFileParams } from '../../../types';
+import { isValidUUID } from '../../../utils';
+import { ApiError, ApplicationError, BadRequestError, ConflictError } from '../../../errors';
+import { apiLogger as logger } from '../../../services/logging';
 
 export class PrivateService {
     /**

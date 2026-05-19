@@ -1,7 +1,7 @@
 import { PrivateService } from './service';
-import { BadRequestError, ConflictError, ApplicationError } from '../../errors';
+import { BadRequestError, ConflictError, ApplicationError } from '../../../errors';
 
-jest.mock('../../config', () => ({
+jest.mock('../../../config', () => ({
     AVAILABLE_BUCKETS: ['bucketName'],
     ALLOWED_UPLOAD_TYPES: ['image/png', 'image/jpeg', 'application/pdf'],
     DEFAULT_BUCKET: undefined,
@@ -242,7 +242,7 @@ describe('PrivateService', () => {
         });
 
         it('should use DEFAULT_BUCKET when bucket is not provided', async () => {
-            const configModule = require('../../config');
+            const configModule = require('../../../config');
             configModule.DEFAULT_BUCKET = 'bucketName';
 
             try {
@@ -275,7 +275,7 @@ describe('PrivateService', () => {
         });
 
         it('should use DEFAULT_BUCKET when bucket is an empty string', async () => {
-            const configModule = require('../../config');
+            const configModule = require('../../../config');
             configModule.DEFAULT_BUCKET = 'bucketName';
 
             try {
@@ -309,7 +309,7 @@ describe('PrivateService', () => {
         });
 
         it('should prefer explicit bucket over DEFAULT_BUCKET', async () => {
-            const configModule = require('../../config');
+            const configModule = require('../../../config');
             configModule.DEFAULT_BUCKET = 'some-other-default';
 
             try {
@@ -624,7 +624,7 @@ describe('PrivateService', () => {
         });
 
         it('should use DEFAULT_BUCKET when bucket is not provided', async () => {
-            const configModule = require('../../config');
+            const configModule = require('../../../config');
             configModule.DEFAULT_BUCKET = 'bucketName';
 
             try {
@@ -658,7 +658,7 @@ describe('PrivateService', () => {
         });
 
         it('should use DEFAULT_BUCKET when bucket is an empty string', async () => {
-            const configModule = require('../../config');
+            const configModule = require('../../../config');
             configModule.DEFAULT_BUCKET = 'bucketName';
 
             try {
@@ -693,7 +693,7 @@ describe('PrivateService', () => {
         });
 
         it('should prefer explicit bucket over DEFAULT_BUCKET', async () => {
-            const configModule = require('../../config');
+            const configModule = require('../../../config');
             configModule.DEFAULT_BUCKET = 'some-other-default';
 
             try {

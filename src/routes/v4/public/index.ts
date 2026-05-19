@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { storePublic } from './controller';
-import { authenticateRequest } from '../../middleware/authentication';
-import { conditionalUpload, handleUploadError } from '../../middleware/upload';
+import { authenticateRequest } from '../../../middleware/authentication';
+import { conditionalUpload, handleUploadError } from '../../../middleware/upload';
 
 export const publicRouter = Router();
 

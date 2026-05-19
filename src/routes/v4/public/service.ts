@@ -1,12 +1,12 @@
 import { isPlainObject } from 'lodash';
 import { v4 } from 'uuid';
 import { extension } from 'mime-types';
-import { IStorageService, ICryptographyService } from '../../services';
-import { ApiError, ApplicationError, BadRequestError, ConflictError } from '../../errors';
-import { AVAILABLE_BUCKETS, ALLOWED_UPLOAD_TYPES, DEFAULT_BUCKET } from '../../config';
-import { isValidUUID } from '../../utils';
-import { IStoreParams, IStoreFileParams } from '../../types';
-import { apiLogger as logger } from '../../services/logging';
+import { IStorageService, ICryptographyService } from '../../../services';
+import { ApiError, ApplicationError, BadRequestError, ConflictError } from '../../../errors';
+import { AVAILABLE_BUCKETS, ALLOWED_UPLOAD_TYPES, DEFAULT_BUCKET } from '../../../config';
+import { isValidUUID } from '../../../utils';
+import { IStoreParams, IStoreFileParams } from '../../../types';
+import { apiLogger as logger } from '../../../services/logging';
 
 export class PublicService {
     /**
