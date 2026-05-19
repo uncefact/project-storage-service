@@ -7,7 +7,7 @@ import { PublicService } from './service';
 import { ApiError, BadRequestError } from '../../../errors';
 import { apiLogger } from '../../../services/logging';
 
-const logger = apiLogger.child({ route: 'POST /public' });
+const logger = apiLogger.child({ route: 'POST /api/v4/public' });
 const UPLOAD_DIR = path.resolve(os.tmpdir());
 
 /**
@@ -28,6 +28,7 @@ export const storePublic: RequestHandler = async (req, res) => {
     let tempPath: string | undefined;
 
     try {
+        logger.info({ contentType: req.headers['content-type'] }, 'Handling public store request');
         const publicService = new PublicService();
         const storageService: IStorageService = initialiseStorageService();
         const cryptoService = new CryptographyService();
@@ -35,8 +36,10 @@ export const storePublic: RequestHandler = async (req, res) => {
         let response;
 
         if (req.file) {
+            logger.info({ mimeType: req.file.mimetype }, 'Reading uploaded file from temp path');
             const resolvedPath = path.resolve(req.file.path);
             if (!resolvedPath.startsWith(UPLOAD_DIR + path.sep)) {
+                logger.warn({ uploadPath: req.file.path }, 'Rejected upload outside permitted directory');
                 throw new BadRequestError('Invalid upload path.');
             }
             tempPath = resolvedPath;
@@ -49,8 +52,10 @@ export const storePublic: RequestHandler = async (req, res) => {
                 mimeType: req.file.mimetype,
             });
         } else if (req.is('multipart/form-data')) {
+            logger.warn('Rejected multipart request with no file part');
             throw new BadRequestError('File is required for multipart uploads.');
         } else {
+            logger.info('Storing JSON document');
             const params = req.body;
 
             response = await publicService.storeDocument(storageService, cryptoService, params);
@@ -58,7 +63,7 @@ export const storePublic: RequestHandler = async (req, res) => {
 
         res.status(201).json(response);
     } catch (err: any) {
-        logger.error({ err }, '[PublicController.storePublic] An error occurred while storing the resource');
+        logger.error({ err }, 'Error storing public resource');
 
         if (err instanceof ApiError) {
             return res.status(err.statusCode).json({ message: err.message });
@@ -73,10 +78,7 @@ export const storePublic: RequestHandler = async (req, res) => {
                 await fs.promises.unlink(tempPath);
             } catch (cleanupErr: any) {
                 if (cleanupErr.code !== 'ENOENT') {
-                    logger.error(
-                        { tempPath, err: cleanupErr },
-                        '[PublicController.storePublic] Failed to clean up temp file',
-                    );
+                    logger.error({ tempPath, err: cleanupErr }, 'Failed to clean up temp file');
                 }
             }
         }

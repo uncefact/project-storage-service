@@ -43,9 +43,11 @@ app.get('/health-check', (req, res) => {
 
 app.use('/api', router);
 
-// Global error handler for unhandled errors
-app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
-    logger.error({ err }, '[GlobalErrorHandler] Unhandled error');
+// Global error handler for unhandled errors. Includes `method` and `path` so
+// operators digging into a 500 know which route fired; `correlationId` is
+// added automatically by Pino's mixin.
+app.use((err: any, req: Request, res: Response, _next: NextFunction) => {
+    logger.error({ err, method: req.method, path: req.originalUrl }, '[GlobalErrorHandler] Unhandled error');
     res.status(500).json({
         message: 'An unexpected error occurred.',
     });

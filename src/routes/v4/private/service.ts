@@ -5,7 +5,7 @@ import { AVAILABLE_BUCKETS, ALLOWED_UPLOAD_TYPES, DEFAULT_BUCKET } from '../../.
 import { IStoreParams, IStoreFileParams } from '../../../types';
 import { isValidUUID } from '../../../utils';
 import { ApiError, ApplicationError, BadRequestError, ConflictError } from '../../../errors';
-import { apiLogger as logger } from '../../../services/logging';
+import { apiLogger } from '../../../services/logging';
 
 export class PrivateService {
     /**
@@ -33,58 +33,67 @@ export class PrivateService {
         cryptographyService: ICryptographyService,
         { bucket, id, data }: IStoreParams,
     ) {
+        const logger = apiLogger.child({ service: 'PrivateService', method: 'encryptAndStoreDocument' });
         try {
+            logger.info({ bucket, id: id ?? null }, 'Validating encrypt-and-store-document parameters');
             const resolvedBucket = bucket || DEFAULT_BUCKET;
 
             if (!bucket && resolvedBucket) {
-                logger.info(
-                    { defaultBucket: resolvedBucket },
-                    '[PrivateService.encryptAndStoreDocument] No bucket specified; falling back to DEFAULT_BUCKET',
-                );
+                logger.info({ defaultBucket: resolvedBucket }, 'No bucket specified; falling back to DEFAULT_BUCKET');
             }
 
             if (!resolvedBucket) {
+                logger.warn('No bucket resolved; rejecting request');
                 throw new BadRequestError(
                     'Bucket is required. Please provide a bucket name, or set the DEFAULT_BUCKET environment variable.',
                 );
             }
 
             if (!AVAILABLE_BUCKETS.includes(resolvedBucket)) {
+                logger.warn({ bucket: resolvedBucket }, 'Rejected unsupported bucket');
                 throw new BadRequestError(
                     `Invalid bucket. Must be one of the following buckets: ${AVAILABLE_BUCKETS.join(', ')}`,
                 );
             }
 
             if (!isPlainObject(data)) {
+                logger.warn('Rejected non-object data payload');
                 throw new BadRequestError('Data must be a JSON object. Please provide a valid JSON object.');
             }
 
             const documentId = id || v4();
 
             if (!isValidUUID(documentId)) {
+                logger.warn({ id: documentId }, 'Rejected invalid document id');
                 throw new BadRequestError(`Invalid id ${documentId}. Please provide a valid UUID.`);
             }
 
             const objectName = documentId + '.json';
 
+            logger.info({ bucket: resolvedBucket, objectName }, 'Checking object existence');
             const objectExists = await storageService.objectExists(resolvedBucket, objectName);
 
             if (objectExists) {
+                logger.warn({ bucket: resolvedBucket, objectName }, 'Rejected duplicate document id');
                 throw new ConflictError('A document with the provided ID already exists in the specified bucket.');
             }
 
             const stringifiedData = JSON.stringify(data);
 
+            logger.info('Computing multibase digest');
             const digestMultibase = await cryptographyService.computeDigestMultibase(stringifiedData);
 
+            logger.info('Generating encryption key');
             const key = await cryptographyService.generateEncryptionKey();
 
+            logger.info('Encrypting payload');
             const encryptedData = cryptographyService.encryptString(stringifiedData, key);
 
             const envelope = { ...encryptedData, contentType: 'application/json' };
 
             const encryptedDocument = JSON.stringify(envelope);
 
+            logger.info({ bucket: resolvedBucket, objectName }, 'Uploading encrypted document to storage');
             const { uri } = await storageService.uploadFile(
                 resolvedBucket,
                 objectName,
@@ -92,16 +101,14 @@ export class PrivateService {
                 'application/json',
             );
 
+            logger.info({ uri }, 'Private document stored successfully');
             return {
                 uri,
                 digestMultibase,
                 decryptionKey: key,
             };
         } catch (err: any) {
-            logger.error(
-                { err },
-                '[PrivateService.encryptAndStoreDocument] An error occurred while encrypting and storing the document',
-            );
+            logger.error({ err }, 'Error encrypting and storing document');
 
             if (err instanceof ApiError) {
                 throw err;
@@ -140,33 +147,36 @@ export class PrivateService {
         cryptographyService: ICryptographyService,
         { bucket, id, file, mimeType }: IStoreFileParams,
     ) {
+        const logger = apiLogger.child({ service: 'PrivateService', method: 'encryptAndStoreFile' });
         try {
+            logger.info({ bucket, id: id ?? null, mimeType }, 'Validating encrypt-and-store-file parameters');
             const resolvedBucket = bucket || DEFAULT_BUCKET;
 
             if (!bucket && resolvedBucket) {
-                logger.info(
-                    { defaultBucket: resolvedBucket },
-                    '[PrivateService.encryptAndStoreFile] No bucket specified; falling back to DEFAULT_BUCKET',
-                );
+                logger.info({ defaultBucket: resolvedBucket }, 'No bucket specified; falling back to DEFAULT_BUCKET');
             }
 
             if (!resolvedBucket) {
+                logger.warn('No bucket resolved; rejecting request');
                 throw new BadRequestError(
                     'Bucket is required. Please provide a bucket name, or set the DEFAULT_BUCKET environment variable.',
                 );
             }
 
             if (!AVAILABLE_BUCKETS.includes(resolvedBucket)) {
+                logger.warn({ bucket: resolvedBucket }, 'Rejected unsupported bucket');
                 throw new BadRequestError(
                     `Invalid bucket. Must be one of the following buckets: ${AVAILABLE_BUCKETS.join(', ')}`,
                 );
             }
 
             if (!file) {
+                logger.warn('Rejected missing file');
                 throw new BadRequestError('File is required. Please provide a file.');
             }
 
             if (!mimeType || !ALLOWED_UPLOAD_TYPES.includes(mimeType)) {
+                logger.warn({ mimeType }, 'Rejected unsupported MIME type');
                 throw new BadRequestError(
                     `Invalid MIME type. Must be one of the following types: ${ALLOWED_UPLOAD_TYPES.join(', ')}`,
                 );
@@ -175,29 +185,36 @@ export class PrivateService {
             const fileId = id || v4();
 
             if (!isValidUUID(fileId)) {
+                logger.warn({ id: fileId }, 'Rejected invalid file id');
                 throw new BadRequestError(`Invalid id ${fileId}. Please provide a valid UUID.`);
             }
 
             const objectName = fileId + '.json';
 
+            logger.info({ bucket: resolvedBucket, objectName }, 'Checking object existence');
             const objectExists = await storageService.objectExists(resolvedBucket, objectName);
 
             if (objectExists) {
+                logger.warn({ bucket: resolvedBucket, objectName }, 'Rejected duplicate file id');
                 throw new ConflictError('A file with the provided ID already exists in the specified bucket.');
             }
 
+            logger.info('Computing multibase digest');
             const digestMultibase = await cryptographyService.computeDigestMultibase(file);
 
             const base64Data = file.toString('base64');
 
+            logger.info('Generating encryption key');
             const key = await cryptographyService.generateEncryptionKey();
 
+            logger.info('Encrypting payload');
             const encryptedData = cryptographyService.encryptString(base64Data, key);
 
             const envelope = { ...encryptedData, contentType: mimeType };
 
             const encryptedDocument = JSON.stringify(envelope);
 
+            logger.info({ bucket: resolvedBucket, objectName }, 'Uploading encrypted file to storage');
             const { uri } = await storageService.uploadFile(
                 resolvedBucket,
                 objectName,
@@ -205,16 +222,14 @@ export class PrivateService {
                 'application/json',
             );
 
+            logger.info({ uri }, 'Private file stored successfully');
             return {
                 uri,
                 digestMultibase,
                 decryptionKey: key,
             };
         } catch (err: any) {
-            logger.error(
-                { err },
-                '[PrivateService.encryptAndStoreFile] An error occurred while encrypting and storing the file',
-            );
+            logger.error({ err }, 'Error encrypting and storing file');
 
             if (err instanceof ApiError) {
                 throw err;
