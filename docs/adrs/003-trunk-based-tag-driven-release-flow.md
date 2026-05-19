@@ -33,7 +33,7 @@ Hotfixes branch from the relevant release tag, PR to `main`, and produce a new p
 - Release notes communicate user-facing impact. The human-written `RELEASE_NOTES.md` entry is the single artefact consumers read at the tagged commit; it is not constrained by what conventional-commit subjects happened to be in the diff.
 - Customising release behaviour is local. Changing how a release is cut is a workflow edit rather than a third-party action configuration.
 - Pipeline scope is honest. Build Docs only runs when docs change; the Docker workflow only runs when something that goes into the image changes. Less wasted CI, faster signal.
-- The Docker tag set is more useful day-to-day. Push to `main` produces both `:main` (rolling) and `:sha-<short>` (pinnable per commit), so an operator pulling from `main` can record exactly which build they ran.
+- The Docker tag set is more useful day-to-day. Push to `main` produces both `:main` (rolling) and `:main-<short-sha>` (pinnable per commit), so an operator pulling from `main` can record exactly which build they ran.
 
 **What becomes more difficult:**
 
