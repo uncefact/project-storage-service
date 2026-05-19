@@ -5,9 +5,9 @@ import { RequestHandler } from 'express';
 import { CryptographyService, IStorageService, initialiseStorageService } from '../../../services';
 import { ApiError, BadRequestError } from '../../../errors';
 import { PrivateService } from './service';
-import { apiLogger as logger, updateRequestContext } from '../../../services/logging';
+import { apiLogger } from '../../../services/logging';
 
-const ROUTE = 'POST /api/v4/private';
+const logger = apiLogger.child({ route: 'POST /api/v4/private' });
 const UPLOAD_DIR = path.resolve(os.tmpdir());
 
 /**
@@ -28,7 +28,6 @@ export const storePrivate: RequestHandler = async (req, res) => {
     let tempPath: string | undefined;
 
     try {
-        updateRequestContext({ route: ROUTE });
         logger.info({ contentType: req.headers['content-type'] }, 'Handling private store request');
         const privateService = new PrivateService();
         const storageService: IStorageService = initialiseStorageService();

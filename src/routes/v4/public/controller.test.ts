@@ -20,7 +20,6 @@ jest.mock('../../../services/logging', () => ({
     storageLogger: mockLogger,
     configLogger: mockLogger,
     serverLogger: mockLogger,
-    updateRequestContext: jest.fn(),
 }));
 
 import { storePublic } from './controller';
