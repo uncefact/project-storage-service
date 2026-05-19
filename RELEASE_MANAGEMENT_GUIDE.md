@@ -99,6 +99,7 @@ The version.json file serves as a central metadata file to define the versioning
 // version.json
 {
   "version": "1.0.0",
+  "apiVersion": "1.0",
   "docVersion": "1.0.0",
   "dependencies": {
     // Example dependency service
@@ -113,6 +114,7 @@ The version.json file serves as a central metadata file to define the versioning
 ### Key Fields
 
 - version: The version of the current service. Must align with the Git tag.
+- apiVersion: The API contract version as `MAJOR.MINOR`. Kept in lockstep with the URL path segment (`/api/v<MAJOR>`, sourced from the routes directory `src/routes/v<MAJOR>/`); MINOR bumps document backwards-compatible additions to the API surface and do not change the URL.
 - docVersion: The version of the documentation.
 - dependencies: A list of dependent services with their repositories and compatible version list, the field is optional.
 - repoUrl: URL of the repository for the dependent service.

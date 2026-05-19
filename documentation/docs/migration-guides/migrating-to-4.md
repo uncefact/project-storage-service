@@ -56,23 +56,22 @@ If your client persists the `uri` returned from previous store calls, those URIs
 
 URIs returned by S3 or GCS adapters point directly at the object store, not at the storage service, so they are unaffected by the path change.
 
-## Response Field: `hash` Removed, `digestMultibase` Stays
+## Response Field: `hash` Replaced By `digestMultibase`
 
-The legacy hex SHA-256 `hash` field is removed from every store response. The `digestMultibase` field (a multibase-encoded multihash) is the sole content-integrity field returned.
+The legacy hex SHA-256 `hash` field is removed from every store response and replaced by `digestMultibase`, a multibase-encoded multihash.
 
 ### Why this changed
 
-The hex `hash` and `digestMultibase` fields encoded the same digest in two different ways. Carrying both pushed consumers to choose, and the hex form has none of the self-describing properties of the multibase-encoded multihash form: the algorithm and the encoding are recoverable from the `digestMultibase` value alone, without out-of-band metadata.
+The hex `hash` form carries the digest bytes only; the algorithm and the encoding have to be communicated out of band. The multibase-encoded multihash form is self-describing: the algorithm and the encoding are recoverable from the value alone, so consumers can verify content integrity without separate metadata.
 
-The multibase-encoded multihash form is also what W3C Verifiable Credentials and the UNTP credentials vocabulary use for content integrity, so dropping the hex form aligns the storage service with the wider ecosystem.
+The multibase-encoded multihash form has broad adoption across the content-integrity ecosystem, so the switch aligns the storage service with how content integrity is typically expressed.
 
 ### Before (3.2.x)
 
 ```json
 {
     "uri": "https://example.com/api/3.1.0/documents/2ad789c7-e513-4523-a826-ab59e1c423cd.json",
-    "hash": "d6bb7b579925baa4fe1cec41152b6577003e6a9fde6850321e36ad4ac9b3f30a",
-    "digestMultibase": "zQmcnsmRVVuPbmPwesYza9zXSbn5GJMQU4x9RnFDAZdcKCD"
+    "hash": "d6bb7b579925baa4fe1cec41152b6577003e6a9fde6850321e36ad4ac9b3f30a"
 }
 ```
 
@@ -94,7 +93,7 @@ Update every consumer that reads `response.hash` to read `response.digestMultiba
 + const integrity = response.digestMultibase;
 ```
 
-If you specifically need a hex SHA-256 for legacy interop, decode the multibase digest in your code (base58btc-decode the value, strip the two-byte multihash prefix `0x12 0x20` for sha2-256, and hex-encode the remaining 32 bytes). The W3C VC ecosystem reads `digestMultibase` directly, so this transformation is only needed if a downstream system you do not control still requires hex.
+If a downstream system you do not control still requires a hex SHA-256, decode the multibase digest in your code (base58btc-decode the value, strip the two-byte multihash prefix `0x12 0x20` for sha2-256, and hex-encode the remaining 32 bytes).
 
 :::warning
 The `digestMultibase` value is a multibase-encoded multihash, not a raw hash. Treat it as a self-describing string and use a multibase / multihash library to decode it. Stripping the leading `z` does not give you a hex hash.
@@ -102,19 +101,20 @@ The `digestMultibase` value is a multibase-encoded multihash, not a raw hash. Tr
 
 ## Version File Internals
 
-The `apiVersion` field has been removed from `version.json`. The path segment now lives in the URL routing (`src/routes/v4/`) and no longer needs a separate field.
+The `apiVersion` field in `version.json` switches from full SemVer to `MAJOR.MINOR` to mirror the contract shape. The MAJOR stays in lockstep with the URL path segment (`v<MAJOR>` under `src/routes/`); MINOR documents backwards-compatible additions to the API surface.
 
 ```diff
 // version.json
  {
      "version": "4.0.0",
 -    "apiVersion": "3.1.0",
++    "apiVersion": "4.0",
      "docVersion": "4.0.0",
      "dependencies": {}
  }
 ```
 
-If you have CI or tooling that reads `apiVersion` from `version.json`, update it to read the URL segment from the routing layer or drop the dependency altogether. The new convention is: the URL path version is `v<MAJOR>`, derived from the latest route directory under `src/routes/`.
+CI or tooling that parses `apiVersion` as full SemVer needs to be updated to expect a `MAJOR.MINOR` value.
 
 ## Docker images
 
