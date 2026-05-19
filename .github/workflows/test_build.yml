@@ -16,6 +16,11 @@ on:
             - 'Dockerfile'
             - '.github/workflows/test_build.yml'
 
+permissions:
+    contents: read
+    pull-requests: write
+    checks: write
+
 jobs:
     test-and-build:
         runs-on: ubuntu-latest

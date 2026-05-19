@@ -10,6 +10,9 @@ on:
             - 'documentation/**'
             - '.github/workflows/build_docs.yml'
 
+permissions:
+    contents: read
+
 jobs:
     build_docs:
         runs-on: ubuntu-latest
