@@ -107,29 +107,57 @@ Resource attributes emitted by the service:
 Example `.env` file for local development:
 
 ```env
-# Server
+# Server Configuration
 PROTOCOL=http
 DOMAIN=localhost
 PORT=3333
 # EXTERNAL_PORT=443
 
 # Authentication (Required)
+# The API key used to authenticate upload requests
 API_KEY=your-secure-api-key-here
 
-# Storage
+# Storage Configuration
+# Options: local | gcp | aws
 STORAGE_TYPE=local
 LOCAL_DIRECTORY=uploads
 
-# Buckets
+# Bucket Configuration
+# DEFAULT_BUCKET is used as a fallback when a request does not include a bucket.
+# If unset, requests without a bucket will receive a 400 error.
 DEFAULT_BUCKET=documents
 AVAILABLE_BUCKETS=documents,files
 
-# Logging
-# LOG_LEVEL=info        # debug | info | warn | error | fatal
-# LOG_PRETTY=true       # Defaults to on in NODE_ENV=development
+# Public URL Override
+# When using a CDN or custom domain, override the base URL for document URIs returned to clients.
+# Uploads still go to the configured storage provider. Only the URI in API responses changes.
+# Applies to: aws, gcp (ignored for local storage)
+# PUBLIC_URL=https://cdn.example.com
 
-# OpenTelemetry (opt-in; SDK starts only when OTEL_EXPORTER_OTLP_ENDPOINT is set)
+# Cloud Provider Credentials (if using cloud storage)
+
+# Google Cloud Platform
+# GOOGLE_APPLICATION_CREDENTIALS=/path/to/service-account-file.json
+
+# AWS S3 / S3-Compatible Providers (MinIO, DigitalOcean Spaces, Cloudflare R2, etc.)
+# S3_REGION=ap-southeast-2           # Required for AWS S3, optional with custom endpoint
+# S3_ENDPOINT=http://localhost:9000  # Custom endpoint for S3-compatible providers
+# S3_FORCE_PATH_STYLE=true           # Required for MinIO, Cloudflare R2
+# AWS_ACCESS_KEY_ID=your-access-key-id
+# AWS_SECRET_ACCESS_KEY=your-secret-access-key
+
+# File Upload Configuration
+# MAX_UPLOAD_SIZE=10485760
+# ALLOWED_UPLOAD_TYPES=image/png,image/jpeg,image/webp,application/pdf
+
+# Logging Configuration
+# LOG_LEVEL=info        # debug | info | warn | error | fatal
+# LOG_PRETTY=true       # Pretty-format logs via pino-pretty.
+                        # Defaults to on in NODE_ENV=development; leave unset in production.
+
+# OpenTelemetry Configuration (opt-in)
+# Set OTEL_EXPORTER_OTLP_ENDPOINT to enable tracing; the SDK does nothing when unset.
 # OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4317
 # OTEL_SERVICE_NAME=storage-service
-# DEPLOYMENT_ENVIRONMENT=development
+# DEPLOYMENT_ENVIRONMENT=development   # development | production
 ```
