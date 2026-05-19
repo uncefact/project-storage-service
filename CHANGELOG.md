@@ -1,5 +1,48 @@
 # Changelog
 
+All notable changes to the storage service are documented in this file. The format is loosely based on [Keep a Changelog](https://keepachangelog.com/) and the version numbers follow semantic versioning. Production releases are shipped as Docker images tagged from the `v<X.Y.Z>` git tag.
+
+## [4.0.0] - 2026-05-19
+
+First release under the trunk-based release flow. Two breaking changes to the API contract (URL path version segment, response field rename), the observability work that lands alongside them, and the coordinated dependency-security sweep.
+
+### Added
+
+- **Structured Pino logging with correlation IDs.** Every log line is JSON with module / service / method / route bindings as appropriate. The `x-correlation-id` header is validated (length cap 128, charset `[A-Za-z0-9_-]`) and propagated through `AsyncLocalStorage`; malformed values are replaced with a fresh UUID and the rejection is logged. The id is echoed on the response so callers can trace the request without parsing the body.
+- **Redact paths covering the secrets the service emits.** `decryptionKey` values in response payloads and `x-api-key`, `authorization`, `cookie` request headers are censored as `[REDACTED]` in log output.
+- **Breadcrumb step logs in every v4 controller and service method.** Each step (parsing, validating, resolving, computing digest, encrypting, uploading) emits a structured info line; every `throw` site emits a `warn` line with the structured rejection context first.
+- **Opt-in OpenTelemetry SDK.** Starts only when `OTEL_EXPORTER_OTLP_ENDPOINT` is set. HTTP and Express auto-instrumentations are enabled; `fs` is explicitly disabled to keep the span signal clean. Resource attributes: `service.name`, `service.version`, `deployment.environment.name`.
+- **`RELEASE_NOTES.md` at the repo root** as the human-facing per-release artefact (this changelog stays technical).
+- **`apiVersion` field in `version.json`** documents the API contract version as `MAJOR.MINOR` (`"4.0"` in this release). Kept in lockstep with the URL path's `v<MAJOR>` segment.
+- **`docs/adrs/`** captures architectural decisions. Three ADRs land with this release: digestMultibase replaces hex hash, URL path major-only, trunk-based release flow.
+
+### Changed
+
+- **URL path version segment moves from full SemVer to `v<MAJOR>`.** Routes now live under `src/routes/v<MAJOR>/`; the URL changes only on a major bump. Existing URIs that point at `/api/3.x.x/...` return 404 against a 4.0.0 deployment with no server-side redirect.
+- **Response field `digestMultibase` replaces hex `hash`.** Self-describing multibase-encoded multihash via `@uncefact/untp-utils` `MultibaseDigest.fromData(...)`. See migration guide for hex decoding if needed.
+- **Trunk-based development on `main`.** PRs target `main`; releases are cut by tagging from `main`. No `next`, `release/*`, or `hotfix/*` branches. `release-please` is removed; this changelog and `RELEASE_NOTES.md` are maintained by hand alongside the code change.
+- **Docker image tag set.** On push to `main`: `:main` (rolling) and `:main-<short-sha>` (pinnable per commit). On release tag (`v<X.Y.Z>`): the bare semver (`:4.0.0`) and `:latest` (suppressed for pre-release suffixes `-rc`, `-alpha`, `-beta`, `-pre`).
+- **Pretty-formatted log output** is on automatically when `NODE_ENV=development`; production and test environments emit raw JSON.
+- **CI workflows split and path-filtered.** Test and Build runs on PRs against application source; Build Docs runs separately on PRs against `documentation/**`; Deploy to GitHub Pages and Docker also gate on path. All workflows derive Node from `.nvmrc` and pin the checkout to `${{ github.sha }}`.
+- **`deployment.environment.name`** defaults to `development`; settable via the `DEPLOYMENT_ENVIRONMENT` env var. Two recognised environments: `development` and `production`.
+
+### Removed
+
+- **Response field `hash`** (hex SHA-256). Replaced by `digestMultibase`.
+- **Full SemVer in the URL path.** `/api/3.x.x/...` no longer routes.
+- **`release-please` pipeline.** Workflow, config, and manifest deleted.
+- **`next` branch.** Trunk-based on `main` from this release on.
+- **`release/*` and `hotfix/*` branches.** Releases are cut directly from `main`; hotfixes branch from the release tag and produce a new tag.
+
+### Fixed
+
+- **Dependency security sweep.** Coordinated update closing the open critical, high, medium, and low dependabot alerts on the root `yarn.lock` (axios, protobufjs, fast-xml-parser, handlebars, undici, multer, lodash, fast-uri, serialize-javascript, path-to-regexp, flatted, @babel/plugin-transform-modules-systemjs, dompurify, bn.js, postcss, qs, js-yaml, @tootallnate/once) and the high alerts on `documentation/yarn.lock` (node-forge, lodash, lodash-es, immutable, image-size, fast-uri, serialize-javascript, @babel/plugin-transform-modules-systemjs). Driven by GHSA advisories pinned via `package.json` `resolutions` entries; no application code changes.
+- **Minimal `GITHUB_TOKEN` permissions on PR-side workflows.** `test_build.yml`, `build_docs.yml`, and `build_publish_docs.yml` now declare an explicit `permissions:` block at the minimum scope each workflow needs.
+
+## Pre-trunk-based releases
+
+The entries below were generated by `release-please` from conventional commits before the move to trunk-based development. They are preserved verbatim.
+
 ## [3.2.1](https://github.com/uncefact/project-storage-service/compare/3.2.0...3.2.1) (2026-03-06)
 
 
@@ -213,3 +256,5 @@
 * Implement the Publish Tag workflow ([#11](https://github.com/uncefact/project-identity-resolver/issues/11)) ([6ec4aa8](https://github.com/uncefact/project-identity-resolver/commit/6ec4aa8e13f1ed3022fa6af56e54928563ff726f))
 * Init repo ([4347d47](https://github.com/uncefact/project-identity-resolver/commit/4347d472c6c938a967459da01e41c4d4d390b9b0))
 * Release 1.0.0 ([9544044](https://github.com/uncefact/project-identity-resolver/commit/954404413f5e8d663d4cf50861ab070d88337555))
+
+[4.0.0]: https://github.com/uncefact/project-storage-service/releases/tag/v4.0.0

@@ -7,8 +7,8 @@ that provides endpoints to store, encrypt, and delete documents.
 
 The service offers the following functionality:
 
-- **Hash Computation**:
-  Computes the SHA-256 hash of a given document to ensure data integrity.
+- **Digest Computation**:
+  Computes a multibase-encoded multihash (`digestMultibase`) of the document so consumers can verify data integrity without out-of-band metadata about the algorithm or encoding.
 - **Encryption**:
   Encrypts the document using AES-256-GCM for enhanced security.
 - **Storage**:
@@ -134,7 +134,7 @@ Configure the storage service using the following environment variables:
 
 ### Logging
 
-The service emits structured JSON logs via Pino. Every log line includes a `correlationId` matching the request that produced it.
+The service emits structured JSON logs via [Pino](https://github.com/pinojs/pino). Every log line includes a `correlationId` matching the request that produced it.
 
 - `LOG_LEVEL`:
   Minimum level emitted: `debug`, `info`, `warn`, or `error` (default: `info`).
