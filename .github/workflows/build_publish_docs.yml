@@ -1,9 +1,14 @@
 name: Deploy to GitHub Pages
 
+# See: RELEASE_MANAGEMENT_GUIDE.md § Pipelines for trigger behaviour.
+
 on:
     push:
         branches:
             - main
+        paths:
+            - 'documentation/**'
+            - '.github/workflows/build_publish_docs.yml'
     workflow_dispatch:
 
 jobs:
@@ -13,13 +18,16 @@ jobs:
         environment: github-pages
 
         steps:
-            # Checkout repository code to access documentation files and source code
             - uses: actions/checkout@v4
+              with:
+                  # Pin to the SHA that triggered the workflow so a parallel push
+                  # to main cannot move the working tree under us.
+                  ref: ${{ github.sha }}
 
             # Setup Node.js environment with caching to optimize dependency installation
-            - uses: actions/setup-node@v3
+            - uses: actions/setup-node@v4
               with:
-                  node-version: '22'
+                  node-version-file: '.nvmrc'
                   cache: yarn
 
             # Install all required Node.js packages and dependencies for documentation generation
@@ -39,7 +47,7 @@ jobs:
             # Popular action to deploy to GitHub Pages:
             # Docs: https://github.com/peaceiris/actions-gh-pages#%EF%B8%8F-docusaurus
             - name: Deploy to GitHub Pages
-              uses: peaceiris/actions-gh-pages@v3
+              uses: peaceiris/actions-gh-pages@v4
               with:
                   github_token: ${{ secrets.GITHUB_TOKEN }}
                   # Build output to publish to the `gh-pages` branch:

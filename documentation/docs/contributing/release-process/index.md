@@ -3,15 +3,16 @@ sidebar_position: 2
 title: Release Process
 ---
 
-This page describes the branch structure, versioning scheme, and step-by-step release workflow for the Storage Service.
+This page describes the branching model, versioning scheme, and step-by-step release workflow for the Storage Service. The repository follows trunk-based development on `main`; releases are cut by tagging from `main`.
 
-## Branch Structure
+## Branching
 
-| Branch          | Purpose                                                                |
-| --------------- | ---------------------------------------------------------------------- |
-| `main`          | Production. Always reflects the latest released version.               |
-| `next`          | Development. All feature work and bug fixes are merged here first.     |
-| `release/X.Y.Z` | Release preparation. Created from `next` when preparing a new release. |
+There is one long-lived branch: `main`. Feature branches use `<conventional-type>/<short-kebab-case-description>` and merge to `main` via pull request. There are no `next`, `release/*`, or `hotfix/*` branches.
+
+| Branch      | Purpose                                                            |
+| ----------- | ------------------------------------------------------------------ |
+| `main`      | The trunk. Always reflects the latest agreed state of the project. |
+| `type/slug` | Short-lived feature branches; merged to `main` via PR.             |
 
 ## Version Files
 
@@ -33,82 +34,91 @@ The `apiVersion` documents the API contract version as `MAJOR.MINOR`. It is kept
 - **`package.json`** -- The `version` field must match `version.json`.
 - **`documentation/package.json`** -- The `version` field must match the `docVersion` in `version.json`.
 
-All three files must be updated as part of the release process.
+## Release Notes And Changelog
+
+Two files at the repository root capture release information; both are maintained by hand alongside the code that ships in the release.
+
+- **`RELEASE_NOTES.md`** -- Human-facing per-release summary. Describes what changes for the operator or integrator. Consumers browse this file at the tagged commit for the release summary.
+- **`CHANGELOG.md`** -- Technical per-release log in [Keep a Changelog](https://keepachangelog.com/) format (`Added` / `Changed` / `Removed` / `Fixed`).
+
+## Pre-release Tags
+
+Versions may carry a pre-release identifier for staged rollouts:
+
+- `v<X.Y.Z>-rc.<n>` for release candidates.
+- `v<X.Y.Z>-alpha.<n>` and `-beta.<n>` for earlier-stage previews.
+- `v<X.Y.Z>-pre.<n>` for ad-hoc pre-release builds.
+
+Pre-release tags push the semver-tagged Docker image but do not move the `:latest` pointer, so a pre-release does not become the default pull target.
 
 ## Release Workflow
 
-The release flow follows this path:
+The release flow is:
 
 ```
-next -> release/X.Y.Z -> PR to main -> merge main back to next
+PRs -> main -> tag v<X.Y.Z> from main
 ```
 
-## Step-by-Step Release Guide
+### Step-by-step
 
-1. **Create a release branch** from `next` with the version number as the branch name:
+1. **Confirm `main` is release-ready.** CI green, no in-flight breaking work that should land first, migration guides updated if this is a major release.
 
-```bash
-git checkout next
-git pull origin next
-git checkout -b release/X.Y.Z
-```
-
-2. **Update version files.** Set the new version number in:
-    - `version.json` (`version`, `docVersion`)
-    - `package.json` (`version`)
-    - `documentation/package.json` (`version`, if `docVersion` changed)
-
-3. **Generate a new documentation version** using the release script:
-
-```bash
-yarn release:doc
-```
-
-This reads the `docVersion` from `version.json` and creates a Docusaurus version snapshot.
-
-4. **Check API documentation** and update if necessary (e.g. Swagger definitions).
-
-5. **Commit the changes** and push the release branch:
-
-```bash
-git add .
-git commit -m "chore(release): prepare X.Y.Z"
-git push origin release/X.Y.Z
-```
-
-6. **Create a pull request** from the release branch to `main`.
-
-7. **Merge the pull request** into `main`.
-
-8. **Create a new release tag** with the version number:
+2. **Open a release-prep branch** from `main`:
 
 ```bash
 git checkout main
-git pull origin main
-git tag X.Y.Z
-git push origin X.Y.Z
+git pull --ff-only
+git checkout -b chore/release-X.Y.Z
 ```
 
-9. **Merge `main` back into `next`** to ensure the development branch has all release changes:
+3. **Bump the version** everywhere it appears:
 
-```bash
-git checkout next
-git pull origin next
-git merge main
-git push origin next
-```
+- `version.json` -- update `version` (and `docVersion` if generating a docs cut).
+- `package.json` -- update `version`.
 
-## Creating a New Documentation Version
+4. **Update release notes and changelog.** Add a new top-level `## X.Y.Z` section to `RELEASE_NOTES.md` with the human-facing summary, and a new top-level `## [X.Y.Z] - YYYY-MM-DD` section to `CHANGELOG.md` in Keep a Changelog format.
 
-Documentation versions are managed through the `scripts/release-doc.js` script. This script:
-
-- Reads the `docVersion` from `version.json`.
-- Creates a Docusaurus versioned snapshot of the current documentation.
-
-To create a new documentation version manually:
+5. **Generate a documentation snapshot** if `docVersion` changed:
 
 ```bash
 yarn release:doc
 ```
 
-The documentation is automatically built and deployed to GitHub Pages via the `build_publish_docs.yml` pipeline, which triggers on manual workflow dispatch.
+6. **Commit and push the release-prep branch**, open a pull request against `main`, get it reviewed, and merge it.
+
+7. **Tag the merge commit** with the release version (prefixed `v`):
+
+```bash
+git checkout main
+git pull --ff-only
+git tag vX.Y.Z
+git push origin vX.Y.Z
+```
+
+The tag push triggers the **Docker** workflow, which builds and pushes `ghcr.io/uncefact/project-storage-service:X.Y.Z` and `:latest` (the `:latest` tag is suppressed for pre-release suffixes).
+
+## Hotfix Workflow
+
+For an urgent fix against a released version:
+
+1. Branch from the affected release tag:
+
+```bash
+git checkout -b fix/short-description vX.Y.Z
+```
+
+2. Apply the fix and open a pull request against `main`.
+
+3. After the PR merges, cut a new patch tag from `main` (`vX.Y.Z+1`).
+
+If `main` has diverged enough that hotfixing directly from `main` is risky, tag the patch from the hotfix branch and push that tag (the docker workflow fires either way), then merge the fix back to `main` separately.
+
+## Creating a New Documentation Version
+
+Documentation versions are managed through the `scripts/release-doc.js` script. To create a new documentation version manually:
+
+```bash
+yarn release:doc
+```
+
+The documentation is automatically built and deployed to GitHub Pages via the `build_publish_docs.yml` pipeline, which triggers on push to `main`.
