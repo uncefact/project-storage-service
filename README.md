@@ -320,14 +320,17 @@ Images support `linux/amd64` and `linux/arm64` architectures (Intel/AMD and Appl
 ### Pulling Images
 
 ```bash
-# Pull a specific version (e.g., 3.0.0)
-docker pull ghcr.io/uncefact/project-storage-service:3.0.0
+# Pull a specific version (e.g., 4.0.0)
+docker pull ghcr.io/uncefact/project-storage-service:4.0.0
 
 # Or pull the latest release
 docker pull ghcr.io/uncefact/project-storage-service:latest
 
-# Or pull the latest development image from the next branch
-docker pull ghcr.io/uncefact/project-storage-service:next
+# Or pull the rolling head of main
+docker pull ghcr.io/uncefact/project-storage-service:main
+
+# Or pin to a specific main commit
+docker pull ghcr.io/uncefact/project-storage-service:main-<short-sha>
 ```
 
 ### Building and Running Locally with Docker

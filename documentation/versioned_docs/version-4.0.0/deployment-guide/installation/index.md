@@ -67,11 +67,14 @@ Images support multiple architectures:
 # Pull the latest release
 docker pull ghcr.io/uncefact/project-storage-service:latest
 
-# Pull a specific version (e.g., 3.0.0)
+# Pull a specific version (e.g., 4.0.0)
 docker pull ghcr.io/uncefact/project-storage-service:<version>
 
-# Pull the latest development image from the next branch
-docker pull ghcr.io/uncefact/project-storage-service:next
+# Pull the rolling head of main
+docker pull ghcr.io/uncefact/project-storage-service:main
+
+# Pull a specific main commit (short SHA)
+docker pull ghcr.io/uncefact/project-storage-service:main-<short-sha>
 ```
 
 ### Running the Container

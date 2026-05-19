@@ -109,7 +109,7 @@ By default, each storage provider constructs public document URIs from its own e
 
 - **AWS S3**: `https://{bucket}.s3.amazonaws.com/{key}` or `https://{bucket}.{endpoint}/{key}`
 - **GCP**: `https://{bucket}.storage.googleapis.com/{key}`
-- **Local**: `http://{domain}:{port}/{key}`
+- **Local**: `http://{domain}:{port}/api/v4/{bucket}/{key}`
 
 If you place a CDN or custom domain in front of your storage bucket, you can set `PUBLIC_URL` to override **only the URI returned to clients**. Uploads and all other storage operations are unaffected.
 

@@ -37,14 +37,14 @@ yarn lint:check
 
 ## Pull Request Process
 
-1. **Branch from `next`.** All feature branches should be created from the `next` branch.
-2. **Submit your PR to `next`.** Pull requests should target the `next` branch, not `main`.
+1. **Branch from `main`.** Use the convention `<conventional-type>/<short-kebab-case-description>` (e.g. `feat/add-foo`, `fix/handle-bar`).
+2. **Submit your PR against `main`.** The repository follows trunk-based development; there is no `next`, `release/*`, or `hotfix/*` branch.
 3. **Ensure tests pass.** All existing and new tests must pass before a PR will be reviewed.
 4. **Keep PRs focused.** Each pull request should address a single concern -- one feature, one bug fix, or one refactoring effort.
 
 ## Commit Conventions
 
-The project follows the [Conventional Commits](https://www.conventionalcommits.org/) format. This is not just a style preference; the release tooling reads commit messages to automatically determine version bumps and generate changelogs. A `feat` commit triggers a minor version bump, a `fix` triggers a patch bump, and a breaking change triggers a major bump.
+The project follows the [Conventional Commits](https://www.conventionalcommits.org/) format. Conventional commit messages make the change history easier to scan and let reviewers infer intent without reading the diff first.
 
 ```
 type(scope): description
@@ -52,19 +52,21 @@ type(scope): description
 
 Common types:
 
-| Type       | Version Bump  | Changelog Section |
-| ---------- | ------------- | ----------------- |
-| `feat`     | Minor (1.x.0) | Features          |
-| `fix`      | Patch (1.0.x) | Bug Fixes         |
-| `docs`     | Patch         | Documentation     |
-| `chore`    | None          | Hidden            |
-| `refactor` | None          | Hidden            |
-| `test`     | None          | Hidden            |
-| `style`    | None          | Hidden            |
+| Type       | Use When                                                   |
+| ---------- | ---------------------------------------------------------- |
+| `feat`     | Adding new functionality                                   |
+| `fix`      | Fixing something that does not work as documented          |
+| `docs`     | Documentation-only changes                                 |
+| `chore`    | Maintenance work (dependency bumps, build config, tooling) |
+| `refactor` | Code changes that neither fix a bug nor add functionality  |
+| `test`     | Adding or revising tests                                   |
+| `style`    | Formatting changes that do not affect meaning              |
+
+Versioning is maintainer-driven; bumps are made in a release-prep PR rather than inferred from commit types. See the [Release Process](../release-process/) for the full flow.
 
 ### Breaking Changes
 
-Add `!` after the type or scope to signal a breaking change. This triggers a major version bump (x.0.0) and appears prominently in the changelog.
+Add `!` after the type or scope to signal a breaking change. This makes the breaking nature of the commit obvious to reviewers and helps the maintainer place the change in the correct `CHANGELOG.md` section at release time.
 
 ```
 feat(api)!: rename storage endpoints
@@ -86,7 +88,7 @@ feat(config)!: rename REGION to S3_REGION
 
 ### Why This Matters
 
-When a PR is squash-merged, GitHub uses the PR title as the merge commit message. If a feature PR title is missing the `feat:` prefix, the release tooling will not detect it as a feature. This results in an incorrect patch bump instead of a minor bump. Always ensure PR titles follow the conventional commit format.
+When a PR is squash-merged, GitHub uses the PR title as the merge commit message. A consistent conventional-commit format on PR titles makes the merge log easier to scan and helps the maintainer assemble the `Added` / `Changed` / `Removed` / `Fixed` sections of `CHANGELOG.md` at release time.
 
 ## Testing Expectations
 
