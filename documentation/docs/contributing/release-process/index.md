@@ -22,11 +22,13 @@ The project maintains version information in three files:
 ```json
 {
     "version": "MAJOR.MINOR.PATCH",
-    "apiVersion": "MAJOR.MINOR.PATCH",
+    "apiVersion": "MAJOR.MINOR",
     "docVersion": "MAJOR.MINOR.PATCH",
     "dependencies": {}
 }
 ```
+
+The `apiVersion` documents the API contract version as `MAJOR.MINOR`. It is kept in lockstep with the URL path segment (`/api/v<MAJOR>`, derived from the routes directory under `src/routes/v<MAJOR>/`): the MAJOR of `apiVersion` always matches the MAJOR in the URL. MINOR bumps document backwards-compatible additions to the API surface and do not change the URL.
 
 - **`package.json`** -- The `version` field must match `version.json`.
 - **`documentation/package.json`** -- The `version` field must match the `docVersion` in `version.json`.
@@ -52,7 +54,7 @@ git checkout -b release/X.Y.Z
 ```
 
 2. **Update version files.** Set the new version number in:
-    - `version.json` (`version`, `apiVersion` if the API has changed, `docVersion`)
+    - `version.json` (`version`, `docVersion`)
     - `package.json` (`version`)
     - `documentation/package.json` (`version`, if `docVersion` changed)
 

@@ -268,25 +268,25 @@ Examples:
 
 ```bash
 # Store public JSON data (no encryption)
-curl -X POST http://localhost:3333/api/3.0.0/public \
+curl -X POST http://localhost:3333/api/v4/public \
 -H "Content-Type: application/json" \
 -H "X-API-Key: your-api-key-here" \
 -d '{"bucket": "documents", "data": {"field1": "value1"}}'
 
 # Store private JSON data (encrypted)
-curl -X POST http://localhost:3333/api/3.0.0/private \
+curl -X POST http://localhost:3333/api/v4/private \
 -H "Content-Type: application/json" \
 -H "X-API-Key: your-api-key-here" \
 -d '{"bucket": "documents", "data": {"field1": "value1"}}'
 
 # Upload a public binary file
-curl -X POST http://localhost:3333/api/3.0.0/public \
+curl -X POST http://localhost:3333/api/v4/public \
 -H "X-API-Key: your-api-key-here" \
 -F "bucket=files" \
 -F "file=@/path/to/image.png"
 
 # Delete a stored resource
-curl -X DELETE http://localhost:3333/api/3.0.0/documents/123e4567-e89b-12d3-a456-426614174000 \
+curl -X DELETE http://localhost:3333/api/v4/documents/123e4567-e89b-12d3-a456-426614174000 \
 -H "X-API-Key: your-api-key-here"
 ```
 

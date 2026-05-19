@@ -1,7 +1,5 @@
 import crypto from 'crypto';
 
-import { apiVersion as API_VERSION } from '../version.json';
-
 /** Base URL for the containerised app */
 export const APP_BASE_URL = 'http://localhost:3334';
 
@@ -13,9 +11,6 @@ const MINIO_HOST_ENDPOINT = 'http://localhost:9010';
 
 /** API key matching the hardcoded value in docker-compose.e2e.yml */
 export const API_KEY = 'test-api-key-e2e';
-
-/** API version from version.json, used for URL paths */
-export { API_VERSION };
 
 /**
  * Rewrites a URI returned by the API to be resolvable from the host machine.

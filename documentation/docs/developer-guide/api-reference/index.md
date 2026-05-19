@@ -17,7 +17,7 @@ X-API-Key: your-secure-api-key-here
 
 ## Store Public Data
 
-- **Endpoint**: `POST /api/3.0.0/public`
+- **Endpoint**: `POST /api/v4/public`
 - **Authentication**: Required (`X-API-Key` header)
 - **Content Types**: `application/json` or `multipart/form-data`
 
@@ -26,7 +26,7 @@ Stores data or files without encryption. Returns a URI where the content can be 
 ### JSON Upload
 
 ```bash
-curl -X POST http://localhost:3333/api/3.0.0/public \
+curl -X POST http://localhost:3333/api/v4/public \
 -H "Content-Type: application/json" \
 -H "X-API-Key: your-secure-api-key-here" \
 -d '{
@@ -41,7 +41,7 @@ Example response:
 
 ```json
 {
-    "uri": "http://localhost:3333/api/3.0.0/documents/2ad789c7-e513-4523-a826-ab59e1c423cd.json",
+    "uri": "http://localhost:3333/api/v4/documents/2ad789c7-e513-4523-a826-ab59e1c423cd.json",
     "digestMultibase": "zQmcnsmRVVuPbmPwesYza9zXSbn5GJMQU4x9RnFDAZdcKCD"
 }
 ```
@@ -49,7 +49,7 @@ Example response:
 ### Binary File Upload
 
 ```bash
-curl -X POST http://localhost:3333/api/3.0.0/public \
+curl -X POST http://localhost:3333/api/v4/public \
 -H "X-API-Key: your-secure-api-key-here" \
 -F "file=@/path/to/image.png" \
 -F "bucket=files"
@@ -59,7 +59,7 @@ Example response:
 
 ```json
 {
-    "uri": "http://localhost:3333/api/3.0.0/files/123e4567-e89b-12d3-a456-426614174000.png",
+    "uri": "http://localhost:3333/api/v4/files/123e4567-e89b-12d3-a456-426614174000.png",
     "digestMultibase": "zQmcnsmRVVuPbmPwesYza9zXSbn5GJMQU4x9RnFDAZdcKCD"
 }
 ```
@@ -91,7 +91,7 @@ Example response:
 
 ## Store Private Data
 
-- **Endpoint**: `POST /api/3.0.0/private`
+- **Endpoint**: `POST /api/v4/private`
 - **Authentication**: Required (`X-API-Key` header)
 - **Content Types**: `application/json` or `multipart/form-data`
 
@@ -100,7 +100,7 @@ Automatically encrypts and stores data or files. Returns a URI, a digestMultibas
 ### JSON Upload
 
 ```bash
-curl -X POST http://localhost:3333/api/3.0.0/private \
+curl -X POST http://localhost:3333/api/v4/private \
 -H "Content-Type: application/json" \
 -H "X-API-Key: your-secure-api-key-here" \
 -d '{
@@ -115,7 +115,7 @@ Example response:
 
 ```json
 {
-    "uri": "http://localhost:3333/api/3.0.0/documents/e8b32169-582c-421a-a03f-5d1a7ac62d51.json",
+    "uri": "http://localhost:3333/api/v4/documents/e8b32169-582c-421a-a03f-5d1a7ac62d51.json",
     "digestMultibase": "zQmcnsmRVVuPbmPwesYza9zXSbn5GJMQU4x9RnFDAZdcKCD",
     "decryptionKey": "f3bee3dc18343aaab66d28fd70a03015d2ddbd5fd3b9ad38fff332c09014598d"
 }
@@ -124,7 +124,7 @@ Example response:
 ### Binary File Upload
 
 ```bash
-curl -X POST http://localhost:3333/api/3.0.0/private \
+curl -X POST http://localhost:3333/api/v4/private \
 -H "X-API-Key: your-secure-api-key-here" \
 -F "file=@/path/to/image.png" \
 -F "bucket=files"
@@ -134,7 +134,7 @@ Example response:
 
 ```json
 {
-    "uri": "http://localhost:3333/api/3.0.0/files/123e4567-e89b-12d3-a456-426614174000.json",
+    "uri": "http://localhost:3333/api/v4/files/123e4567-e89b-12d3-a456-426614174000.json",
     "digestMultibase": "zQmcnsmRVVuPbmPwesYza9zXSbn5GJMQU4x9RnFDAZdcKCD",
     "decryptionKey": "a1bc2de3f4567890abcdef1234567890abcdef1234567890abcdef1234567890"
 }
@@ -168,13 +168,13 @@ Example response:
 
 ## Delete a Resource
 
-- **Endpoint**: `DELETE /api/3.0.0/:bucket/:id`
+- **Endpoint**: `DELETE /api/v4/:bucket/:id`
 - **Authentication**: Required (`X-API-Key` header)
 
 Deletes a previously stored resource (public or encrypted) by bucket and ID. Uses prefix matching to locate the resource regardless of file extension. If multiple objects share the same ID prefix, all are deleted.
 
 ```bash
-curl -X DELETE http://localhost:3333/api/3.0.0/documents/2ad789c7-e513-4523-a826-ab59e1c423cd \
+curl -X DELETE http://localhost:3333/api/v4/documents/2ad789c7-e513-4523-a826-ab59e1c423cd \
 -H "X-API-Key: your-secure-api-key-here"
 ```
 

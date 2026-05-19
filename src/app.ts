@@ -23,7 +23,7 @@ app.use(
     (req: any, res: any, next: any) => {
         // Build the Swagger server URL from config rather than request internals (req.protocol,
         // req.hostname, req.socket.localPort) which reflect the container's internal address.
-        const url = buildBaseUrl(PROTOCOL, DOMAIN, EXTERNAL_PORT, `api/${API_VERSION}`);
+        const url = buildBaseUrl(PROTOCOL, DOMAIN, EXTERNAL_PORT, 'api/v4');
         swaggerJson = updateSwagger(swaggerJson, { version: API_VERSION, url });
         req.swaggerDoc = swaggerJson;
         next();
@@ -41,7 +41,7 @@ app.get('/health-check', (req, res) => {
     res.send('OK');
 });
 
-app.use(`/api/${API_VERSION}`, router);
+app.use('/api', router);
 
 // Global error handler for unhandled errors
 app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {

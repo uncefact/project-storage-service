@@ -1,8 +1,8 @@
 import { RequestHandler } from 'express';
-import { initialiseStorageService, IStorageService } from '../../services';
+import { initialiseStorageService, IStorageService } from '../../../services';
 import { DeleteService } from './service';
-import { ApiError } from '../../errors';
-import { apiLogger } from '../../services/logging';
+import { ApiError } from '../../../errors';
+import { apiLogger } from '../../../services/logging';
 
 const logger = apiLogger.child({ route: 'DELETE /:bucket/:id' });
 
