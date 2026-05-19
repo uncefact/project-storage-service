@@ -50,6 +50,17 @@ For cloud storage provider configuration, see [Storage Providers](../storage-pro
 `MAX_UPLOAD_SIZE` governs the maximum size for both JSON request bodies and multipart file uploads.
 :::
 
+:::caution Disk space considerations for file uploads
+
+Uploaded files are temporarily written to the OS temp directory before being forwarded to storage. Temp files are automatically cleaned up after each upload completes or fails.
+
+When planning your deployment, ensure:
+
+- **Temp directory disk space** can accommodate concurrent uploads at the configured `MAX_UPLOAD_SIZE`. For example, 10 concurrent 10 MB uploads require approximately 100 MB of temporary disk space.
+- **`MAX_UPLOAD_SIZE`** is set appropriately for your use case -- lower it if your files are typically smaller.
+
+:::
+
 ## Google Cloud Storage Configuration
 
 | Variable                         | Description                               | Default |
@@ -91,17 +102,6 @@ Resource attributes emitted by the service:
 | `service.version`             | `version` field in `package.json`                        |
 | `deployment.environment.name` | `DEPLOYMENT_ENVIRONMENT` env var (default `development`) |
 
-:::caution Disk space considerations for file uploads
-
-Uploaded files are temporarily written to the OS temp directory before being forwarded to storage. Temp files are automatically cleaned up after each upload completes or fails.
-
-When planning your deployment, ensure:
-
-- **Temp directory disk space** can accommodate concurrent uploads at the configured `MAX_UPLOAD_SIZE`. For example, 10 concurrent 10 MB uploads require approximately 100 MB of temporary disk space.
-- **`MAX_UPLOAD_SIZE`** is set appropriately for your use case -- lower it if your files are typically smaller.
-
-:::
-
 ## Example Environment File
 
 Example `.env` file for local development:
@@ -123,4 +123,13 @@ LOCAL_DIRECTORY=uploads
 # Buckets
 DEFAULT_BUCKET=documents
 AVAILABLE_BUCKETS=documents,files
+
+# Logging
+# LOG_LEVEL=info        # debug | info | warn | error | fatal
+# LOG_PRETTY=true       # Defaults to on in NODE_ENV=development
+
+# OpenTelemetry (opt-in; SDK starts only when OTEL_EXPORTER_OTLP_ENDPOINT is set)
+# OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4317
+# OTEL_SERVICE_NAME=storage-service
+# DEPLOYMENT_ENVIRONMENT=development
 ```
