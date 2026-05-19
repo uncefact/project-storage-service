@@ -7,17 +7,17 @@ import { apiLogger } from '../../../services/logging';
 const logger = apiLogger.child({ route: 'DELETE /api/v4/:bucket/:id' });
 
 export const deleteResource: RequestHandler = async (req, res) => {
+    const { bucket, id } = req.params;
     try {
+        logger.info({ bucket, id }, 'Handling delete request');
         const deleteService = new DeleteService();
         const storageService: IStorageService = initialiseStorageService();
-
-        const { bucket, id } = req.params;
 
         await deleteService.deleteDocument(storageService, bucket, id);
 
         res.status(204).send();
     } catch (err: any) {
-        logger.error({ err }, '[DeleteController.deleteResource] An error occurred while deleting the resource');
+        logger.error({ err }, 'Error deleting resource');
 
         if (err instanceof ApiError) {
             return res.status(err.statusCode).json({ message: err.message });
