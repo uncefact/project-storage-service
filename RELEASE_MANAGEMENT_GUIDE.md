@@ -223,4 +223,4 @@ workflows in the repository.
 
 ### Build and Prepare Docs
 
-Triggers on push to `main` that touches `documentation/**`. Builds the Docusaurus site and pushes the build output to the `gh-pages` branch. GitHub's own `pages build and deployment` workflow then fires on the `gh-pages` push and publishes the content to the public Pages URL.
+Triggers on push to `main` that touches documentation source or the workflow itself (`documentation/**`, `.github/workflows/build_publish_docs.yml`). Builds the Docusaurus site and pushes the build output to the `gh-pages` branch. GitHub's own `pages build and deployment` workflow then fires on the `gh-pages` push and publishes the content to the public Pages URL.
