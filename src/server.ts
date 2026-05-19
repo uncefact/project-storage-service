@@ -1,3 +1,8 @@
+// IMPORTANT: load OpenTelemetry instrumentation before any other import so the
+// SDK can patch HTTP / Express / AWS SDK module exports when they are first
+// loaded. This module is a no-op when OTEL_EXPORTER_OTLP_ENDPOINT is not set.
+import './instrumentation';
+
 import { app } from './app';
 import { DOMAIN, EXTERNAL_PORT, MAX_UPLOAD_SIZE, PORT, PROTOCOL, getApiKey } from './config';
 import { buildBaseUrl } from './utils';
