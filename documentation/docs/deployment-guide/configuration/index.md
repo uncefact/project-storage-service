@@ -86,13 +86,27 @@ The `decryptionKey` field returned by `/private` uploads and the `x-api-key`, `a
 
 ## OpenTelemetry Configuration
 
-The service ships with the OpenTelemetry Node SDK and auto-instrumentations for HTTP, Express, and AWS SDK calls. Tracing is **opt-in**: the SDK starts only when `OTEL_EXPORTER_OTLP_ENDPOINT` is set. With no endpoint configured the service runs with zero SDK overhead.
+The service ships with the OpenTelemetry Node SDK and auto-instrumentations for HTTP, Express, and AWS SDK calls. Tracing is **opt-in**: the SDK starts only when an OTLP endpoint (`OTEL_EXPORTER_OTLP_ENDPOINT` or `OTEL_EXPORTER_OTLP_TRACES_ENDPOINT`) is set. With no endpoint configured the service runs with zero SDK overhead. Traces export over OTLP/gRPC by default; set `OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf` to export over OTLP/HTTP, for example to reach a collector that accepts HTTP only.
 
-| Variable                      | Description                                                                                                      | Default                 |
-| ----------------------------- | ---------------------------------------------------------------------------------------------------------------- | ----------------------- |
-| `OTEL_EXPORTER_OTLP_ENDPOINT` | OTLP gRPC endpoint to export traces to (e.g. `http://localhost:4317`). When unset, the SDK does not start.       | _(unset; SDK disabled)_ |
-| `OTEL_SERVICE_NAME`           | Overrides the `service.name` resource attribute. The standard OpenTelemetry env var the wider ecosystem expects. | `storage-service`       |
-| `DEPLOYMENT_ENVIRONMENT`      | Sets the `deployment.environment.name` resource attribute. Recognised values: `development`, `production`.       | `development`           |
+Only the traces signal is exported. The OTLP metrics and logs signals are off by default; to opt in, set `OTEL_METRICS_EXPORTER=otlp` or `OTEL_LOGS_EXPORTER=otlp` explicitly.
+
+| Variable                                | Description                                                                                                                                                                                                                                                                                              | Default                 |
+| --------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------- |
+| `OTEL_EXPORTER_OTLP_ENDPOINT`           | Endpoint to export traces to. The SDK starts when this or `OTEL_EXPORTER_OTLP_TRACES_ENDPOINT` is set; with neither set it does not start. For gRPC use the base address (e.g. `http://localhost:4317`); for HTTP use the base URL (e.g. `http://localhost:4318`) and the exporter appends `/v1/traces`. | _(unset; SDK disabled)_ |
+| `OTEL_EXPORTER_OTLP_PROTOCOL`           | Export transport: `grpc` or `http/protobuf`. An unrecognised value falls back to `grpc` and logs a warning.                                                                                                                                                                                              | `grpc`                  |
+| `OTEL_SERVICE_NAME`                     | Overrides the `service.name` resource attribute. The standard OpenTelemetry env var the wider ecosystem expects.                                                                                                                                                                                         | `storage-service`       |
+| `DEPLOYMENT_ENVIRONMENT`                | Sets the `deployment.environment.name` resource attribute. Recognised values: `development`, `production`.                                                                                                                                                                                               | `development`           |
+| `OTEL_EXPORTER_OTLP_CLIENT_CERTIFICATE` | Path to the client certificate (PEM) presented for mutual TLS. Required only when the collector enforces mTLS.                                                                                                                                                                                           | _(unset)_               |
+| `OTEL_EXPORTER_OTLP_CLIENT_KEY`         | Path to the client private key (PEM) for the mTLS client certificate.                                                                                                                                                                                                                                    | _(unset)_               |
+| `OTEL_EXPORTER_OTLP_CERTIFICATE`        | Path to the CA certificate (PEM) used to verify the collector. Omit when the collector presents a publicly trusted certificate.                                                                                                                                                                          | _(unset)_               |
+| `OTEL_METRICS_EXPORTER`                 | Set to `otlp` to opt into OTLP metrics export. The service does not currently emit custom metrics, so the resulting signal is whatever the auto-instrumentations contribute.                                                                                                                             | `none`                  |
+| `OTEL_LOGS_EXPORTER`                    | Set to `otlp` to opt into OTLP logs export. The service does not currently emit OTel log records, so the resulting signal is whatever the auto-instrumentations contribute.                                                                                                                              | `none`                  |
+
+For a collector behind mutual TLS, use an `https://` endpoint and set the three certificate paths above; the SDK reads the PEM files at those paths and presents the client certificate on each export. This applies to both transports.
+
+:::note
+The `/v1/traces` path is appended only to the base `OTEL_EXPORTER_OTLP_ENDPOINT`. If you instead set the signal-specific `OTEL_EXPORTER_OTLP_TRACES_ENDPOINT`, it is used verbatim, so that value must already include the full path.
+:::
 
 Resource attributes emitted by the service:
 
@@ -156,8 +170,19 @@ AVAILABLE_BUCKETS=documents,files
                         # Defaults to on in NODE_ENV=development; leave unset in production.
 
 # OpenTelemetry Configuration (opt-in)
-# Set OTEL_EXPORTER_OTLP_ENDPOINT to enable tracing; the SDK does nothing when unset.
+# Set OTEL_EXPORTER_OTLP_ENDPOINT to enable tracing; the SDK does nothing when
+# unset. Traces export over OTLP/gRPC by default; set OTEL_EXPORTER_OTLP_PROTOCOL
+# to http/protobuf to export over OTLP/HTTP instead.
+# For gRPC use the base address; for HTTP use the base URL (the exporter appends
+# /v1/traces itself).
 # OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4317
+# OTEL_EXPORTER_OTLP_PROTOCOL=grpc   # grpc | http/protobuf
 # OTEL_SERVICE_NAME=storage-service
 # DEPLOYMENT_ENVIRONMENT=development   # development | production
+#
+# When the collector requires mutual TLS, use an https:// endpoint and point
+# these at the PEM files the SDK should present / trust (both transports):
+# OTEL_EXPORTER_OTLP_CLIENT_CERTIFICATE=/path/to/client.crt
+# OTEL_EXPORTER_OTLP_CLIENT_KEY=/path/to/client.key
+# OTEL_EXPORTER_OTLP_CERTIFICATE=/path/to/ca.crt
 ```

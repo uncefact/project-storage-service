@@ -149,12 +149,24 @@ Every response carries an `x-correlation-id` header. Inbound `x-correlation-id` 
 
 The service ships with the OpenTelemetry Node SDK and auto-instrumentations for HTTP, Express, and AWS SDK calls. Tracing is **opt-in**: the SDK starts only when `OTEL_EXPORTER_OTLP_ENDPOINT` is set. With no endpoint configured the service runs as before with zero SDK overhead.
 
+Traces are exported over OTLP/gRPC by default. Set `OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf` to export over OTLP/HTTP instead, for example to reach a collector that accepts HTTP only.
+
+Only traces are exported. The OTLP metrics and logs signals are off by default; to opt in, set `OTEL_METRICS_EXPORTER=otlp` or `OTEL_LOGS_EXPORTER=otlp` explicitly.
+
 - `OTEL_EXPORTER_OTLP_ENDPOINT`:
-  OTLP gRPC endpoint to export traces to (e.g. `http://localhost:4317`). When unset, the SDK does not start.
+  Endpoint to export traces to. The SDK starts when this or the signal-specific `OTEL_EXPORTER_OTLP_TRACES_ENDPOINT` is set; with neither set it does not start. For gRPC use the base address (e.g. `http://localhost:4317`); for HTTP use the base URL (e.g. `http://localhost:4318`) and the exporter appends the `/v1/traces` path itself.
+- `OTEL_EXPORTER_OTLP_PROTOCOL`:
+  Export transport: `grpc` (default) or `http/protobuf`. An unrecognised value falls back to `grpc` and logs a warning.
 - `OTEL_SERVICE_NAME`:
   Overrides the `service.name` resource attribute (default: `storage-service`). The standard OpenTelemetry env var the wider ecosystem expects.
 - `DEPLOYMENT_ENVIRONMENT`:
   Resource attribute `deployment.environment.name`. Valid values are `development` (default; covers laptops and the deployed dev environment) and `production`. Set this to `production` in prod deployments so dashboards can tenant signals by environment.
+
+When the collector sits behind mutual TLS, point the exporter at the `https://` endpoint and supply the client credentials via the standard OpenTelemetry env vars; the SDK reads the PEM files at the given paths (these apply to both transports):
+
+- `OTEL_EXPORTER_OTLP_CLIENT_CERTIFICATE`: path to the client certificate (PEM) presented for mTLS.
+- `OTEL_EXPORTER_OTLP_CLIENT_KEY`: path to the client private key (PEM) for that certificate.
+- `OTEL_EXPORTER_OTLP_CERTIFICATE`: path to the CA certificate (PEM) used to verify the collector. Omit when the collector presents a publicly trusted certificate.
 
 Resource attributes the SDK emits with every span:
 
