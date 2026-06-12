@@ -38,17 +38,20 @@ const endpoint =
 if (endpoint) {
     // The service only emits traces, but `NodeSDK` will silently spin up an
     // OTLP metrics exporter and an OTLP logs exporter when `OTEL_*_EXPORTER`
-    // are unset. Our trace default of `grpc` lives in `resolveOtlpProtocol`
+    // are unset (or, equivalently for NodeSDK, set to an empty string, which
+    // is what templated deployments such as Kubernetes manifests often pass
+    // through). Our trace default of `grpc` lives in `resolveOtlpProtocol`
     // (a code default, not an env var), so when `OTEL_EXPORTER_OTLP_PROTOCOL`
     // is also unset the SDK falls back to the spec default `http/protobuf`
     // for metrics and logs and they fail every export against a gRPC-only
     // collector with `Parse Error: Expected HTTP/`. Default the two signals
-    // to `none` here so the SDK only starts the trace pipeline; operators
-    // who want metrics or logs set the matching env var explicitly.
-    if (process.env.OTEL_METRICS_EXPORTER === undefined) {
+    // to `none` here when the operator has not given a real value, so the
+    // SDK only starts the trace pipeline; operators who want metrics or logs
+    // set the matching env var to `otlp` explicitly.
+    if (!process.env.OTEL_METRICS_EXPORTER?.trim()) {
         process.env.OTEL_METRICS_EXPORTER = 'none';
     }
-    if (process.env.OTEL_LOGS_EXPORTER === undefined) {
+    if (!process.env.OTEL_LOGS_EXPORTER?.trim()) {
         process.env.OTEL_LOGS_EXPORTER = 'none';
     }
 
