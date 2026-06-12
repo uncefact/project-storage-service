@@ -1,8 +1,7 @@
 # ADR: Support OTLP/HTTP trace export alongside gRPC, selected by protocol
 
 - **Date:** 2026-05-25
-- **Status:** proposed
-- **Superseded by:** _(none)_
+- **Status:** accepted
 
 ## Context
 
