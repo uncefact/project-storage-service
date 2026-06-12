@@ -151,6 +151,8 @@ The service ships with the OpenTelemetry Node SDK and auto-instrumentations for 
 
 Traces are exported over OTLP/gRPC by default. Set `OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf` to export over OTLP/HTTP instead, for example to reach a collector that accepts HTTP only.
 
+Only traces are exported. The OTLP metrics and logs signals are off by default; to opt in, set `OTEL_METRICS_EXPORTER=otlp` or `OTEL_LOGS_EXPORTER=otlp` explicitly.
+
 - `OTEL_EXPORTER_OTLP_ENDPOINT`:
   Endpoint to export traces to. The SDK starts when this or the signal-specific `OTEL_EXPORTER_OTLP_TRACES_ENDPOINT` is set; with neither set it does not start. For gRPC use the base address (e.g. `http://localhost:4317`); for HTTP use the base URL (e.g. `http://localhost:4318`) and the exporter appends the `/v1/traces` path itself.
 - `OTEL_EXPORTER_OTLP_PROTOCOL`:
