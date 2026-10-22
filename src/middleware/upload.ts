@@ -19,12 +19,26 @@ const fileFilter: multer.Options['fileFilter'] = (_req, file, cb) => {
     cb(null, true);
 };
 
+// @types/multer 2.0.0 predates the two field-name limits, so they are declared here
+// rather than cast away. multer 2.5.0 validates and enforces both at runtime.
+const limits: multer.Options['limits'] & { fieldNestingDepth: number; fieldArrayIndexLimit: number } = {
+    fileSize: MAX_UPLOAD_SIZE,
+    // The upload routes accept only the flat fields `bucket`, `id` and `file`.
+    // GHSA-72gw-mp4g-v24j: append-field builds nested objects from bracketed names
+    // with no depth bound. One level is allowed because multer checks depth first, and
+    // at 0 every indexed name would be rejected before the array index limit below runs.
+    // One level cannot build a deep structure.
+    fieldNestingDepth: 1,
+    // GHSA-535w-7cp7-47q4: a large index such as `items[4294967294]`, followed by a
+    // non-numeric key on the same base, makes append-field iterate the whole sparse
+    // array synchronously. No field here is an array, so only index 0 is accepted.
+    fieldArrayIndexLimit: 0,
+};
+
 export const upload = multer({
     storage,
     fileFilter,
-    limits: {
-        fileSize: MAX_UPLOAD_SIZE,
-    },
+    limits,
 });
 
 /**

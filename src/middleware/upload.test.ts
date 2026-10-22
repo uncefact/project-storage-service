@@ -1,5 +1,7 @@
-import { NextFunction, Request, Response } from 'express';
+import express, { NextFunction, Request, Response } from 'express';
+import fs from 'fs';
 import multer from 'multer';
+import request from 'supertest';
 import { ApiError, BadRequestError, PayloadTooLargeError } from '../errors';
 
 jest.mock('../config', () => ({
@@ -150,6 +152,52 @@ describe('Upload Middleware', () => {
             handleUploadError(genericError, mockRequest as any, mockResponse as any, mockNext);
 
             expect(mockNext).toHaveBeenCalledWith(genericError);
+        });
+    });
+
+    // These drive real multer parsing through the middleware chain the upload routes mount,
+    // so they fail if the field-name limits are dropped from the multer configuration.
+    describe('multipart field-name limits', () => {
+        const buildApp = () => {
+            const app = express();
+            app.post('/', conditionalUpload, handleUploadError, (req: Request, res: Response) => {
+                if (req.file) fs.rmSync(req.file.path, { force: true });
+                res.status(201).json({ bucket: req.body.bucket, id: req.body.id, fieldname: req.file?.fieldname });
+            });
+            return app;
+        };
+
+        it('should reject a field name whose array index exceeds the limit with the 400 JSON shape', async () => {
+            const response = await request(buildApp())
+                .post('/')
+                .field('bucket', 'test-bucket')
+                .field('id', 'test-id')
+                .field('items[1]', 'x');
+
+            expect(response.status).toBe(400);
+            expect(response.body).toEqual({ message: expect.stringContaining('array index') });
+        });
+
+        it('should reject a field name nested beyond the limit with the 400 JSON shape', async () => {
+            const response = await request(buildApp())
+                .post('/')
+                .field('bucket', 'test-bucket')
+                .field('id', 'test-id')
+                .field('a[b][c]', 'x');
+
+            expect(response.status).toBe(400);
+            expect(response.body).toEqual({ message: expect.stringContaining('nesting') });
+        });
+
+        it('should accept a normal upload with bucket, id and file', async () => {
+            const response = await request(buildApp())
+                .post('/')
+                .field('bucket', 'test-bucket')
+                .field('id', 'test-id')
+                .attach('file', Buffer.from('png-bytes'), { filename: 'image.png', contentType: 'image/png' });
+
+            expect(response.status).toBe(201);
+            expect(response.body).toEqual({ bucket: 'test-bucket', id: 'test-id', fieldname: 'file' });
         });
     });
 });
