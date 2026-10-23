@@ -40,7 +40,10 @@
         "lodash": "^4.18.0",
         "lodash-es": "^4.18.0",
         "node-forge": "^1.4.0",
-        "serialize-javascript": "^7.0.3"
+        "proxy-addr": "^2.0.8",
+        "serialize-javascript": "^7.0.3",
+        "shell-quote": "^1.12.0",
+        "websocket-driver": "^0.7.5"
     },
     "browserslist": {
         "production": [
