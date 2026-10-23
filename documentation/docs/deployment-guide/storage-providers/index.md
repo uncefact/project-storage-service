@@ -27,7 +27,7 @@ STORAGE_TYPE=gcp
 GOOGLE_APPLICATION_CREDENTIALS=/tmp/service-account-file.json
 ```
 
-When running with Docker, mount your service account file into the container:
+When running with Docker, mount your service account file into the container. The container runs as the `node` user (uid 1000), so that user must be able to read the file. For example, give it to uid 1000 and keep it private to that user with `chmod 600 /path/to/local/gcp/service-account-file.json && sudo chown 1000 /path/to/local/gcp/service-account-file.json`.
 
 ```bash
 docker run -d --env-file .env -p 3333:3333 \

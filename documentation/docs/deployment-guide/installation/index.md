@@ -79,6 +79,14 @@ docker pull ghcr.io/uncefact/project-storage-service:main-<short-sha>
 
 ### Running the Container
 
+The container runs as the `node` user (uid 1000), so the uploads directory you mount must be writable by that user. On a Linux host, create it with that owner before the first run, because Docker creates a missing bind-mount directory owned by root:
+
+```bash
+mkdir -p uploads && sudo chown 1000:1000 uploads
+```
+
+A new named volume mounted at `/app/src/uploads` needs no preparation. A directory or volume that an earlier image running as root has already written to stays root-owned, and uploads to it fail with a permission error until you change its owner once, for example with `sudo chown -R 1000:1000 uploads`.
+
 Copy and configure your environment file, then run:
 
 ```bash
@@ -97,6 +105,9 @@ Build and run with Docker:
 ```bash
 # Build the Docker image
 docker build -t storage-service:latest .
+
+# Create the uploads directory owned by the container user (uid 1000)
+mkdir -p uploads && sudo chown 1000:1000 uploads
 
 # Copy and configure your environment file
 cp .env.example .env
