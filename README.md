@@ -362,6 +362,8 @@ docker run -d --env-file .env -p 3333:3333 \
 storage-service:latest
 ```
 
+The image runs as the `node` user (uid 1000). The Google Cloud service account file must be readable by that user. Local uploads go to `/app/src/uploads`, which is writable by `node`. For a bind-mounted uploads directory, a custom `LOCAL_DIRECTORY`, or a volume already written to by an earlier image that ran as root, see the [installation](documentation/docs/deployment-guide/installation/index.md) and [configuration](documentation/docs/deployment-guide/configuration/index.md) guides.
+
 ## Documentation
 
 Full documentation is available at [uncefact.github.io/project-storage-service](https://uncefact.github.io/project-storage-service/).

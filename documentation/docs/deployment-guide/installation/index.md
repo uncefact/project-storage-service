@@ -85,6 +85,8 @@ The container runs as the `node` user (uid 1000), so the uploads directory you m
 mkdir -p uploads && sudo chown 1000:1000 uploads
 ```
 
+A new named volume mounted at `/app/src/uploads` needs no preparation. A directory or volume that an earlier image running as root has already written to stays root-owned, and uploads to it fail with a permission error until you change its owner once, for example with `sudo chown -R 1000:1000 uploads`.
+
 Copy and configure your environment file, then run:
 
 ```bash
