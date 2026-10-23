@@ -10,3 +10,5 @@ e2e
 .env
 .env.*
 report.json
+uploads
+src/uploads

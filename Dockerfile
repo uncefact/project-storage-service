@@ -23,5 +23,4 @@ USER node
 HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
     CMD wget -q --spider "http://127.0.0.1:${PORT:-3333}/health-check" || exit 1
 
-# Same command as the start script, run directly so node is PID 1 and receives SIGTERM.
-CMD [ "node", "dist/index.js" ]
+CMD [ "yarn", "start" ]

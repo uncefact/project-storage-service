@@ -27,8 +27,10 @@ The service will not start without `API_KEY` set.
 | Variable          | Description                                                                                  | Default     |
 | ----------------- | -------------------------------------------------------------------------------------------- | ----------- |
 | `STORAGE_TYPE`    | Storage provider (`local`, `gcp`, or `aws`)                                                  | `local`     |
-| `LOCAL_DIRECTORY` | Directory for local file storage                                                             | `uploads`   |
+| `LOCAL_DIRECTORY` | Directory for local file storage, under `/app/src` in the image                              | `uploads`   |
 | `PUBLIC_URL`      | Override base URL for document URIs returned to clients. Applies to `aws` and `gcp` storage. | _(not set)_ |
+
+The Docker image runs as the `node` user (uid 1000) and makes only `/app/src/uploads` writable. If you set `LOCAL_DIRECTORY` to another value, mount a volume or directory writable by uid 1000 at `/app/src/<LOCAL_DIRECTORY>`.
 
 For cloud storage provider configuration, see [Storage Providers](../storage-providers/).
 
