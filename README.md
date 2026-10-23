@@ -335,6 +335,11 @@ docker pull ghcr.io/uncefact/project-storage-service:main-<short-sha>
 
 ### Building and Running Locally with Docker
 
+The image runs as the `node` user (uid 1000). Check these before you start a container:
+
+- With Google Cloud Storage, uid 1000 must be able to read the mounted service account file. The [storage providers guide](documentation/docs/deployment-guide/storage-providers/index.md#google-cloud-storage) gives the commands.
+- With local storage, uploads go to `/app/src/uploads`, which is writable by `node`. For a bind-mounted uploads directory, a custom `LOCAL_DIRECTORY`, or a volume already written to by an earlier image that ran as root, see the [installation](documentation/docs/deployment-guide/installation/index.md) and [configuration](documentation/docs/deployment-guide/configuration/index.md) guides.
+
 ```bash
 # Build the image
 docker build -t storage-service:latest .
@@ -361,8 +366,6 @@ storage-service:latest
 docker run -d --env-file .env -p 3333:3333 \
 storage-service:latest
 ```
-
-The image runs as the `node` user (uid 1000). The Google Cloud service account file must be readable by that user. Local uploads go to `/app/src/uploads`, which is writable by `node`. For a bind-mounted uploads directory, a custom `LOCAL_DIRECTORY`, or a volume already written to by an earlier image that ran as root, see the [installation](documentation/docs/deployment-guide/installation/index.md) and [configuration](documentation/docs/deployment-guide/configuration/index.md) guides.
 
 ## Documentation
 
