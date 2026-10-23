@@ -2,6 +2,27 @@
 
 All notable changes to the storage service are documented in this file. The format is loosely based on [Keep a Changelog](https://keepachangelog.com/) and the version numbers follow semantic versioning. Production releases are shipped as Docker images tagged from the `v<X.Y.Z>` git tag.
 
+## [4.0.1] - 2026-10-23
+
+Security patch release: dependency updates for published advisories, and the multer upgrade and upload limits that close its denial-of-service advisories.
+
+### Changed
+
+- **Upload field-name limits.** The upload middleware sets multer's `fieldNestingDepth` to 1 and `fieldArrayIndexLimit` to 0. A field name nested two or more levels deep, or with an array index above 0, gets a 400 ([#134](https://github.com/uncefact/project-storage-service/pull/134)).
+- **multer 2.5.0 upload behaviour.** A file of exactly `MAX_UPLOAD_SIZE` bytes is accepted rather than refused with a 413. A file under the wrong field name is refused with "Unexpected file field". A `MAX_UPLOAD_SIZE` such as `abc` or `-1` fails at multer construction during start-up, instead of reaching the service's own configuration check ([#134](https://github.com/uncefact/project-storage-service/pull/134)).
+- **Documentation image on the Node 22 major line, and a README prerequisite of Node 22 or later** ([#133](https://github.com/uncefact/project-storage-service/pull/133)).
+- **e2e stack pulls MinIO and the `mc` client from `pgsty/minio` and `pgsty/mc`**, pinned by digest, because the `minio/minio` and `minio/mc` images can no longer be pulled from Docker Hub ([#133](https://github.com/uncefact/project-storage-service/pull/133)).
+- **Docs publish workflow renamed to "Build and Prepare Docs"** ([#127](https://github.com/uncefact/project-storage-service/pull/127)).
+
+### Fixed
+
+- **Runtime dependency advisories.** axios 1.20.0, follow-redirects 1.16.1, form-data 2.5.6 and 4.0.6, @grpc/grpc-js 1.14.6, undici 6.29.1 and fast-uri 3.1.9 ([#133](https://github.com/uncefact/project-storage-service/pull/133)). proxy-addr 2.0.8 (GHSA-jqcg-44mw-7w3h) and multer 2.5.0 (GHSA-72gw-mp4g-v24j, GHSA-535w-7cp7-47q4, GHSA-wc9g-mqfw-jrwm, GHSA-3p4h-7m6x-2hcm) ([#134](https://github.com/uncefact/project-storage-service/pull/134)).
+- **Critical advisories on development and documentation dependencies.** handlebars 4.7.10, dompurify 3.4.17 and shell-quote 1.12.0 in the root lockfile. proxy-addr 2.0.8, websocket-driver 0.7.5 and shell-quote 1.12.0 in `documentation/yarn.lock` ([#134](https://github.com/uncefact/project-storage-service/pull/134)).
+
+### Documentation
+
+- **Environment examples extended with the logging and OpenTelemetry settings**, and the disk-space caution moved ([#126](https://github.com/uncefact/project-storage-service/pull/126)).
+
 ## [4.0.0] - 2026-05-19
 
 First release under the trunk-based release flow. Two breaking changes to the API contract (URL path version segment, response field rename), the observability work that lands alongside them, and the coordinated dependency-security sweep.
