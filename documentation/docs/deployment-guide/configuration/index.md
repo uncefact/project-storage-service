@@ -30,7 +30,7 @@ The service will not start without `API_KEY` set.
 | `LOCAL_DIRECTORY` | Directory for local file storage, under `/app/src` in the image                              | `uploads`   |
 | `PUBLIC_URL`      | Override base URL for document URIs returned to clients. Applies to `aws` and `gcp` storage. | _(not set)_ |
 
-The Docker image runs as the `node` user (uid 1000) and makes only `/app/src/uploads` writable. If you set `LOCAL_DIRECTORY` to another value, mount a volume or directory writable by uid 1000 at `/app/src/<LOCAL_DIRECTORY>`. Docker creates a new named volume at that path owned by root, so change its owner once, for example with `docker run --rm -v <volume>:/data alpine chown -R 1000:1000 /data`.
+From 4.0.2, the container runs as `node` (uid 1000), and the image makes only `/app/src/uploads` writable. If you set `LOCAL_DIRECTORY` to another value, mount a volume or directory writable by uid 1000 at `/app/src/<LOCAL_DIRECTORY>`. Docker creates a new named volume at that path owned by root, so change its owner once, for example with `docker run --rm -v <volume>:/data alpine chown -R 1000:1000 /data`.
 
 For cloud storage provider configuration, see [Storage Providers](../storage-providers/).
 

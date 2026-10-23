@@ -2,6 +2,62 @@
 
 These are the user-facing release notes for the storage service. They focus on what changes for you, the operator or integrator, in each release. For a technical, per-change log see [CHANGELOG.md](./CHANGELOG.md).
 
+## 4.0.2
+
+This patch release changes the user the containers run as. The service image and the documentation site's image now run as the `node` user (uid 1000) instead of root, and both carry a Docker health check. The API contract and the configuration settings are unchanged. If you keep uploads on local storage, or mount a Google Cloud service account file, complete the steps under [Before you deploy 4.0.2](#before-you-deploy-402) first.
+
+- Container image: `ghcr.io/uncefact/project-storage-service:4.0.2` (also tagged `:latest`)
+
+### What changes
+
+- Both images run as `node` (uid 1000). The service image creates `/app/src/uploads`, the default local storage directory, owned by that user.
+- The service image checks `GET /health-check` on the container's `PORT` (default 3333) at a configured 30-second interval, with a 15-second start period. Failures during the start period do not count until the first successful check. After that, Docker marks the container unhealthy after three failed checks in a row. The documentation image, which you build from `documentation/Dockerfile`, checks its site root and allows 120 seconds for the first build. Docker and Docker Compose report this status. Kubernetes ignores image health checks, so keep your own probes there.
+- The default local storage directories, `uploads` and `src/uploads`, are kept out of the Docker build context, so an image you build from a checkout no longer copies files that a local run stored there. If you set a custom `LOCAL_DIRECTORY`, add `src/<LOCAL_DIRECTORY>` to `.dockerignore` yourself.
+
+### Before you deploy 4.0.2
+
+If you run `:latest`, the next pull after this release fetches 4.0.2, and the next time the container is created or recreated it runs 4.0.2, for example after `docker compose pull` and `docker compose up`, through an automatic updater, or with `imagePullPolicy: Always`. Pin `:4.0.1`, or stop re-pulling `:latest`, until you have completed the steps below.
+
+The container needs write access to its local storage directory as uid 1000. A directory or volume that an earlier image wrote to is owned by root, and 4.0.2 does not change that for you. If you skip these steps, the container starts and reports healthy, but uploads and deletes on local storage fail. Clients get a 500, and the service log shows `EACCES: permission denied`.
+
+Steps 1 to 4 apply when `STORAGE_TYPE` is `local` or unset (`local` is the default). Step 5 applies when it is `gcp`. The `sudo` commands are for a Linux host running standard Docker. With rootless Docker, or with user-namespace remapping, container uid 1000 is a different uid on the host, so a host-side `sudo chown 1000` sets the wrong owner. The container form in step 2 changes the owner of files the container's root user can reach: anything an earlier image wrote and, on rootless Docker, a directory you created. With user-namespace remapping, give a directory you created on the host to the host uid that container uid 1000 maps to (the start of the `dockremap` range in `/etc/subuid` plus 1000).
+
+These are Docker commands. On Kubernetes, give the pod `securityContext.fsGroup: 1000` where the volume type supports it, or an init container that changes the owner, for a volume claim that an earlier version wrote to, and mount the service account Secret with a mode that uid 1000 can read.
+
+1. Stop the running container before you change any ownership, so that it writes no new root-owned files afterwards.
+
+2. Change the owner of your existing uploads directory or volume to uid 1000. On a standard Docker host, for a bind-mounted directory:
+
+    ```bash
+    sudo chown -R 1000:1000 <path>
+    ```
+
+    The container form below works for a named volume, and for a bind-mounted directory that an earlier image wrote to. For a directory, give its absolute path in place of `<volume>`. By default Docker Compose prefixes a named volume with the project name, such as `myproject_uploads`, so check the real name with `docker volume ls` first. A wrong name creates a new, empty volume, and the command changes that one instead.
+
+    ```bash
+    docker run --rm -v <volume>:/data alpine chown -R 1000:1000 /data
+    ```
+
+3. For a new deployment with a bind-mounted directory, create the directory owned by uid 1000 before the first run, because Docker creates a missing bind-mount directory owned by root:
+
+    ```bash
+    mkdir -p uploads && sudo chown 1000:1000 uploads
+    ```
+
+    With rootless Docker, create the directory and change its owner with the container form from step 2 instead. With user-namespace remapping, give it to the mapped uid described above. A new named volume mounted at `/app/src/uploads` needs no preparation, because it takes its owner from the image.
+
+4. If you set `LOCAL_DIRECTORY` to a value other than `uploads`, the image does not create that directory. Mount a directory or volume writable by uid 1000 at `/app/src/<LOCAL_DIRECTORY>`. Docker creates a new named volume at that path owned by root, so change its owner once with the container form in step 2.
+
+5. If you use Google Cloud Storage with a mounted service account file, uid 1000 must be able to read it. A file that uid 1000 can already read needs no change. Otherwise, give the file to uid 1000 and keep it private to that user:
+
+    ```bash
+    sudo chown 1000 <key-file> && sudo chmod 600 <key-file>
+    ```
+
+    The health check does not read the key, so with an unreadable file the container still reports healthy, and the failure shows on the first storage request.
+
+Then deploy 4.0.2. If you later roll back to 4.0.1, it runs as root again and can create root-owned files, so repeat step 2 before you deploy 4.0.2 again.
+
 ## 4.0.1
 
 This is a security patch release. It clears every critical dependency advisory in the service's and the documentation site's lockfiles, moves the other dependencies named below to fixed releases, and closes four denial-of-service advisories in multer. The API contract is unchanged, but the upload endpoint now refuses some requests it used to accept.

@@ -2,6 +2,20 @@
 
 All notable changes to the storage service are documented in this file. The format is loosely based on [Keep a Changelog](https://keepachangelog.com/) and the version numbers follow semantic versioning. Production releases are shipped as Docker images tagged from the `v<X.Y.Z>` git tag.
 
+## [4.0.2] - 2026-10-23
+
+Patch release: the service and documentation images run as a non-root user and carry Docker health checks.
+
+### Changed
+
+- **Both images run as the `node` user (uid 1000).** The service image creates `/app/src/uploads` owned by `node`, so a new named volume mounted there takes that owner. An uploads directory or volume that an earlier image wrote to stays root-owned and must be re-owned once ([#137](https://github.com/uncefact/project-storage-service/pull/137)) ([6db4891](https://github.com/uncefact/project-storage-service/commit/6db48918c1d00748617b56d944c57fb413eecf76)).
+- **Docker health checks.** The service image requests `GET /health-check` on `PORT` (default 3333) at a configured 30-second interval, with a 5-second timeout, a 15-second start period and 3 retries. The documentation image requests its site root with a 120-second start period ([#137](https://github.com/uncefact/project-storage-service/pull/137)) ([6db4891](https://github.com/uncefact/project-storage-service/commit/6db48918c1d00748617b56d944c57fb413eecf76)).
+- **Default local storage directories kept out of the build context.** `.dockerignore` excludes `uploads` and `src/uploads`. A custom `LOCAL_DIRECTORY` is not excluded ([#137](https://github.com/uncefact/project-storage-service/pull/137)) ([6db4891](https://github.com/uncefact/project-storage-service/commit/6db48918c1d00748617b56d944c57fb413eecf76)).
+
+### Documentation
+
+- **Container user's access to uploads and the GCP key file.** The README and the installation, configuration and storage providers pages describe the uid 1000 requirement for bind-mounted directories, existing volumes, a custom `LOCAL_DIRECTORY` and the Google Cloud service account file ([#137](https://github.com/uncefact/project-storage-service/pull/137)) ([6db4891](https://github.com/uncefact/project-storage-service/commit/6db48918c1d00748617b56d944c57fb413eecf76)). The README gives the key-file prerequisite before the GCP start command, and the pages say the change applies from 4.0.2. The published 4.0.0 documentation snapshot carries the same three pages.
+
 ## [4.0.1] - 2026-10-23
 
 Security patch release: dependency updates for published advisories, and the multer upgrade and upload limits that close its denial-of-service advisories.
