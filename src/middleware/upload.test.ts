@@ -158,10 +158,16 @@ describe('Upload Middleware', () => {
     // These drive real multer parsing through the middleware chain the upload routes mount,
     // so they fail if the field-name limits are dropped from the multer configuration.
     describe('multipart field-name limits', () => {
+        const uploadedPaths: string[] = [];
+
+        afterEach(() => {
+            uploadedPaths.splice(0).forEach((uploadedPath) => fs.rmSync(uploadedPath, { force: true }));
+        });
+
         const buildApp = () => {
             const app = express();
             app.post('/', conditionalUpload, handleUploadError, (req: Request, res: Response) => {
-                if (req.file) fs.rmSync(req.file.path, { force: true });
+                if (req.file) uploadedPaths.push(req.file.path);
                 res.status(201).json({ bucket: req.body.bucket, id: req.body.id, fieldname: req.file?.fieldname });
             });
             return app;
