@@ -18,7 +18,7 @@ Originally developed as part of the United Nations Transparency Protocol (UNTP) 
 - **Multiple cloud storage backends** -- deploy with AWS S3, Google Cloud Storage, or any S3-compatible provider.
 - **Self-describing data integrity** -- every stored item receives a multibase-encoded multihash (`digestMultibase`) that consumers can verify without out-of-band metadata about the algorithm or encoding.
 - **Structured logging with request correlation** -- every log line is JSON with a `correlationId` matching the request, so a single id traces a logical operation across services.
-- **Opt-in OpenTelemetry tracing** -- emit traces over OTLP/gRPC when an endpoint is configured; off by default with zero overhead.
+- **Opt-in OpenTelemetry tracing** -- emit traces over OTLP (gRPC by default, or HTTP) when an endpoint is configured; off by default with zero overhead.
 - **Simple REST API** -- a straightforward interface that developers can integrate with in minutes.
 
 ## Where to Go Next
