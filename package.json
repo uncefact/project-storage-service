@@ -29,7 +29,7 @@
         "@opentelemetry/semantic-conventions": "^1.41.0",
         "@uncefact/untp-ri-services": "0.1.0-dev.8",
         "@uncefact/untp-utils": "^0.1.0",
-        "body-parser": "^1.20.3",
+        "body-parser": "^1.20.9",
         "cors": "^2.8.5",
         "dotenv": "^16.4.1",
         "express": "^4.18.2",
